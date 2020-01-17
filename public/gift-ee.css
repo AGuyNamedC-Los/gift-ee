@@ -1,0 +1,67 @@
+body {
+	/*background-color: #4db8ff;*/
+	/*background-color: #f2f2f2;*/
+}
+
+nav {
+	border: solid;
+}
+
+nav ul {
+	border: solid;
+	list-style: none;
+	text-align: center;
+}
+
+nav ul li {
+	display: inline-block; 
+	margin: 1% 2.5% 1%;
+}
+
+nav ul li a {
+	text-decoration: none;
+	border: solid;
+}
+
+main {
+	border: solid;
+	margin: 0% 22% 0%;
+	/*background: #86D4F9;*/
+}
+
+h1 {
+	text-align: center;
+	font-size: 50px;
+}
+
+h2 {
+	text-align: center;
+	font-size: 35px;
+}
+
+p {
+	text-align: center;
+	font-size: 23px;
+}
+
+/* ---------------------------------------------------------HOMEPAGE--------------------------------------------------------- */
+.user_input {
+	text-align: center;
+}
+
+label {
+	display: block;
+}
+
+label p {
+	display: inline-block;
+}
+
+label input {
+	display: inline-block;
+}
+
+.login_button {
+	border: solid;
+}
+

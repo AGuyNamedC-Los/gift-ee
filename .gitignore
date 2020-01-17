@@ -102,3 +102,12 @@ dist
 
 # TernJS port file
 .tern-port
+
+# STUFF I ADDED ****************************************************************
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules

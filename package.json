@@ -1,0 +1,26 @@
+{
+  "name": "gift-ee",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AGuyNamedC-Los/gift-ee.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AGuyNamedC-Los/gift-ee/issues"
+  },
+  "homepage": "https://github.com/AGuyNamedC-Los/gift-ee#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "nedb": "^1.8.0",
+    "nunjucks": "^3.2.0"
+  }
+}
