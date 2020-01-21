@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        {% block metaStuff %}
+            <title>gift-ee</title>
+        {% endblock %}
+        <link href="gift-ee.css" rel="stylesheet">
+    </head>
+    <body>
+		<nav>
+			<ul>
+				<li><a href="/">Home</a></li>
+				<li><a href="/login">Login</a></li>
+				<li><a href="/profile">Profile</a></li>
+				<li><a href="/about">About</a></li>
+				<li><a href="/sign-up">Sign-Up</a></li>
+			</ul>
+		</nav>
+		<main>
+			{% block main %}{% endblock %}
+		</main>
+    </body>
+</html>

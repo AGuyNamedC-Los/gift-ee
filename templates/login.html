@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block metaStuff%}
+	<title>Login</title>
+{% endblock %}
+
+{% block main %}
+	<h1>Login</h1>
+	<div class="user_input">
+		<form class="login" action="login_status" method="POST">
+			<fieldset>
+				<legend>Login</legend>
+				<div>
+					<label><input type="text", id="email", placeholder="Email"></label>
+					<label><input type="text", id="password", placeholder="Password"></label>
+					<input type="submit" value="login">
+				</div>
+			</fieldset>
+		</form>
+	</div>
+{% endblock %}
