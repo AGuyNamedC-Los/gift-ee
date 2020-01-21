@@ -20,7 +20,12 @@
     "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
+    "gulp-nunjucks": "^5.0.1",
+    "gulp-nunjucks-render": "^2.2.3",
     "nedb": "^1.8.0",
     "nunjucks": "^3.2.0"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2"
   }
 }

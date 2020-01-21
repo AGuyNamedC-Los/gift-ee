@@ -5,6 +5,7 @@
 	npm install nunjucks
 	npm install nedb --save
 	npm install bcryptjs
+	to use nunjucks-precompile go into node.js command prompt then drag templates into 
 */
 
 const express = require('express');
@@ -22,6 +23,11 @@ nunjucks.configure('templates', {
 	express: app
 });
 
+const template = nunjucks.precompile(
+  './templates/base.html',
+  { name: 'base' }
+)
+
 const cookieName="yummy_cookie";
 app.use(session({
 	secret: "This is my secret, look away!",
@@ -32,23 +38,23 @@ app.use(session({
 
 /* ----------------------------------------------------WEBPAGES---------------------------------------------------- */
 app.get('/', function (req, res) {
-    res.render('home.njk');
+    res.render('home.html');
 });
 
 app.get('/login', function (req, res) {
-    res.render('login.njk');
+    res.render('login.html');
 });
 
 app.get('/sign-up', function (req, res) {
-    res.render('sign_up.njk');
+    res.render('sign_up.html');
 });
 
 app.get('/profile', function (req, res) {
-    res.render('gift-ee_profile.njk');
+    res.render('gift-ee_profile.html');
 });
 
 app.get('/about', function (req, res) {
-    res.render('about.njk');
+    res.render('about.html');
 });
 
 let host = '127.15.59.37';
