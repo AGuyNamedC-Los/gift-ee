@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block metaStuff%}
+	<title>User List</title>
+{% endblock %}
+
+{% block main %}
+	<div>
+		<ul>
+			{% for user in users %}
+				<li>{{user.firstName}}</li>
+			{% endfor %}
+		<ul>
+	</div>
+{% endblock %}
