@@ -5,17 +5,16 @@
 {% endblock %}
 
 {% block main %}
-	<h1>Sign-Up</h1>
 	<div class="user_input">
 		<form class="sign_up" action="sign_up_status" method="POST">
 			<fieldset>
-				<legend>Sign Up</legend>
+				<legend>gift-ee Sign Up</legend>
 				<div>
 					<label><input type="text", id="email", placeholder="Email"></label>
 					<label><input type="text", id="first_name", placeholder="First Name"></label>
 					<label><input type="text", id="last_name", placeholder="Last Name"></label>
 					<label><input type="text", id="password", placeholder="Password"></label>
-					<input type="submit" value="Sign Up">
+					<input class="sign_up_btn" type="submit" value="Sign Up">
 				</div>
 			</fieldset>
 		</form>
