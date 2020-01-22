@@ -61,9 +61,16 @@ app.get('/about', function (req, res) {
     res.render('about.html');
 });
 
+const PORT = process.env.PORT || 5000
+app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
+
+/*
 let host = '127.15.59.37';
 let port = '2323';
+
 
 app.listen(port, host, function () {
     console.log("tourServer via Templates listening on IPv4: " + host + ":" + port);
 });
+
+*/
