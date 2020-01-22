@@ -1,0 +1,12 @@
+[
+	{
+		"firstName": "carlos",
+		"lastName": "castillo",
+		"userName": "aguynamedc_los",
+		"password": "password",
+		"email": "closcastillo95@gmail.com",
+		"birthday": {"year": 1995, "month": 2, "day": 23},
+		"numOfFollowers": 0,
+		"following": 0
+	}
+]

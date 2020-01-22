@@ -115,3 +115,7 @@ node_modules
 # directories
 output_templates
 
+# stuff from heroku
+.DS_Store
+/*.env
+

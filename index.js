@@ -6,6 +6,10 @@
 	npm install nedb --save
 	npm install bcryptjs
 	to use nunjucks-precompile go into node.js command prompt then drag templates into 
+	npm install gulp -D
+	npm install gulp-cli-g
+	npm install gulp-nunjucks --save
+	npm install hulp-nunjucks-render
 */
 
 const express = require('express');
