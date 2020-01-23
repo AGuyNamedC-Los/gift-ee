@@ -66,6 +66,40 @@ app.get('/login', function (req, res) {
     res.render('login.html');
 });
 
+const userDB = new DataStore({filename: __dirname + '/usersDB', autoload: true});
+app.post('/login_status', express.urlencoded({extended:true}), function(req, res) {
+	let email = req.body.email;
+	let password = req.body.password;
+	
+	userDB.find({"email": email, "password": password}, function (err, docs) {
+		if (err) {
+			console.log("something is wrong");
+		} else {
+			console.log("We found " + docs.length + " email that matches");
+			if(docs.length == 0) {
+				res.render('users_only.html');
+				return;
+			}
+			
+			let oldInfo = req.session.user;
+			req.session.regenerate(function (err) {
+				if (err) {
+					console.log(err);
+					res.render('users_only.html');
+					return;
+				}
+				
+				req.session.user = Object.assign(oldInfo, docs, {
+					role: "user",
+					firstName: docs[0]['firstName'],
+					lastName: docs[0]['lastName']
+				});
+			});
+			
+		}
+	});
+});
+
 app.get('/sign-up', function (req, res) {
     res.render('sign_up.html');
 });
@@ -78,7 +112,7 @@ app.get('/about', function (req, res) {
     res.render('about.html');
 });
 
-const userDB = new DataStore({filename: __dirname + '/usersDB', autoload: true});
+
 app.get('/userlist', function (req, res) {
 	let userList = [];
 	
