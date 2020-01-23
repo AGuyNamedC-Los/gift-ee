@@ -78,11 +78,11 @@ app.get('/about', function (req, res) {
     res.render('about.html');
 });
 
-const userDB = new DataStore({filename:__dirname + '/gift-ee_users', autoload: true});
+const userDB = new DataStore({filename: __dirname + '/usersDB', autoload: true});
 app.get('/userlist', function (req, res) {
 	let userList = [];
 	
-	userDB.find({"firstName": /.../}, function(err, docs) {		// return all items in the database
+	userDB.find({}, function(err, docs) {		// return all items in the database
 		if (err) {
 			console.log("something is wrong");
 		} else {
