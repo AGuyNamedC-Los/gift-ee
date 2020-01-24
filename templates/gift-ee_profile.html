@@ -6,4 +6,23 @@
 
 {% block main %}
 	<h1>Gift-ee Profile</h1>
+	<fieldset class="add_item">
+		<div>
+			<label><input type="text", id="item_name", name="itemName", placeholder="Item Name"></label>
+			<label><input type="text", id="link", name="link", placeholder="Link"></label>
+			<label><input type="text", id="quantity", name="qty", placeholder="Quantity"></label>
+			<label><input type="text", id="size", name="size", placeholder="Size"></label>
+			<label><input type="text", id="color", name="color", placeholder="Color"></label>
+			<input class="login_btn" type="submit" value="Log In">
+		</div>
+	</fieldset>
+	
+	<table>
+		<thead><tr><p>column name</p></tr></thead>
+		<tbody>
+			<tr><td><p>table row item</p></td></tr>
+		</tbody>
+	</table>
+	
+	
 {% endblock %}
