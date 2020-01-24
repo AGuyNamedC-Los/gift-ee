@@ -94,14 +94,41 @@ app.post('/login_status', express.urlencoded({extended:true}), function(req, res
 					firstName: docs[0]['firstName'],
 					lastName: docs[0]['lastName']
 				});
+				console.log("You've been promoted to user!");
+				res.render("gift-ee_profile.html");
 			});
-			
 		}
 	});
 });
 
 app.get('/sign-up', function (req, res) {
     res.render('sign_up.html');
+});
+
+app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, res) {
+	let email = req.body.email;
+	let username = req.body.username;
+	let firstName = req.body.firstName;
+	let lastName = req.body.lastName;
+	let password = req.body.password;
+	
+	userDB.find({$or : [{"email": email}, {"username": username}]}, function (err, docs) {
+		if (err) {
+			console.log("something is wrong");
+		} else {
+			console.log("We found " + docs.length + " emails or user names that matched");
+			console.log(email);
+			if(docs.length == 0) {
+				console.log(firstName);
+				res.render('sign_up_success.html', {"firstName":firstName});
+				return;
+			} else {
+				console.log("email or username has already been taken!");
+				res.render('users_only.html');
+				return;
+			}
+		}
+	});
 });
 
 app.get('/profile', loggedInMiddleware, function (req, res) {
@@ -134,9 +161,9 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
 /*
+
 let host = '127.15.59.37';
 let port = '2323';
-
 
 app.listen(port, host, function () {
     console.log("tourServer via Templates listening on IPv4: " + host + ":" + port);

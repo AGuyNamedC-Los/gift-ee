@@ -6,14 +6,15 @@
 
 {% block main %}
 	<div class="user_input">
-		<form class="sign_up" action="sign_up_status" method="POST">
+		<form class="signup_status" action="sign_up_status" method="POST">
 			<fieldset>
 				<legend>gift-ee</legend>
 				<div>
-					<label><input type="text", id="email", placeholder="Email"></label>
-					<label><input type="text", id="first_name", placeholder="First Name"></label>
-					<label><input type="text", id="last_name", placeholder="Last Name"></label>
-					<label><input type="text", id="password", placeholder="Password"></label>
+					<label><input type="text", id="email", name="email", placeholder="Email"></label>
+					<label><input type="text", id="username", name="username", placeholder="Username"></label>
+					<label><input type="text", id="first_name", name="firstName", placeholder="First Name"></label>
+					<label><input type="text", id="last_name", name="lastName", placeholder="Last Name"></label>
+					<label><input type="text", id="password", name="password" placeholder="Password"></label>
 					<input class="sign_up_btn" type="submit" value="Sign Up">
 				</div>
 			</fieldset>

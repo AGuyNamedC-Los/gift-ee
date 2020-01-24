@@ -5,6 +5,7 @@
 		"email": "closcastillo95@gmail.com",
 		"username": "user",
 		"password": "dumb",
-		"numOfFollowers": 0
+		"numOfFollowers": 0,
+		"content": {"itemName": "", "link": "", "qty": 0, "size": ""}
 	}
 ]
