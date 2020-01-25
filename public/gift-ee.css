@@ -110,3 +110,26 @@ label:nth-last-child(2) {		/* label before the button */
 	margin-bottom: 10%;
 }
 
+/* ---------------------------------------------------------GIFT-EE_PROFILE PAGE--------------------------------------------------------- */
+table {
+	margin: 0 auto;
+	border: solid;
+	border-collapse: separate;
+}
+
+table thead tr th:nth-child(1){
+	width: 55%;
+}
+
+table thead tr th:nth-child(2){
+	width: 15%;
+}
+
+table tr {
+}
+
+table td {
+	border: solid;
+	padding-right: 10%;
+}
+
