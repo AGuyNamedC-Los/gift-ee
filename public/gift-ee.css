@@ -1,3 +1,4 @@
+/* ---------------------------------------------------------GENERAL--------------------------------------------------------- */
 body {
 	/*background-color: #4db8ff;*/
 	/*background-color: #f2f2f2;*/
@@ -117,12 +118,18 @@ table {
 	border-collapse: separate;
 }
 
+table thead tr th {
+	padding-top: 2%;
+	padding-bottom: 2%;
+	border: solid;
+}
+
 table thead tr th:nth-child(1){
 	width: 55%;
 }
 
 table thead tr th:nth-child(2){
-	width: 15%;
+	width: 30%;
 }
 
 table tr {
@@ -130,6 +137,5 @@ table tr {
 
 table td {
 	border: solid;
-	padding-right: 10%;
 }
 
