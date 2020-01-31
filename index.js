@@ -71,13 +71,19 @@ app.post('/login_status', express.urlencoded({extended:true}), function(req, res
 	let email = req.body.email;
 	let password = req.body.password;
 	
-	userDB.find({"email": email, "password": password}, function (err, docs) {
+	userDB.find({"email": email}, function (err, docs) {
 		if (err) {
 			console.log("something is wrong");
 		} else {
 			console.log("We found " + docs.length + " email that matches");
-			if(docs.length == 0) {
+			if(docs.length == 0) {		// no email matched
 				res.render('users_only.html');
+				return;
+			}
+			
+			let verified = bcrypt.compareSync(password, docs[0].password); 
+			if (!verified) {
+				res.render("users_only.html");
 				return;
 			}
 			
@@ -118,8 +124,32 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 		} else {
 			console.log("We found " + docs.length + " emails or user names that matched");
 			console.log(email);
+			console.log(username);
 			if(docs.length == 0) {
-				console.log(firstName);
+				// salt and hash password
+				let nRounds = 11;
+				let hashedPassword = bcrypt.hashSync(password, nRounds);
+				let verified = bcrypt.compareSync(password, hashedPassword);
+				
+				// create a new user with user inputed fields 
+				let newUser = 	{
+					"firstName": firstName,
+					"lastName": lastName,
+					"email": email,
+					"username": username,
+					"password": hashedPassword,
+					"numOfFollowers": 0,
+					"content": {"itemName": "", "link": "", "qty": 0, "size": ""}
+				}
+				
+				// add them to the user database
+				userDB.insert(newUser, function(err, newDocs) {
+					if (err) {
+						console.log("Something went wrong when adding to the database");
+						console.log(err);
+					} else { console.log("Added a new user"); }
+				});
+				
 				res.render('sign_up_success.html', {"firstName":firstName});
 				return;
 			} else {
