@@ -17,6 +17,11 @@ const session = require('express-session');
 const nunjucks = require('nunjucks');
 const DataStore = require('nedb');
 const userDB = new DataStore({filename: __dirname + '/usersDB', autoload: true});		// importing the database
+userDB.loadDatabase(function (err) {
+    userDB.find({}, function(err, docs) {
+        console.log(err || docs);
+    });
+});
 const bcrypt = require('bcryptjs');
 
 var app = express();
@@ -181,15 +186,6 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 });
 
 app.get('/profile', loggedInMiddleware, function (req, res) {
-    res.render('gift-ee_profile.html');
-});
-
-app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:true}), function(req, res) {
-	let itemName = req.body.itemName;
-	let link = req.body.link;
-	let qty = req.body.qty;
-	let size = req.body.size;
-	let color = req.body.color;
 	let email = req.session.user.email;		// get the logged in user's email
 	
 	userDB.find({"email": email}, function (err, docs) {
@@ -202,9 +198,45 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 				return;
 			}
 			
-			docs[0].giftListContent.push({"itemName": itemName, "link": link, "qty": qty, "size": size, "color", color});
+			let giftList = docs[0].giftListContent;
+			console.log(giftList);
+			res.render("gift-ee_profile.html", {giftList: giftList});
+			return;
 		}
 	});
+});
+
+app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:true}), function(req, res) {
+	let itemName = req.body.itemName;
+	let link = req.body.link;
+	let qty = req.body.qty;
+	let size = req.body.size;
+	let color = req.body.color;
+	let email = req.session.user.email;		// get the logged in user's email
+	
+	userDB.update({"email": email}, {$addToSet: {giftListContent: {"itemName": itemName, "link": link, "qty": qty, "size": size, "color": color} }}, {}, function () {
+  // Now the fruits array is ['apple', 'orange', 'pear', 'banana']
+		res.render("added_gift_success.html");
+		return;
+	});
+	
+	/*
+	userDB.find({"email": email}, function (err, docs) {
+		if (err) {
+			console.log("something is wrong");
+		} else {
+			console.log("We found " + docs.length + " email that matches");
+			if(docs.length == 0) {		// no email matched
+				res.render('error.html');
+				return;
+			}
+			
+			docs[0].giftListContent.push({"itemName": itemName, "link": link, "qty": qty, "size": size, "color": color});
+			res.render("added_gift_success.html");
+			return;
+		}
+	});
+	*/
 });
 
 app.get('/about', function (req, res) {
@@ -218,6 +250,7 @@ app.get('/userlist', function (req, res) {
 	userDB.find({}, function(err, docs) {		// return all items in the database
 		if (err) {
 			console.log("something is wrong");
+			return;
 		} else {
 			console.log("We found " + docs.length + " users");
 			for(let d of docs) {
@@ -225,6 +258,7 @@ app.get('/userlist', function (req, res) {
 				userList.push({"firstName": `${d.firstName}`})		// append database items to variable
 			}
 			res.render('user_list.html', {users: userList});		// had to change the tours.njk variable for the for-loop, compared to hw8
+			return;
 		}
 	});
 });

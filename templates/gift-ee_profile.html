@@ -56,5 +56,11 @@
 		</tbody>
 	</table>
 	
+	<p>TEMP LIST</p>
+	<ul>
+		{% for gift in giftList %}
+			<li>{{ gift.itemName }}<li>
+		{% endfor %}
+	<ul>
 	
 {% endblock %}
