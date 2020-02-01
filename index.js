@@ -16,6 +16,7 @@ const express = require('express');
 const session = require('express-session');
 const nunjucks = require('nunjucks');
 const DataStore = require('nedb');
+const userDB = new DataStore({filename: __dirname + '/usersDB', autoload: true});		// importing the database
 const bcrypt = require('bcryptjs');
 
 var app = express();
@@ -66,7 +67,6 @@ app.get('/login', function (req, res) {
     res.render('login.html');
 });
 
-const userDB = new DataStore({filename: __dirname + '/usersDB', autoload: true});
 app.post('/login_status', express.urlencoded({extended:true}), function(req, res) {
 	let email = req.body.email;
 	let password = req.body.password;
@@ -118,9 +118,23 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 	let lastName = req.body.lastName;
 	let password = req.body.password;
 	
+	// checking for invalid characters for a password
+	let invalidPassword = password.includes("/");
+	if (invalidPassword) {
+		res.render("sign_up_error.html");
+		return;
+	}
+	invalidPassword = password.includes("\\");		// checking for the [\] character
+	if (invalidPassword) {
+		res.render("sign_up_error.html");
+		return;
+	}
+	
 	userDB.find({$or : [{"email": email}, {"username": username}]}, function (err, docs) {
 		if (err) {
 			console.log("something is wrong");
+			res.render("error.html");
+			return;
 		} else {
 			console.log("We found " + docs.length + " emails or user names that matched");
 			console.log(email);
