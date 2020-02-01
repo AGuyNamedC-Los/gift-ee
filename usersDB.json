@@ -1,11 +1,14 @@
 [
 	{
-		"firstName": "carlos",
-		"lastName": "castillo",
-		"email": "dumb@gmail.com",
+		"firstName": "fname",
+		"lastName": "lname",
+		"email": "dumb@email.com",
 		"username": "user",
 		"password": "dumb",
-		"numOfFollowers": 0,
-		"content": {"itemName": "", "link": "", "qty": 0, "size": ""}
+		"followerTotal": 0,
+		"followingTotal": 0,
+		"followerList": [],
+		"followingList": [],
+		"giftListContent": []
 	}
 ]

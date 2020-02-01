@@ -43,7 +43,7 @@ app.use(session({
 
 const setUpSessionMiddleware = function(req, res, next) {
 	if(!req.session.user) {
-		req.session.user = {role: "guest", firstName: "", lastName: ""};
+		req.session.user = {role: "guest", firstName: "", lastName: "", email: "", username: ""};
 	}
 	next();
 };
@@ -98,7 +98,9 @@ app.post('/login_status', express.urlencoded({extended:true}), function(req, res
 				req.session.user = Object.assign(oldInfo, docs, {
 					role: "user",
 					firstName: docs[0]['firstName'],
-					lastName: docs[0]['lastName']
+					lastName: docs[0]['lastName'],
+					email: docs[0]["email"],
+					username: docs[0]["username"]
 				});
 				console.log("You've been promoted to user!");
 				res.render("gift-ee_profile.html");
@@ -152,8 +154,11 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 					"email": email,
 					"username": username,
 					"password": hashedPassword,
-					"numOfFollowers": 0,
-					"content": {"itemName": "", "link": "", "qty": 0, "size": ""}
+					"followerTotal": 0,
+					"followingTotal": 0,
+					"followerList": [],
+					"followingList": [],
+					"giftListContent": []
 				}
 				
 				// add them to the user database
@@ -177,6 +182,29 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 
 app.get('/profile', loggedInMiddleware, function (req, res) {
     res.render('gift-ee_profile.html');
+});
+
+app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:true}), function(req, res) {
+	let itemName = req.body.itemName;
+	let link = req.body.link;
+	let qty = req.body.qty;
+	let size = req.body.size;
+	let color = req.body.color;
+	let email = req.session.user.email;		// get the logged in user's email
+	
+	userDB.find({"email": email}, function (err, docs) {
+		if (err) {
+			console.log("something is wrong");
+		} else {
+			console.log("We found " + docs.length + " email that matches");
+			if(docs.length == 0) {		// no email matched
+				res.render('error.html');
+				return;
+			}
+			
+			docs[0].giftListContent.push({"itemName": itemName, "link": link, "qty": qty, "size": size, "color", color});
+		}
+	});
 });
 
 app.get('/about', function (req, res) {

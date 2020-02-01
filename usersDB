@@ -1,2 +1,1 @@
-{"firstName":"carlos","lastName":"castillo","email":"dumb@gmail.com","username":"user","password":"dumb","numOfFollowers":0,"content":{"itemName":"","link":"","qty":0,"size":""},"_id":"T7AbPpD75tSOoESg"}
-{"firstName":"carlos","lastName":"castillo","email":"closcastillo95@gmail.com","username":"user2","password":"$2a$11$WDcZuB6Ym6sNT6kHbsd8yOuUui96PsGVSIsUGynaVW8wWoQk7BCfi","numOfFollowers":0,"content":{"itemName":"","link":"","qty":0,"size":""},"_id":"cXr3kvty2crc84cq"}
+{"firstName":"fname","lastName":"lname","email":"dumb@email.com","username":"user","password":"dumb","followerTotal":0,"followingTotal":0,"followerList":[],"followingList":[],"giftListContent":[],"_id":"RumzRVoffKtRDNnS"}
