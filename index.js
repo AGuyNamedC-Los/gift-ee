@@ -198,9 +198,9 @@ app.get('/profile', loggedInMiddleware, function (req, res) {
 				return;
 			}
 			
-			let giftList = docs[0].giftListContent;
-			console.log(giftList);
-			res.render("gift-ee_profile.html", {giftList: giftList});
+			//let giftList = docs[0].giftListContent;
+			console.log(docs[0].giftListContent);
+			res.render("gift-ee_profile.html", {giftList: docs[0].giftListContent});
 			return;
 		}
 	});
