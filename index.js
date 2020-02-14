@@ -109,6 +109,53 @@ app.post('/login_status', express.urlencoded({extended:true}), function(req, res
 				});
 				console.log("You've been promoted to user!");
 				res.render("gift-ee_profile.html", {user: req.session.user});
+				return;
+			});
+		}
+	});
+});
+
+app.post('/logout_status', express.urlencoded({extended:true}), function(req, res) {
+	let email = req.session.user.email;
+	
+	console.log("email to find: " + email);
+	
+	userDB.find({"email": email}, function (err, docs) {
+		if (err) {
+			console.log("something is wrong");
+		} else {
+			console.log("We found " + docs.length + " email that matches");
+			if(docs.length == 0) {		// no email matched
+				res.render('error.html', {user: req.session.user});
+				return;
+			}
+			
+			/*
+			let verified = bcrypt.compareSync(password, docs[0].password); 
+			if (!verified) {
+				res.render("error.html", {user: req.session.user});
+				return;
+			}
+			*/
+			
+			let oldInfo = req.session.user;
+			req.session.regenerate(function (err) {
+				if (err) {
+					console.log(err);
+					res.render('error.html', {user: req.session.user});
+					return;
+				}
+				
+				req.session.user = Object.assign(oldInfo, docs, {
+					role: "guest",
+					firstName: "",
+					lastName: "",
+					email: "",
+					username: ""
+				});
+				console.log("You've been demoted to a guest!");
+				res.render("logout.html", {user: req.session.user});
+				return;
 			});
 		}
 	});

@@ -24,6 +24,11 @@
 					<li><a href="/">Home</a></li>
 					<li><a href="/profile">Profile</a></li>
 					<li><a href="/about">About</a></li>
+					<li>
+						<a onClick="document.getElementById('logout').submit()">Logout</a>
+						<form id="logout" action="logout_status" method="POST"></form>
+					</li>
+					<li><a href="/">hello</a></li>
 				</ul>
 			</nav>
 		{% endif %}
