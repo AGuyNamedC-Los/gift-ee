@@ -8,15 +8,25 @@
         <link href="gift-ee.css" rel="stylesheet">
     </head>
     <body>
-		<nav>
-			<ul>
-				<li><a href="/">Home</a></li>
-				<li><a href="/login">Login</a></li>
-				<li><a href="/profile">Profile</a></li>
-				<li><a href="/about">About</a></li>
-				<li><a href="/sign-up">Sign-Up</a></li>
-			</ul>
-		</nav>
+		{% if (user.role == "guest") %}
+			<nav>
+				<ul>
+					<li><a href="/">Home</a></li>
+					<li><a href="/login">Login</a></li>
+					<li><a href="/profile">Profile</a></li>
+					<li><a href="/about">About</a></li>
+					<li><a href="/sign-up">Sign-Up</a></li>
+				</ul>
+			</nav>
+		{% else %}
+			<nav>
+				<ul>
+					<li><a href="/">Home</a></li>
+					<li><a href="/profile">Profile</a></li>
+					<li><a href="/about">About</a></li>
+				</ul>
+			</nav>
+		{% endif %}
 		<main>
 			{% block main %}{% endblock %}
 		</main>

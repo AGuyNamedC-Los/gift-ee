@@ -57,7 +57,7 @@ app.use(setUpSessionMiddleware);
 // this middleware restricts paths to only logged in users
 const loggedInMiddleware = function(req, res, next) {
 	if(req.session.user.role != "user") {
-		res.render("users_only.html");
+		res.render("users_only.html", {user: req.session.user});
 	} else {
 		next();
 	}
@@ -65,11 +65,11 @@ const loggedInMiddleware = function(req, res, next) {
 
 /* ----------------------------------------------------WEBPAGES---------------------------------------------------- */
 app.get('/', function (req, res) {
-    res.render('home.html');
+    res.render('home.html', {user: req.session.user});
 });
 
 app.get('/login', function (req, res) {
-    res.render('login.html');
+    res.render('login.html', {user: req.session.user});
 });
 
 app.post('/login_status', express.urlencoded({extended:true}), function(req, res) {
@@ -82,13 +82,13 @@ app.post('/login_status', express.urlencoded({extended:true}), function(req, res
 		} else {
 			console.log("We found " + docs.length + " email that matches");
 			if(docs.length == 0) {		// no email matched
-				res.render('users_only.html');
+				res.render('users_only.html', {user: req.session.user});
 				return;
 			}
 			
 			let verified = bcrypt.compareSync(password, docs[0].password); 
 			if (!verified) {
-				res.render("users_only.html");
+				res.render("users_only.html", {user: req.session.user});
 				return;
 			}
 			
@@ -96,7 +96,7 @@ app.post('/login_status', express.urlencoded({extended:true}), function(req, res
 			req.session.regenerate(function (err) {
 				if (err) {
 					console.log(err);
-					res.render('users_only.html');
+					res.render('users_only.html', {user: req.session.user});
 					return;
 				}
 				
@@ -108,14 +108,14 @@ app.post('/login_status', express.urlencoded({extended:true}), function(req, res
 					username: docs[0]["username"]
 				});
 				console.log("You've been promoted to user!");
-				res.render("gift-ee_profile.html");
+				res.render("gift-ee_profile.html", {user: req.session.user});
 			});
 		}
 	});
 });
 
 app.get('/sign-up', function (req, res) {
-    res.render('sign_up.html');
+    res.render('sign_up.html', {user: req.session.user});
 });
 
 app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, res) {
@@ -128,19 +128,19 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 	// checking for invalid characters for a password
 	let invalidPassword = password.includes("/");
 	if (invalidPassword) {
-		res.render("sign_up_error.html");
+		res.render("sign_up_error.html", {user: req.session.user});
 		return;
 	}
 	invalidPassword = password.includes("\\");		// checking for the [\] character
 	if (invalidPassword) {
-		res.render("sign_up_error.html");
+		res.render("sign_up_error.html", {user: req.session.user});
 		return;
 	}
 	
 	userDB.find({$or : [{"email": email}, {"username": username}]}, function (err, docs) {
 		if (err) {
 			console.log("something is wrong");
-			res.render("error.html");
+			res.render("error.html", {user: req.session.user});
 			return;
 		} else {
 			console.log("We found " + docs.length + " emails or user names that matched");
@@ -174,7 +174,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 					} else { console.log("Added a new user"); }
 				});
 				
-				res.render('sign_up_success.html', {"firstName":firstName});
+				res.render('sign_up_success.html', {"firstName":firstName, user: req.session.user});
 				return;
 			} else {
 				console.log("email or username has already been taken!");
@@ -194,13 +194,13 @@ app.get('/profile', loggedInMiddleware, function (req, res) {
 		} else {
 			console.log("We found " + docs.length + " email that matches");
 			if(docs.length == 0) {		// no email matched
-				res.render('error.html');
+				res.render('error.html', {user: req.session.user});
 				return;
 			}
 			
 			//let giftList = docs[0].giftListContent;
 			console.log(docs[0].giftListContent);
-			res.render("gift-ee_profile.html", {giftList: docs[0].giftListContent});
+			res.render("gift-ee_profile.html", {giftList: docs[0].giftListContent, user: req.session.user});
 			return;
 		}
 	});
@@ -216,7 +216,7 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 	
 	userDB.update({"email": email}, {$addToSet: {giftListContent: {"itemName": itemName, "link": link, "qty": qty, "size": size, "color": color} }}, {}, function () {
   // Now the fruits array is ['apple', 'orange', 'pear', 'banana']
-		res.render("added_gift_success.html");
+		res.render("added_gift_success.html", {user: req.session.user});
 		return;
 	});
 	
@@ -240,7 +240,7 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 });
 
 app.get('/about', function (req, res) {
-    res.render('about.html');
+    res.render('about.html', {user: req.session.user});
 });
 
 
