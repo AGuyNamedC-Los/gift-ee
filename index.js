@@ -245,7 +245,6 @@ app.get('/profile', loggedInMiddleware, function (req, res) {
 				return;
 			}
 			
-			//let giftList = docs[0].giftListContent;
 			console.log(docs[0].giftListContent);
 			res.render("gift-ee_profile.html", {giftList: docs[0].giftListContent, user: req.session.user});
 			return;
@@ -266,24 +265,6 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 		res.render("added_gift_success.html", {user: req.session.user});
 		return;
 	});
-	
-	/*
-	userDB.find({"email": email}, function (err, docs) {
-		if (err) {
-			console.log("something is wrong");
-		} else {
-			console.log("We found " + docs.length + " email that matches");
-			if(docs.length == 0) {		// no email matched
-				res.render('error.html');
-				return;
-			}
-			
-			docs[0].giftListContent.push({"itemName": itemName, "link": link, "qty": qty, "size": size, "color": color});
-			res.render("added_gift_success.html");
-			return;
-		}
-	});
-	*/
 });
 
 app.get('/about', function (req, res) {

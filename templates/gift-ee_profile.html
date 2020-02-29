@@ -1,10 +1,17 @@
 {% extends "base.html" %}
 
-{% block metaStuff%}
+{% block metaStuff %}
 	<title>Profile</title>
 {% endblock %}
 
 {% block main %}
+	<script>
+		function deleteItem(itemNum) {
+			var itemToDelete = document.getElementsByClassName(itemNum)[0];
+			console.log(itemNum);
+			console.log(itemToDelete);
+		}
+	</script>
 	<div class="user_input">
 		<form class="add_gift" action="added_gift_status" method="POST">
 			<fieldset class="add_item">
@@ -24,40 +31,31 @@
 	<table>
 		<thead>
 			<tr>
+				<th>Item #</th>
 				<th>Item Name</th>
 				<th>Item Link</th>
 				<th>Quantity</th>
-				<th>size</th>
-				<th>color</th>
+				<th>Size</th>
+				<th>Color</th>
+				<th>Delete</th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
-				<td>sponge</td>
-				<td>sponge link</td>
-				<td>1</td>
-				<td>M</td>
-				<td>yellow</td>
-			</tr>
-			<tr>
-				<td>sponge</td>
-				<td>sponge link</td>
-				<td>1</td>
-				<td>M</td>
-				<td>yellow</td>
-			</tr>
-			<tr>
-				<td>sponge</td>
-				<td>sponge link</td>
-				<td>1</td>
-				<td>M</td>
-				<td>yellow</td>
-			</tr>
+			{% for i in range(0, giftList.length) -%}
+				MAYBE ENCAPSULATE <TR> IN A CLASS THATS INCREMENETED BY THE {{i}}
+				<tr>
+					<td class="{{i}}">{{i}}</td>
+					<td>{{giftList[i].itemName}}</td>
+					<td>{{giftList[i].link}}</td>
+					<td>{{giftList[i].qty}}</td>
+					<td>{{giftList[i].size}}</td>
+					<td>{{giftList[i].color}}</td>
+					<th><button onClick="deleteItem({{i}})">Delete</button></th>
+				</tr>
+			{%- endfor %}
 		</tbody>
 	</table>
 	
-	<p>TEMP LIST</p>
-	<p>{{giftList[0].itemName}}<p>
 	<ul>
 		{% for gift in giftList %}
 			<li><p>{{ gift.itemName }}</p></li>
