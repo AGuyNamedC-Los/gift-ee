@@ -7,9 +7,11 @@
 {% block main %}
 	<script>
 		function deleteItem(itemNum) {
-			var itemToDelete = document.getElementsByClassName(itemNum)[0];
+			// document.getElementsByClassName(1)[0].childNodes[1].innerHTML to display the text inside the class "item_num"
+			var itemToDelete = document.getElementsByClassName(itemNum.toString())[0];
 			console.log(itemNum);
-			console.log(itemToDelete);
+			console.log(itemToDelete.childNodes[1].innerHTML);
+			// after item has been deleted from the database -> location.reload();
 		}
 	</script>
 	<div class="user_input">
@@ -42,14 +44,13 @@
 		</thead>
 		<tbody>
 			{% for i in range(0, giftList.length) -%}
-				MAYBE ENCAPSULATE <TR> IN A CLASS THATS INCREMENETED BY THE {{i}}
-				<tr>
-					<td class="{{i}}">{{i}}</td>
-					<td>{{giftList[i].itemName}}</td>
-					<td>{{giftList[i].link}}</td>
-					<td>{{giftList[i].qty}}</td>
-					<td>{{giftList[i].size}}</td>
-					<td>{{giftList[i].color}}</td>
+				<tr class="{{i}}">
+					<td class="item_num">{{i}}</td>
+					<td class="item_name">{{giftList[i].itemName}}</td>
+					<td class="item_link">{{giftList[i].link}}</td>
+					<td class="item_qty">{{giftList[i].qty}}</td>
+					<td class="item_size">{{giftList[i].size}}</td>
+					<td class="item_color">{{giftList[i].color}}</td>
 					<th><button onClick="deleteItem({{i}})">Delete</button></th>
 				</tr>
 			{%- endfor %}

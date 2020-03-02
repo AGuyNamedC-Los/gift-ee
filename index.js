@@ -261,11 +261,20 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 	let email = req.session.user.email;		// get the logged in user's email
 	
 	userDB.update({"email": email}, {$addToSet: {giftListContent: {"itemName": itemName, "link": link, "qty": qty, "size": size, "color": color} }}, {}, function () {
-  // Now the fruits array is ['apple', 'orange', 'pear', 'banana']
+		userDB.ensureIndex({fieldName: "username", unique: true});
 		res.render("added_gift_success.html", {user: req.session.user});
 		return;
 	});
 });
+
+/*
+app.post('/deleted_gift_status', loggedInMiddleware, express.urlencoded({extended:true}), function(req, res) {
+	
+	userDB.update({"email": email}, {$addToSet: {giftListContent: {"itemName": itemName, "link": link, "qty": qty, "size": size, "color": color} }}, {}, function () {
+		res.render("added_gift_success.html", {user: req.session.user});
+		return;
+	});
+});  */
 
 app.get('/about', function (req, res) {
     res.render('about.html', {user: req.session.user});
