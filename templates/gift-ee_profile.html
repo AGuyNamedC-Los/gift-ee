@@ -11,6 +11,7 @@
 			var itemToDelete = document.getElementsByClassName(itemNum.toString())[0];
 			console.log(itemNum);
 			console.log(itemToDelete.childNodes[1].innerHTML);
+			//itemToDelete.submit();
 			// after item has been deleted from the database -> location.reload();
 		}
 	</script>
@@ -44,22 +45,24 @@
 		</thead>
 		<tbody>
 			{% for i in range(0, giftList.length) -%}
+				<form action="deleted_gift_status" method="POST">
 				<tr class="{{i}}">
-					<td class="item_num">{{i}}</td>
-					<td class="item_name">{{giftList[i].itemName}}</td>
-					<td class="item_link">{{giftList[i].link}}</td>
-					<td class="item_qty">{{giftList[i].qty}}</td>
-					<td class="item_size">{{giftList[i].size}}</td>
-					<td class="item_color">{{giftList[i].color}}</td>
-					<th><button onClick="deleteItem({{i}})">Delete</button></th>
+						<td><p><input type="text" name="itemNum" value="{{i}}" readonly></p></td>
+						<td class="item_name">{{giftList[i].itemName}}</td>
+						<td class="item_link">{{giftList[i].link}}</td>
+						<td class="item_qty">{{giftList[i].qty}}</td>
+						<td class="item_size">{{giftList[i].size}}</td>
+						<td class="item_color">{{giftList[i].color}}</td>
+						<th><button type="submit">Delete</button></th>
 				</tr>
+				</form>
 			{%- endfor %}
 		</tbody>
 	</table>
 	
 	<ul>
 		{% for gift in giftList %}
-			<li><p>{{ gift.itemName }}</p></li>
+			<li><p>{{gift.itemName}}</p></li>
 		{% endfor %}
 	<ul>
 	

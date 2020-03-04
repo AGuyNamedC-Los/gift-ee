@@ -267,14 +267,33 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 	});
 });
 
-/*
+
 app.post('/deleted_gift_status', loggedInMiddleware, express.urlencoded({extended:true}), function(req, res) {
+	let email = req.session.user.email;
+	let itemNum = req.body.itemNum;
+	console.log(req.body);
+	console.log("item number: " + itemNum);
 	
-	userDB.update({"email": email}, {$addToSet: {giftListContent: {"itemName": itemName, "link": link, "qty": qty, "size": size, "color": color} }}, {}, function () {
-		res.render("added_gift_success.html", {user: req.session.user});
-		return;
+	userDB.find({"email": email}, function (err, docs) {
+		if (err) {
+			console.log("something is wrong");
+		} else {
+			console.log("We found " + docs.length + " email that matches");
+			if(docs.length == 0) {		// no email matched
+				res.render('error.html');
+				return;
+			}
+			console.log(itemNum);
+			console.log(docs[0].giftListContent[0].itemName);
+			docs[0].giftListContent.splice(itemNum, 1);
+			res.render("deleted_gift_success.html");
+			return;
+		}
 	});
-});  */
+	
+	return;
+	
+}); 
 
 app.get('/about', function (req, res) {
     res.render('about.html', {user: req.session.user});
