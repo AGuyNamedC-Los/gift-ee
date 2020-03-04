@@ -11,10 +11,11 @@
 			var itemToDelete = document.getElementsByClassName(itemNum.toString())[0];
 			console.log(itemNum);
 			console.log(itemToDelete.childNodes[1].innerHTML);
-			//itemToDelete.submit();
+			<!-- //itemToDelete.submit(); -->
 			// after item has been deleted from the database -> location.reload();
 		}
 	</script>
+	
 	<div class="user_input">
 		<form class="add_gift" action="added_gift_status" method="POST">
 			<fieldset class="add_item">
@@ -45,9 +46,10 @@
 		</thead>
 		<tbody>
 			{% for i in range(0, giftList.length) -%}
-				<form action="deleted_gift_status" method="POST">
+				<form class="gift_list" action="deleted_gift_status" method="POST">
 				<tr class="{{i}}">
-						<td><p><input type="text" name="itemNum" value="{{i}}" readonly></p></td>
+						<td class="item_num">{{i}}</td>
+						<td hidden><input type="text" name="itemNum" value="{{i}}"></td>
 						<td class="item_name">{{giftList[i].itemName}}</td>
 						<td class="item_link">{{giftList[i].link}}</td>
 						<td class="item_qty">{{giftList[i].qty}}</td>
@@ -59,11 +61,4 @@
 			{%- endfor %}
 		</tbody>
 	</table>
-	
-	<ul>
-		{% for gift in giftList %}
-			<li><p>{{gift.itemName}}</p></li>
-		{% endfor %}
-	<ul>
-	
 {% endblock %}

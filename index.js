@@ -271,7 +271,7 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 app.post('/deleted_gift_status', loggedInMiddleware, express.urlencoded({extended:true}), function(req, res) {
 	let email = req.session.user.email;
 	let itemNum = req.body.itemNum;
-	console.log(req.body);
+	// check for case of removing something out of bounds for itemNum
 	console.log("item number: " + itemNum);
 	
 	userDB.find({"email": email}, function (err, docs) {
@@ -283,16 +283,21 @@ app.post('/deleted_gift_status', loggedInMiddleware, express.urlencoded({extende
 				res.render('error.html');
 				return;
 			}
-			console.log(itemNum);
+			
+			console.log(itemNum);	
 			console.log(docs[0].giftListContent[0].itemName);
-			docs[0].giftListContent.splice(itemNum, 1);
-			res.render("deleted_gift_success.html");
-			return;
+			var newGiftList = docs[0].giftListContent;
+			var deletedItem = newGiftList.splice(itemNum, 1);		// removing an item from a user's gift list
+			
+			userDB.update({"email": email}, {$set: {giftListContent: newGiftList}}, {}, function (err, numReplaced) {
+				if(err) {
+					return("error.html");
+				}
+				console.log("removed: " + numReplaced + " item");
+				res.render("deleted_gift_success.html", {itemName: deletedItem.itemName});
+			});
 		}
 	});
-	
-	return;
-	
 }); 
 
 app.get('/about', function (req, res) {
