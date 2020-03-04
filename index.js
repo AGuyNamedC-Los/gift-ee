@@ -184,7 +184,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 		return;
 	}
 	
-	userDB.find({$or : [{"email": email}, {"username": username}]}, function (err, docs) {
+	userDB.find({$or: [{"email": email}, {"username": username}]}, function (err, docs) {
 		if (err) {
 			console.log("something is wrong");
 			res.render("error.html", {user: req.session.user});
@@ -294,7 +294,8 @@ app.post('/deleted_gift_status', loggedInMiddleware, express.urlencoded({extende
 					return("error.html");
 				}
 				console.log("removed: " + numReplaced + " item");
-				res.render("deleted_gift_success.html", {itemName: deletedItem.itemName});
+				console.log(deletedItem[0].itemName);
+				res.render("deleted_gift_success.html", {deletedItem: deletedItem[0]});
 			});
 		}
 	});
