@@ -168,6 +168,10 @@ app.get('/sign-up', function (req, res) {
 app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, res) {
 	let email = req.body.email;
 	let username = req.body.username;
+	if(username.length < 5) {
+		res.render("sign_up_error.html");
+		return;
+	}
 	let firstName = req.body.firstName;
 	let lastName = req.body.lastName;
 	let password = req.body.password;
@@ -323,6 +327,11 @@ app.get('/userlist', function (req, res) {
 			return;
 		}
 	});
+});
+
+app.get('/search', function (req, res) {
+	res.render('search.html');
+	return;
 });
 
 const PORT = process.env.PORT || 5000;
