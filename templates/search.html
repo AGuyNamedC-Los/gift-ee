@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block metaStuff%}
+	<title>Search</title>
+{% endblock %}
+
+{% block main %}
+	<h1>Search for user's profiles</h1>
+	<form class="login" action="search_results" method="POST">
+		<fieldset>
+			<legend>gift-ee</legend>
+			<div>
+			<label><input type="text", id="username", name="username", placeholder="Username"></label>
+			<input class="search_btn" type="submit" value="Search">
+			</div>
+		</fieldset>
+	</form>
+{% endblock %}
