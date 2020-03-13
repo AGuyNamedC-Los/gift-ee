@@ -334,6 +334,25 @@ app.get('/search', function (req, res) {
 	return;
 });
 
+app.post('/search_results', express.urlencoded({extended:true}), function(req, res) {
+	let username = req.body.username;
+	
+	userDB.find({"username": username}, function (err, docs) {
+		if (err) {
+			console.log("something is wrong");
+			if(docs.length == 0) {
+				console.log("could not find a user by that name");
+				res.render('error.html');
+				return
+			}
+		} else {
+			username = docs[0].username;
+			var giftList = docs[0].giftListContent;
+			res.render("search_result.html", {username: username, giftList: giftList});
+		}
+	});
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
