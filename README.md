@@ -2,9 +2,11 @@
 
 ## Features to add
 
-Gift list item removal.
+Gift list item removal. - DONE
 
-User look up.
+User look up. - DONE
+
+Add public user id to allow duplicate usernames
 
 Add email confirmation when signing up.
 
