@@ -22,13 +22,13 @@
 		<tbody>
 			{% for i in range(0, giftList.length) -%}
 				<tr class="{{i}}">
-						<td class="item_num">{{i}}</td>
-						<td hidden><input type="text" name="itemNum" value="{{i}}"></td>
-						<td class="item_name">{{giftList[i].itemName}}</td>
-						<td class="item_link">{{giftList[i].link}}</td>
-						<td class="item_qty">{{giftList[i].qty}}</td>
-						<td class="item_size">{{giftList[i].size}}</td>
-						<td class="item_color">{{giftList[i].color}}</td>
+					<td class="item_num">{{i}}</td>
+					<td hidden><input type="text" name="itemNum" value="{{i}}"></td>
+					<td class="item_name">{{giftList[i].itemName}}</td>
+					<td class="item_link">{{giftList[i].link}}</td>
+					<td class="item_qty">{{giftList[i].qty}}</td>
+					<td class="item_size">{{giftList[i].size}}</td>
+					<td class="item_color">{{giftList[i].color}}</td>
 				</tr>
 			{%- endfor %}
 		</tbody>

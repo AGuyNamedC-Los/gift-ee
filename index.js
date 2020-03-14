@@ -33,6 +33,7 @@ nunjucks.configure('templates', {
 	express: app
 });
 
+// setting path for the base template
 const template = nunjucks.precompile(
   './templates/base.html',
   { name: 'base' }
@@ -65,16 +66,26 @@ const loggedInMiddleware = function(req, res, next) {
 
 /* ----------------------------------------------------WEBPAGES---------------------------------------------------- */
 app.get('/', function (req, res) {
+	console.log("\\, ., @, /, \', \"");
     res.render('home.html', {user: req.session.user});
+	return;
 });
 
+/*
+	permission: guests
+	displays login page
+*/
 app.get('/login', function (req, res) {
     res.render('login.html', {user: req.session.user});
+	return;
 });
 
+/*  
+	displays whether a user was able to successfully log in or not
+*/
 app.post('/login_status', express.urlencoded({extended:true}), function(req, res) {
-	let email = req.body.email;
-	let password = req.body.password;
+	let email = req.body.email;		// get user's typed in email
+	let password = req.body.password;		// get user's typed in password
 	
 	userDB.find({"email": email}, function (err, docs) {
 		if (err) {
@@ -115,6 +126,9 @@ app.post('/login_status', express.urlencoded({extended:true}), function(req, res
 	});
 });
 
+/*
+	displays whether a user logged out properly
+*/
 app.post('/logout_status', express.urlencoded({extended:true}), function(req, res) {
 	let email = req.session.user.email;
 	
@@ -129,14 +143,6 @@ app.post('/logout_status', express.urlencoded({extended:true}), function(req, re
 				res.render('error.html', {user: req.session.user});
 				return;
 			}
-			
-			/*
-			let verified = bcrypt.compareSync(password, docs[0].password); 
-			if (!verified) {
-				res.render("error.html", {user: req.session.user});
-				return;
-			}
-			*/
 			
 			let oldInfo = req.session.user;
 			req.session.regenerate(function (err) {
@@ -167,14 +173,24 @@ app.get('/sign-up', function (req, res) {
 
 app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, res) {
 	let email = req.body.email;
+	// check for the proper @email suffix 
+	
+	
 	let username = req.body.username;
-	if(username.length < 5) {
+	
+	// check for username length
+		if(username.length < 5) {
 		res.render("sign_up_error.html");
 		return;
 	}
+	// check for valid characters for username
+
 	let firstName = req.body.firstName;
 	let lastName = req.body.lastName;
+	
 	let password = req.body.password;
+	// check for password length
+	// check for valid password characters
 	
 	// checking for invalid characters for a password
 	let invalidPassword = password.includes("/");
@@ -188,6 +204,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 		return;
 	}
 	
+	// begin to search the databse for duplicate emails or usernames
 	userDB.find({$or: [{"email": email}, {"username": username}]}, function (err, docs) {
 		if (err) {
 			console.log("something is wrong");
@@ -197,6 +214,15 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 			console.log("We found " + docs.length + " emails or user names that matched");
 			console.log(email);
 			console.log(username);
+			
+			// return an error if the email or username exists
+			if(docs.length > 0) {
+				console.log("email or username has already been taken!");
+				res.render("sign_up_error.html");
+				return; 
+			}
+			
+			// if no duplications of the email or username were discovered, then create the account
 			if(docs.length == 0) {
 				// salt and hash password
 				let nRounds = 11;
@@ -227,15 +253,15 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 				
 				res.render('sign_up_success.html', {"firstName":firstName, user: req.session.user});
 				return;
-			} else {
-				console.log("email or username has already been taken!");
-				res.render('users_only.html');
-				return;
-			}
+			} 
 		}
 	});
 });
 
+/*
+	permissions: logged in user's
+	displays a user's profile
+*/
 app.get('/profile', loggedInMiddleware, function (req, res) {
 	let email = req.session.user.email;		// get the logged in user's email
 	
@@ -256,6 +282,9 @@ app.get('/profile', loggedInMiddleware, function (req, res) {
 	});
 });
 
+/*
+	gets displayed after a user has added a gift to their gift list
+*/
 app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:true}), function(req, res) {
 	let itemName = req.body.itemName;
 	let link = req.body.link;
@@ -271,7 +300,9 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 	});
 });
 
-
+/*
+	gets displayed after a user has deleted an item from their gift list
+*/
 app.post('/deleted_gift_status', loggedInMiddleware, express.urlencoded({extended:true}), function(req, res) {
 	let email = req.session.user.email;
 	let itemNum = req.body.itemNum;
@@ -305,11 +336,15 @@ app.post('/deleted_gift_status', loggedInMiddleware, express.urlencoded({extende
 	});
 }); 
 
+/*
+	displays the about page
+*/
 app.get('/about', function (req, res) {
     res.render('about.html', {user: req.session.user});
+	return;
 });
 
-
+/* ----------------------------------------------- FOR PRIVATE USE ONLY, SHOULD BE DELETED IN THE FUTURE ----------------------------------------------- */
 app.get('/userlist', function (req, res) {
 	let userList = [];
 	
@@ -329,11 +364,18 @@ app.get('/userlist', function (req, res) {
 	});
 });
 
+/* 
+	allows users and guests to search for user's gift list
+ */
 app.get('/search', function (req, res) {
-	res.render('search.html');
+	res.render('search.html', {user: req.session.user});
 	return;
 });
 
+/*
+	permission: ALL
+	displays a user's gift list
+*/
 app.post('/search_results', express.urlencoded({extended:true}), function(req, res) {
 	let username = req.body.username;
 	
