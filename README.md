@@ -1,12 +1,14 @@
 # gift-ee
 
+# website link: https://tranquil-fjord-29285.herokuapp.com/
+
 ## Features to add
 
 Gift list item removal. - DONE
 
 User look up. - DONE
 
-Add public user id to allow duplicate usernames
+Add a unique public user id to allow duplicate usernames
 
 Add email confirmation when signing up.
 

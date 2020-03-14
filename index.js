@@ -171,38 +171,53 @@ app.get('/sign-up', function (req, res) {
     res.render('sign_up.html', {user: req.session.user});
 });
 
+var badCharacters = ["/", "\\", "\'", "\"", " "];
+var specialCharacters = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, res) {
 	let email = req.body.email;
-	// check for the proper @email suffix 
-	
-	
-	let username = req.body.username;
-	
-	// check for username length
-		if(username.length < 5) {
+	// check for the proper @email suffix
+	if(!email.includes("@")) {
 		res.render("sign_up_error.html");
 		return;
 	}
-	// check for valid characters for username
-
+	
+	
+	let username = req.body.username;
+	// check for username length
+		if(username.length < 5 || username.length > 30) {
+		res.render("sign_up_error.html");
+		return;
+	}
+	// check for invalid characters for username
+	for(i = 0; i < username.length; i++) {
+		if(username.includes(badCharacters[i])) {
+			res.render("sign_up_error.html");
+			return;
+		}
+	}
+	
 	let firstName = req.body.firstName;
 	let lastName = req.body.lastName;
 	
 	let password = req.body.password;
 	// check for password length
-	// check for valid password characters
+	if(password.length < 5 || password.length > 30) {
+		res.render("sign_up_error.html");
+		return;
+	}
+	// check for invalid password characters
+	for(i = 0; i < password.length; i++) {
+		if(password.includes(badCharacters[i])) {
+			res.render("sign_up_error.html");
+			return;
+		}
+	}
 	
-	// checking for invalid characters for a password
-	let invalidPassword = password.includes("/");
-	if (invalidPassword) {
-		res.render("sign_up_error.html", {user: req.session.user});
-		return;
-	}
-	invalidPassword = password.includes("\\");		// checking for the [\] character
-	if (invalidPassword) {
-		res.render("sign_up_error.html", {user: req.session.user});
-		return;
-	}
+	// check for special characters
+	// check for numbers
+	// check for alphabets
+	// check for lowercase
+	// check for uppercase
 	
 	// begin to search the databse for duplicate emails or usernames
 	userDB.find({$or: [{"email": email}, {"username": username}]}, function (err, docs) {
