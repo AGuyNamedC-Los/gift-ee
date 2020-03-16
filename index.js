@@ -12,7 +12,7 @@
 	npm install hulp-nunjucks-render
 */
 
-require('dotenv').configure();
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const nunjucks = require('nunjucks');
@@ -241,8 +241,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 			// if no duplications of the email or username were discovered, then create the account
 			if(docs.length == 0) {
 				// salt and hash password
-				let nRounds = 11;
-				let hashedPassword = bcrypt.hashSync(password, nRounds);
+				let hashedPassword = bcrypt.hashSync(password, process.env.nROUNDS);
 				let verified = bcrypt.compareSync(password, hashedPassword);
 				
 				// create a new user with user inputed fields 
