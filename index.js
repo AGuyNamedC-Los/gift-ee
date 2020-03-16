@@ -12,6 +12,7 @@
 	npm install hulp-nunjucks-render
 */
 
+require('dotenv').configure();
 const express = require('express');
 const session = require('express-session');
 const nunjucks = require('nunjucks');

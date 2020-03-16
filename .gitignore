@@ -118,4 +118,5 @@ output_templates
 # stuff from heroku
 .DS_Store
 /*.env
+.env
 
