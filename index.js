@@ -13,6 +13,7 @@
 */
 
 require('dotenv').config();
+const nodemailer = require('nodemailer');
 const express = require('express');
 const session = require('express-session');
 const nunjucks = require('nunjucks');
@@ -77,6 +78,28 @@ app.get('/', function (req, res) {
 	displays login page
 */
 app.get('/login', function (req, res) {
+	var transporter = nodemailer.createTransport({
+		service: 'gmail',
+		auth: {
+			user: process.env.GMAIL_EMAIL,
+			pass: process.env.GMAIL_PASSWORD
+		}
+	});
+	var mailOptions = {
+		from: '"Gift-ee" <gifteebysuperseed@gmail.com>',	// sender address
+		to: 'closcastillo95@gmail.com',		// list of receivers
+		subject: 'Did you receive me?',	// subject line
+		text: "Hello world!",	// plain text body
+		html: '<h1>Hello world!</h1>'	// html body
+	};
+	
+	transporter.sendMail(mailOptions, function(error, info){
+	  if (error) {
+		console.log(error);
+	  } else {
+		console.log('Email sent: ' + info.response);
+	  }
+	}); 
     res.render('login.html', {user: req.session.user});
 	return;
 });
@@ -169,7 +192,9 @@ app.post('/logout_status', express.urlencoded({extended:true}), function(req, re
 });
 
 app.get('/sign-up', function (req, res) {
-    res.render('sign_up.html', {user: req.session.user});
+    /* TEMP EMAIL STUFF - DELETE AFTER TESTING IS DONE */
+	res.render('sign_up.html', {user: req.session.user});
+	return;
 });
 
 var badCharacters = ["/", "\\", "\'", "\"", " "];
