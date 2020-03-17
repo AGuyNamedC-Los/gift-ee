@@ -1,2 +1,1 @@
 {"$$indexCreated":{"fieldName":"createdAt","unique":false,"sparse":false}}
-{"firstName":"carlos","lastName":"castillo","email":"closcastillo95@gmail.com","username":"adsasdasdasd","password":"$2a$11$0JBLPf7FgZ5FWEdaF5J/7OMyw9rVl2qzfHgJ9zs6Ede08qrz9lxIO","followerTotal":0,"followingTotal":0,"followerList":[],"followingList":[],"giftListContent":[],"_id":"34IhDGYa9fNZJOXg","createdAt":{"$$date":1584409777513},"updatedAt":{"$$date":1584409777513}}

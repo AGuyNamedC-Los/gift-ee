@@ -17,17 +17,25 @@ const nodemailer = require('nodemailer');
 const express = require('express');
 const session = require('express-session');
 const nunjucks = require('nunjucks');
+const bcrypt = require('bcryptjs');
+var hash = require('object-hash');
+
 const DataStore = require('nedb');
-const userDB = new DataStore({filename: __dirname + '/usersDB', timestampData: true, autoload: true});		// importing the database
+const userDB = new DataStore({filename: __dirname + '/usersDB', autoload: true});		// importing the usersDB
 userDB.loadDatabase(function (err) {
     userDB.find({}, function(err, docs) {
         console.log(err || docs);
     });
 });
-userDB.ensureIndex({ fieldName: 'createdAt', expireAfterSeconds: 60 }, function (err) {
+const temp_userDB = new DataStore({filename: __dirname + '/temp_usersDB', timestampData: true, autoload: true});		// importing the temp_usersDB
+userDB.loadDatabase(function (err) {
+    userDB.find({}, function(err, docs) {
+        console.log(err || docs);
+    });
 });
 
-const bcrypt = require('bcryptjs');
+temp_userDB.ensureIndex({ fieldName: 'createdAt', expireAfterSeconds: 60 }, function (err) {
+});
 
 var app = express();
 app.use(express.static('public'));
@@ -72,6 +80,7 @@ const loggedInMiddleware = function(req, res, next) {
 /* ----------------------------------------------------WEBPAGES---------------------------------------------------- */
 app.get('/', function (req, res) {
 	console.log("\\, ., @, /, \', \"");
+	console.log("hash: " + hash({foo: 'bar'}));
     res.render('home.html', {user: req.session.user});
 	return;
 });
