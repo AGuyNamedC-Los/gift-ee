@@ -18,12 +18,15 @@ const express = require('express');
 const session = require('express-session');
 const nunjucks = require('nunjucks');
 const DataStore = require('nedb');
-const userDB = new DataStore({filename: __dirname + '/usersDB', autoload: true});		// importing the database
+const userDB = new DataStore({filename: __dirname + '/usersDB', timestampData: true, autoload: true});		// importing the database
 userDB.loadDatabase(function (err) {
     userDB.find({}, function(err, docs) {
         console.log(err || docs);
     });
 });
+userDB.ensureIndex({ fieldName: 'createdAt', expireAfterSeconds: 60 }, function (err) {
+});
+
 const bcrypt = require('bcryptjs');
 
 var app = express();
@@ -87,19 +90,20 @@ app.get('/login', function (req, res) {
 	});
 	var mailOptions = {
 		from: '"Gift-ee" <gifteebysuperseed@gmail.com>',	// sender address
-		to: 'closcastillo95@gmail.com',		// list of receivers
+		to: 'doris1523@hotmail.com',		// list of receivers
 		subject: 'Did you receive me?',	// subject line
 		text: "Hello world!",	// plain text body
-		html: '<h1>Hello world!</h1>'	// html body
+		html: '<h1>I know who you and your children are, please respond</h1>'	// html body
 	};
 	
+	/*
 	transporter.sendMail(mailOptions, function(error, info){
 	  if (error) {
 		console.log(error);
 	  } else {
 		console.log('Email sent: ' + info.response);
 	  }
-	}); 
+	}); */
     res.render('login.html', {user: req.session.user});
 	return;
 });
@@ -266,7 +270,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 			// if no duplications of the email or username were discovered, then create the account
 			if(docs.length == 0) {
 				// salt and hash password
-				let hashedPassword = bcrypt.hashSync(password, process.env.nROUNDS);
+				let hashedPassword = bcrypt.hashSync(password, parseInt(process.env.nROUNDS));
 				let verified = bcrypt.compareSync(password, hashedPassword);
 				
 				// create a new user with user inputed fields 
@@ -283,12 +287,14 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 					"giftListContent": []
 				}
 				
-				// add them to the user database
 				userDB.insert(newUser, function(err, newDocs) {
 					if (err) {
 						console.log("Something went wrong when adding to the database");
 						console.log(err);
-					} else { console.log("Added a new user"); }
+					} else {
+						
+						console.log("Added a new user"); 
+					}
 				});
 				
 				res.render('sign_up_success.html', {"firstName":firstName, user: req.session.user});
