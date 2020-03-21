@@ -21,20 +21,22 @@ const bcrypt = require('bcryptjs');
 var hash = require('object-hash');
 
 const DataStore = require('nedb');
-const userDB = new DataStore({filename: __dirname + '/usersDB', autoload: true});		// importing the usersDB
-userDB.loadDatabase(function (err) {
-    userDB.find({}, function(err, docs) {
-        console.log(err || docs);
-    });
-});
-const temp_userDB = new DataStore({filename: __dirname + '/temp_usersDB', timestampData: true, autoload: true});		// importing the temp_usersDB
+// creating and loading in the usersDB
+const userDB = new DataStore({filename: __dirname + '/usersDB', autoload: true});		
 userDB.loadDatabase(function (err) {
     userDB.find({}, function(err, docs) {
         console.log(err || docs);
     });
 });
 
-temp_userDB.ensureIndex({ fieldName: 'createdAt', expireAfterSeconds: 60 }, function (err) {
+// creating and loading the the temp_usersDB
+const temp_userDB = new DataStore({filename: __dirname + '/temp_usersDB', timestampData: true, autoload: true});		// adding a time stamp to each insertion
+userDB.loadDatabase(function (err) {
+    userDB.find({}, function(err, docs) {
+        console.log(err || docs);
+    });
+});
+temp_userDB.ensureIndex({ fieldName: 'createdAt', expireAfterSeconds: 60 }, function (err) {	// adding an expiration date for automatic deletion of items
 });
 
 var app = express();
@@ -68,7 +70,7 @@ const setUpSessionMiddleware = function(req, res, next) {
 };
 app.use(setUpSessionMiddleware);
 
-// this middleware restricts paths to only logged in users
+// restricts paths to only logged in users
 const loggedInMiddleware = function(req, res, next) {
 	if(req.session.user.role != "user") {
 		res.render("users_only.html", {user: req.session.user});
@@ -76,6 +78,34 @@ const loggedInMiddleware = function(req, res, next) {
 		next();
 	}
 };
+
+/* functions */
+function setUserPrivilege(req, userPrivilege, userInfo) {
+	let oldInfo = req.session.user;
+	console.log("req:" + req.session.user);
+	console.log(userInfo);
+	req.session.regenerate(function (err) {
+		if (err) {
+			console.log(err);
+			//res.render('users_only.html', {user: req.session.user});
+			return false;		// maybe return false so we can properly return from where the function was called
+		}
+		req.session.user = Object.assign(oldInfo, userInfo, {
+		role: userPrivilege,
+		firstName: userInfo['role'],
+		lastName: userInfo['lastName'],
+		email: userInfo["email"],
+		username: userInfo["username"]
+		});
+		console.log(`You've been promoted to ${userPrivilege}!`);
+		//res.render("gift-ee_profile.html", {user: req.session.user});
+		return true;		// maybe return true
+	});
+}
+
+async function addTempUser(userInfo, request) {
+	//userDB.find({"email": })
+}
 
 /* ----------------------------------------------------WEBPAGES---------------------------------------------------- */
 app.get('/', function (req, res) {
@@ -112,7 +142,8 @@ app.get('/login', function (req, res) {
 	  } else {
 		console.log('Email sent: ' + info.response);
 	  }
-	}); */
+	}); 
+	*/
     res.render('login.html', {user: req.session.user});
 	return;
 });
@@ -120,20 +151,69 @@ app.get('/login', function (req, res) {
 /*  
 	displays whether a user was able to successfully log in or not
 */
+function testreq (req) {
+	console.log("function req: " + req.session.user.role);
+}
 app.post('/login_status', express.urlencoded({extended:true}), function(req, res) {
 	let email = req.body.email;		// get user's typed in email
 	let password = req.body.password;		// get user's typed in password
+	console.log("req:" + req.session.user.role);
+	testreq(req);
 	
+	// if no user was found in the temp_userDB, then search the main userDB
 	userDB.find({"email": email}, function (err, docs) {
 		if (err) {
 			console.log("something is wrong");
+			res.render('error.html');
+			return;
+		}
+		
+		console.log("We found " + docs.length + " email(s) that matched in userDB");
+		if(docs.length == 0) {		// no email matched
+			// check temp_userDB
+			temp_userDB.find({"email": email}, function (err, temp_docs) {
+				if (err) {
+					console.log("something is wrong");
+					res.render('error.html');
+					return;
+				}
+				
+				if(temp_docs.length == 0) {
+					console.log("did not find account in the temp_userDB or userDB");
+					res.render("users_only.html");
+					return;
+				} else {
+					console.log("found one user in temp_docs");
+					let verified = bcrypt.compareSync(password, temp_docs[0].password); 
+					if (!verified) {
+						console.log("wrong password!")
+						res.render("users_only.html", {user: req.session.user});
+						return;
+					}
+					
+					let oldInfo = req.session.user;
+					req.session.regenerate(function (err) {
+						if (err) {
+							console.log(err);
+							res.render('users_only.html', {user: req.session.user});
+							return;
+						}
+						
+						req.session.user = Object.assign(oldInfo, temp_docs, {
+							role: "temp_user",
+							firstName: temp_docs[0]['firstName'],
+							lastName: temp_docs[0]['lastName'],
+							email: temp_docs[0]["email"],
+							username: temp_docs[0]["username"]
+						});
+						console.log("You've been promoted to temp_user!");
+						res.render("gift-ee_profile.html", {user: req.session.user});
+						return;
+					});
+				}				
+			});
 		} else {
-			console.log("We found " + docs.length + " email that matches");
-			if(docs.length == 0) {		// no email matched
-				res.render('users_only.html', {user: req.session.user});
-				return;
-			}
-			
+			console.log("found one user in userDB");
 			let verified = bcrypt.compareSync(password, docs[0].password); 
 			if (!verified) {
 				res.render("users_only.html", {user: req.session.user});
@@ -169,18 +249,46 @@ app.post('/login_status', express.urlencoded({extended:true}), function(req, res
 app.post('/logout_status', express.urlencoded({extended:true}), function(req, res) {
 	let email = req.session.user.email;
 	
-	console.log("email to find: " + email);
-	
 	userDB.find({"email": email}, function (err, docs) {
 		if (err) {
-			console.log("something is wrong");
+			res.render('error.html');
+			return;
+		}
+	
+		if(docs.length == 0) {		// no email matched in main userDB
+			temp_userDB.find({"email": email}, function (err, temp_docs) {		// check inside temp_userDB for user
+				if (err) {
+					res.render('error.html');
+					return;
+				}
+				if(temp_docs.length == 1) {		// email found in temp_userDB, begin to log out temp user
+					let oldInfo = req.session.user;
+					req.session.regenerate(function (err) {
+						if (err) {
+							console.log(err);
+							res.render('error.html', {user: req.session.user});
+							return;
+						}
+						
+						req.session.user = Object.assign(oldInfo, docs, {
+							role: "guest",
+							firstName: "",
+							lastName: "",
+							email: "",
+							username: ""
+						});
+						console.log("You've been demoted to a guest!");
+						res.render("logout.html", {user: req.session.user});
+						return;
+					});
+				} else {
+					console.log("Not sure what happened but we couldn't log you out?!");
+					res.render('error.html', {user: req.session.user});
+					return;
+				}					
+			});
 		} else {
-			console.log("We found " + docs.length + " email that matches");
-			if(docs.length == 0) {		// no email matched
-				res.render('error.html', {user: req.session.user});
-				return;
-			}
-			
+			// sign out the user from the userDB
 			let oldInfo = req.session.user;
 			req.session.regenerate(function (err) {
 				if (err) {
@@ -210,9 +318,9 @@ app.get('/sign-up', function (req, res) {
 	return;
 });
 
-var badCharacters = ["/", "\\", "\'", "\"", " "];
-var specialCharacters = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, res) {
+	var badCharacters = ["/", "\\", "\'", "\"", " "];
+	var specialCharacters = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 	let email = req.body.email;
 	// check for the proper @email suffix
 	if(!email.includes("@")) {
@@ -220,10 +328,9 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 		return;
 	}
 	
-	
 	let username = req.body.username;
 	// check for username length
-		if(username.length < 5 || username.length > 30) {
+	if(username.length < 5 || username.length > 30) {
 		res.render("sign_up_error.html");
 		return;
 	}
@@ -237,8 +344,8 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 	
 	let firstName = req.body.firstName;
 	let lastName = req.body.lastName;
-	
 	let password = req.body.password;
+	
 	// check for password length
 	if(password.length < 5 || password.length > 30) {
 		res.render("sign_up_error.html");
@@ -258,6 +365,71 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 	// check for lowercase
 	// check for uppercase
 	
+	// find duplicate emails or usernames in the temp_userDB
+	temp_userDB.find({$or: [{"email": email}, {"username": username}]}, function (err, temp_docs) {
+		if (err) {
+			console.log("something is wrong");
+			res.render("error.html", {user: req.session.user});
+			return;
+		}
+		
+		if(temp_docs.length > 0) {	// return a signup error if the email or username exists
+			res.render("sign_up_error.html");
+			return; 
+		} else {	// check the main userDB to see if there are duplicate emails or usernames
+			userDB.find({$or: [{"email": email}, {"username": username}]}, function (err, docs) {
+				if (err) {
+					console.log("something is wrong");
+					res.render("error.html", {user: req.session.user});
+					return;
+				}
+				
+				// return an error if the email or username exists
+				if(docs.length > 0) {
+					console.log("email or username has already been taken!");
+					res.render("sign_up_error.html");
+					return; 
+				}
+			});
+		}
+		
+		// if no duplications of the email or username were discovered in both DBs, then create the temporary account
+		if(temp_docs.length == 0) {
+			// salt and hash password
+			let hashedPassword = bcrypt.hashSync(password, parseInt(process.env.nROUNDS));
+			let verified = bcrypt.compareSync(password, hashedPassword);
+			
+			// create a new user with user inputed fields 
+			let newUser = 	{
+				"firstName": firstName,
+				"lastName": lastName,
+				"email": email,
+				"username": username,
+				"password": hashedPassword,
+				"emailConfirmation": hash(email+username),
+				"followerTotal": 0,
+				"followingTotal": 0,
+				"followerList": [],
+				"followingList": [],
+				"giftListContent": []
+			}
+			
+			temp_userDB.insert(newUser, function(err, newDocs) {
+				if (err) {
+					console.log("Something went wrong when adding to the database");
+					console.log(err);
+				} else {
+					console.log("Added a new temporary user"); 
+				}
+			});
+			
+			res.render('sign_up_success.html', {"firstName":firstName, user: req.session.user});
+			return;
+		}
+	});
+	
+	
+	/* POTENTIALLY DELETE THIS SECTION OF CODE BELOW
 	// begin to search the databse for duplicate emails or usernames
 	userDB.find({$or: [{"email": email}, {"username": username}]}, function (err, docs) {
 		if (err) {
@@ -311,6 +483,8 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 			} 
 		}
 	});
+	
+	*/
 });
 
 /*
