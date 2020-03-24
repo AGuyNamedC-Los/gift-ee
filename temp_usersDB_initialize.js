@@ -5,7 +5,7 @@
 
 const DataStore = require('nedb-promises');
 const db = DataStore.create(__dirname + '/usersDB');
-const users = require('./temp_userDB.json');
+const users = require('./temp_usersDB.json');
 
 async function initialize() { // so I can await!
     try {

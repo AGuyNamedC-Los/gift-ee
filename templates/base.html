@@ -19,6 +19,28 @@
 					<li><a href="/search">search</a></li>
 				</ul>
 			</nav>
+			
+		{% elif (user.role == "temp_user") %}
+			<nav>
+				<ul>
+					<li><a href="/">Home</a></li>
+					<li><a href="/about">About</a></li>
+					<li><a href="/search">search</a></li>
+				</ul>
+			</nav>
+			
+			<div class="user_input">
+				<form class="email_confirmation_status" action="email_confirmation_status" method="POST">
+					<fieldset class="add_item">
+						<legend>Email Confirmation</legend>
+						<div>
+							<label><input type="text", id="emailConfirmation", name="emailConfirmation", placeholder="Enter email confirmation code"></label>
+							<input class="login_btn" type="submit" value="Add to gift-ee List">
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		
 		{% else %}
 			<nav>
 				<ul>

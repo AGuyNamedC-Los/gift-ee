@@ -20,6 +20,30 @@ const nunjucks = require('nunjucks');
 const bcrypt = require('bcryptjs');
 var hash = require('object-hash');
 
+const DataStore = require('nedb-promises');
+async function loadDatabases() {
+	
+}
+let userDB = DataStore.create({filename: __dirname + '/usersDB', autoload: true});
+userDB.on('update', (DataStore, result, query, update, options) => {
+	console.log("hi");
+});
+userDB.on('load', (userDB) => {
+    console.log("hi");// this event doesn't have a result
+});
+let temp_userDB = DataStore.create({filename: __dirname + '/temp_usersDB', timestampData: true, autoload: true});
+let options = { fieldName: 'createdAt', expireAfterSeconds: 60 };
+temp_userDB.ensureIndex({ fieldName: 'createdAt', expireAfterSeconds: 60 }, function (err) {	// adding an expiration date for automatic deletion of items
+});
+/*
+temp_userDB.load(function (err) {
+    temp_userDB.find({}, function(err, docs) {
+        console.log(err || docs);
+    });
+});
+*/
+
+/*
 const DataStore = require('nedb');
 // creating and loading in the usersDB
 const userDB = new DataStore({filename: __dirname + '/usersDB', autoload: true});		
@@ -38,6 +62,8 @@ userDB.loadDatabase(function (err) {
 });
 temp_userDB.ensureIndex({ fieldName: 'createdAt', expireAfterSeconds: 60 }, function (err) {	// adding an expiration date for automatic deletion of items
 });
+
+*/
 
 var app = express();
 app.use(express.static('public'));
@@ -72,6 +98,14 @@ app.use(setUpSessionMiddleware);
 
 // restricts paths to only logged in users
 const loggedInMiddleware = function(req, res, next) {
+	if(req.session.user.role == "guest") {
+		res.render("users_only.html", {user: req.session.user});
+	} else {
+		next();
+	}
+};
+
+const usersOnlyMiddleware = function(req, res, next) {
 	if(req.session.user.role != "user") {
 		res.render("users_only.html", {user: req.session.user});
 	} else {
@@ -79,38 +113,50 @@ const loggedInMiddleware = function(req, res, next) {
 	}
 };
 
-/* functions */
-function setUserPrivilege(req, userPrivilege, userInfo) {
-	let oldInfo = req.session.user;
-	console.log("req:" + req.session.user);
-	console.log(userInfo);
-	req.session.regenerate(function (err) {
-		if (err) {
-			console.log(err);
-			//res.render('users_only.html', {user: req.session.user});
-			return false;		// maybe return false so we can properly return from where the function was called
-		}
-		req.session.user = Object.assign(oldInfo, userInfo, {
-		role: userPrivilege,
-		firstName: userInfo['role'],
-		lastName: userInfo['lastName'],
-		email: userInfo["email"],
-		username: userInfo["username"]
-		});
-		console.log(`You've been promoted to ${userPrivilege}!`);
-		//res.render("gift-ee_profile.html", {user: req.session.user});
-		return true;		// maybe return true
-	});
-}
+const tempUsersOnlyMiddleware = function(req, res, next) {
+	if(req.session.user.role != "temp_user") {
+		res.render("users_only.html", {user: req.session.user});
+	} else {
+		next();
+	}
+};
 
-async function addTempUser(userInfo, request) {
-	//userDB.find({"email": })
+async function sendConfirmationCode(req) {
+	try {
+		let temp_docs = await temp_userDB.find({'email': req.session.user.email});
+		let confirmationCode = temp_docs[0].emailConfirmation;
+		
+		let transporter = nodemailer.createTransport({
+			service: 'gmail',
+			auth: {
+				user: process.env.GMAIL_EMAIL,
+				pass: process.env.GMAIL_PASSWORD
+			}
+		});
+		let mailOptions = {
+			from: '"Gift-ee" <gifteebysuperseed@gmail.com>',	// sender address
+			to: req.session.user.email,		// list of receivers
+			subject: 'Gift-ee confirmation code!',	// subject line
+			text: confirmationCode,	// plain text body
+			html: '<h1>Above is your confirmation code, please re-type that into your gift-ee account to be deemed an official user!</h1>'	// html body
+		};
+
+		transporter.sendMail(mailOptions, function(error, info){
+			if (error) {
+			console.log(error);
+			} else {
+			console.log('Email sent: ' + info.response);
+			}
+		}); 
+	} catch (err) {
+		console.log(err);
+	}
+
 }
 
 /* ----------------------------------------------------WEBPAGES---------------------------------------------------- */
 app.get('/', function (req, res) {
-	console.log("\\, ., @, /, \', \"");
-	console.log("hash: " + hash({foo: 'bar'}));
+	console.log("home: " + req.session.user.role);
     res.render('home.html', {user: req.session.user});
 	return;
 });
@@ -120,30 +166,6 @@ app.get('/', function (req, res) {
 	displays login page
 */
 app.get('/login', function (req, res) {
-	var transporter = nodemailer.createTransport({
-		service: 'gmail',
-		auth: {
-			user: process.env.GMAIL_EMAIL,
-			pass: process.env.GMAIL_PASSWORD
-		}
-	});
-	var mailOptions = {
-		from: '"Gift-ee" <gifteebysuperseed@gmail.com>',	// sender address
-		to: 'doris1523@hotmail.com',		// list of receivers
-		subject: 'Did you receive me?',	// subject line
-		text: "Hello world!",	// plain text body
-		html: '<h1>I know who you and your children are, please respond</h1>'	// html body
-	};
-	
-	/*
-	transporter.sendMail(mailOptions, function(error, info){
-	  if (error) {
-		console.log(error);
-	  } else {
-		console.log('Email sent: ' + info.response);
-	  }
-	}); 
-	*/
     res.render('login.html', {user: req.session.user});
 	return;
 });
@@ -151,96 +173,98 @@ app.get('/login', function (req, res) {
 /*  
 	displays whether a user was able to successfully log in or not
 */
-function testreq (req) {
-	console.log("function req: " + req.session.user.role);
-}
-app.post('/login_status', express.urlencoded({extended:true}), function(req, res) {
+app.post('/login_status', express.urlencoded({extended:true}), async function(req, res) {
 	let email = req.body.email;		// get user's typed in email
 	let password = req.body.password;		// get user's typed in password
-	console.log("req:" + req.session.user.role);
-	testreq(req);
+	console.log("logging in... req: " + req.session.user.role);
 	
-	// if no user was found in the temp_userDB, then search the main userDB
-	userDB.find({"email": email}, function (err, docs) {
-		if (err) {
-			console.log("something is wrong");
-			res.render('error.html');
-			return;
-		}
+	try {
+		console.log("searching through temp_userDB");
+		let temp_docs = await temp_userDB.find({'email': email});
+		console.log("finished searching through temp_userDB");
 		
-		console.log("We found " + docs.length + " email(s) that matched in userDB");
-		if(docs.length == 0) {		// no email matched
-			// check temp_userDB
-			temp_userDB.find({"email": email}, function (err, temp_docs) {
-				if (err) {
-					console.log("something is wrong");
-					res.render('error.html');
-					return;
-				}
-				
-				if(temp_docs.length == 0) {
-					console.log("did not find account in the temp_userDB or userDB");
-					res.render("users_only.html");
-					return;
-				} else {
-					console.log("found one user in temp_docs");
-					let verified = bcrypt.compareSync(password, temp_docs[0].password); 
-					if (!verified) {
-						console.log("wrong password!")
-						res.render("users_only.html", {user: req.session.user});
-						return;
+		let tempUserFound = await temp_docs.length;
+		if(tempUserFound) {		// searching through temp_userDB
+			let passVerified = bcrypt.compareSync(password, temp_docs[0].password);
+			if (passVerified) {		// found temp_user and correct password
+				console.log("matching password and email found for temp_user");
+				let tempUserInfo = {firstname: temp_docs[0].firstName, lastName: temp_docs[0].lastName, username: temp_docs[0].username, email: temp_docs[0].email};
+				let oldInfo = req.session.user;
+				req.session.regenerate(function (err) {
+					if (err) {
+						console.log(err);
+						return false;
 					}
 					
-					let oldInfo = req.session.user;
-					req.session.regenerate(function (err) {
-						if (err) {
-							console.log(err);
-							res.render('users_only.html', {user: req.session.user});
-							return;
-						}
-						
-						req.session.user = Object.assign(oldInfo, temp_docs, {
-							role: "temp_user",
-							firstName: temp_docs[0]['firstName'],
-							lastName: temp_docs[0]['lastName'],
-							email: temp_docs[0]["email"],
-							username: temp_docs[0]["username"]
-						});
-						console.log("You've been promoted to temp_user!");
-						res.render("gift-ee_profile.html", {user: req.session.user});
-						return;
+					req.session.user = Object.assign(oldInfo, tempUserInfo, {
+						role: "temp_user",
+						firstName: tempUserInfo.firstName,
+						lastName: tempUserInfo.lastName,
+						email: tempUserInfo.email,
+						username: tempUserInfo.username
 					});
-				}				
-			});
-		} else {
-			console.log("found one user in userDB");
-			let verified = bcrypt.compareSync(password, docs[0].password); 
-			if (!verified) {
-				res.render("users_only.html", {user: req.session.user});
+					console.log("user upgraded to " + req.session.user.role);
+					res.render("gift-ee_profile.html", {user: req.session.user});
+					return;
+				});
+			} else {		// found temp_user but wrong password
+				console.log("password incorrect in temp_user");
+				res.render("error.html");
 				return;
 			}
-			
-			let oldInfo = req.session.user;
-			req.session.regenerate(function (err) {
-				if (err) {
-					console.log(err);
-					res.render('users_only.html', {user: req.session.user});
+		} else {		// searching through userDB
+			try {
+				console.log("searching through userDB");
+				let docs = await userDB.find({'email': email});
+				console.log("finished searching through userDB");
+				
+				let userFound = await docs.length;
+				if(userFound) {
+					let passVerified = bcrypt.compareSync(password, docs[0].password);
+					if (passVerified) {		// found user and correct password
+						console.log("matching password and email found for user");
+						let userInfo = {firstname: docs[0].firstName, lastName: docs[0].lastName, username: docs[0].username, email: docs[0].email};
+						req.session.regenerate(function (err) {
+							if (err) {
+								console.log(err);
+								return false;
+							}
+							
+							req.session.user = Object.assign(oldInfo, userInfo, {
+								role: "user",
+								firstName: userInfo.firstName,
+								lastName: userInfo.lastName,
+								email: userInfo.email,
+								username: userInfo.username
+							});
+							console.log("user upgraded to " + req.session.user.role);
+							res.render("gift-ee_profile.html", {user: req.session.user});
+							return;
+						});
+						console.log("user upgraded to user");
+						res.render("gift-ee_profile.html", {user: req.session.user});
+						return;
+					} else {		// found user but wrong password
+						console.log("incorrect password for user in userDB");
+						res.render("error.html");
+						return;
+					}
+				} else {
+					console.log("could not find user email at all");
+					res.render("error.html");
 					return;
 				}
-				
-				req.session.user = Object.assign(oldInfo, docs, {
-					role: "user",
-					firstName: docs[0]['firstName'],
-					lastName: docs[0]['lastName'],
-					email: docs[0]["email"],
-					username: docs[0]["username"]
-				});
-				console.log("You've been promoted to user!");
-				res.render("gift-ee_profile.html", {user: req.session.user});
+			} catch (err) {
+				console.log(`userDB error ${err}`);
+				res.render("error.html");
 				return;
-			});
+			}
 		}
-	});
+	} catch (err) {
+		console.log(`temp_userDB error ${err}`);
+		res.render("error.html");
+		return;
+	}
 });
 
 /*
@@ -318,7 +342,7 @@ app.get('/sign-up', function (req, res) {
 	return;
 });
 
-app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, res) {
+app.post('/sign_up_status', express.urlencoded({extended:true}), async function(req, res) {
 	var badCharacters = ["/", "\\", "\'", "\"", " "];
 	var specialCharacters = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 	let email = req.body.email;
@@ -365,6 +389,61 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 	// check for lowercase
 	// check for uppercase
 	
+	try {
+		console.log("searching temp_userDB");
+		let temp_docs = await temp_userDB.find({'email': email}, {'username': username});
+		console.log("tempUserFound: " + temp_docs.length);
+		let tempUserFound = temp_docs.length;
+		if(tempUserFound) {		// duplicate username or email found in temp_userDB
+			res.render('sign_up_error.html');
+			return
+		} else {		// no duplicate temp user found, check the main userDB
+			try {
+				let userdocs = await userDB.find({'email': email}, {'username': username});
+				console.log("userFound: " + userdocs.length);
+				let userFound = userdocs.length;
+				console.log(userdocs[0]);
+				if(userFound) {		// duplicate username or email found in userDB
+					res.render('sign_up_error.html');
+					return;
+				}
+			} catch (err) {
+				console.log(err);
+				res.render('error.html');
+				return;
+			}
+			
+		}
+	} catch (err) {
+		res.render('error.html');
+		return;
+	}
+	
+	let hashedPassword = bcrypt.hashSync(password, parseInt(process.env.nROUNDS));
+	try {
+		let newTempUser = 	{
+			"firstName": firstName,
+			"lastName": lastName,
+			"email": email,
+			"username": username,
+			"password": hashedPassword,
+			"emailConfirmation": hash(email+username),
+			"followerTotal": 0,
+			"followingTotal": 0,
+			"followerList": [],
+			"followingList": [],
+			"giftListContent": []
+		}
+		await temp_userDB.insert(newTempUser);
+		res.render('sign_up_success.html', {user: req.session.user});
+		return;
+	} catch (err) {
+		console.log("error: " + err);
+		res.render('error.html');
+		return;
+	}
+	
+	/*
 	// find duplicate emails or usernames in the temp_userDB
 	temp_userDB.find({$or: [{"email": email}, {"username": username}]}, function (err, temp_docs) {
 		if (err) {
@@ -484,7 +563,73 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), function(req, r
 		}
 	});
 	
+	
+	
 	*/
+});
+
+app.post('/email_confirmation_status', tempUsersOnlyMiddleware, express.urlencoded({extended:true}), async function(req, res) {
+	let email = req.session.user.email;
+	let emailConfirmationCode = req.body.emailConfirmation;
+	
+	try {
+		console.log("searching for temp_user's email confirmation code in temp_userDB");
+		let temp_docs = await temp_userDB.find({'email': email});
+		console.log("finished searching through temp_userDB");
+		
+		if(temp_docs[0].emailConfirmation == emailConfirmationCode) {
+			console.log("email confirmation confirmed!");
+			console.log("promoting to user");
+			try {
+				console.log("adding to user DB");
+				let newUser = {
+					"firstName": temp_docs[0].firstName,
+					"lastName": temp_docs[0].lastName,
+					"email": temp_docs[0].email,
+					"username": temp_docs[0].username,
+					"password": temp_docs[0].hashedPassword,
+					"followerTotal": 0,
+					"followingTotal": 0,
+					"followerList": [],
+					"followingList": [],
+					"giftListContent": []
+				}
+				let docs = await userDB.insert(newUser);
+				console.log(`added new user: ${temp_docs[0].username}`);
+				
+				req.session.regenerate(function (err) {
+					if (err) {
+						console.log(err);
+						return false;
+					}
+					
+					req.session.user = Object.assign(oldInfo, userInfo, {
+						role: "user",
+						firstName: temp_docs[0].firstName,
+						lastName: temp_docs[0].lastName,
+						email: temp_docs[0].email,
+						username: temp_docs[0].username
+					});
+					console.log("user upgraded to " + req.session.user.role);
+					res.render("gift-ee_profile.html", {user: req.session.user});
+					return;
+				});				
+				
+				
+				
+				res.render('gift-ee_profile', {user: req.session.user});
+				return;
+			} catch (err) {
+				console.log(err);
+				res.render('error.html');
+				return;
+			}
+		}
+	} catch (err) {
+		console.log(err);
+		res.render('error.html');
+		return;
+	}
 });
 
 /*
