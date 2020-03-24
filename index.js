@@ -105,6 +105,14 @@ const loggedInMiddleware = function(req, res, next) {
 	}
 };
 
+const guestsOnlyMiddleware = function(req, res, next) {
+	if(req.session.user.role != "guest") {
+		res.render("users_only.html", {user: req.session.user});
+	} else {
+		next();
+	}
+};
+
 const usersOnlyMiddleware = function(req, res, next) {
 	if(req.session.user.role != "user") {
 		res.render("users_only.html", {user: req.session.user});
@@ -121,11 +129,19 @@ const tempUsersOnlyMiddleware = function(req, res, next) {
 	}
 };
 
-async function sendConfirmationCode(req) {
+const guestsAndTempUsersOnly = function(req, res, next) {
+	if(req.session.user.role == "user") {
+		console.log("users not allowed to login again!");
+		res.render("users_only.html", {user: req.session.user});
+	} else {
+		next();
+	}
+};
+
+
+async function sendConfirmationCode(secretCode, email) {
+	console.log("secret code: " + secretCode);
 	try {
-		let temp_docs = await temp_userDB.find({'email': req.session.user.email});
-		let confirmationCode = temp_docs[0].emailConfirmation;
-		
 		let transporter = nodemailer.createTransport({
 			service: 'gmail',
 			auth: {
@@ -135,10 +151,10 @@ async function sendConfirmationCode(req) {
 		});
 		let mailOptions = {
 			from: '"Gift-ee" <gifteebysuperseed@gmail.com>',	// sender address
-			to: req.session.user.email,		// list of receivers
+			to: email,		// list of receivers
 			subject: 'Gift-ee confirmation code!',	// subject line
-			text: confirmationCode,	// plain text body
-			html: '<h1>Above is your confirmation code, please re-type that into your gift-ee account to be deemed an official user!</h1>'	// html body
+			text: secretCode,	// plain text body
+			html: `<h1>Above is your confirmation code, please re-type that into your gift-ee account to be deemed an official user! ${secretCode}</h1>`	// html body
 		};
 
 		transporter.sendMail(mailOptions, function(error, info){
@@ -165,7 +181,7 @@ app.get('/', function (req, res) {
 	permission: guests
 	displays login page
 */
-app.get('/login', function (req, res) {
+app.get('/login', guestsOnlyMiddleware, function (req, res) {
     res.render('login.html', {user: req.session.user});
 	return;
 });
@@ -336,7 +352,7 @@ app.post('/logout_status', express.urlencoded({extended:true}), function(req, re
 	});
 });
 
-app.get('/sign-up', function (req, res) {
+app.get('/sign-up', guestsOnlyMiddleware, function (req, res) {
     /* TEMP EMAIL STUFF - DELETE AFTER TESTING IS DONE */
 	res.render('sign_up.html', {user: req.session.user});
 	return;
@@ -435,6 +451,9 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 			"giftListContent": []
 		}
 		await temp_userDB.insert(newTempUser);
+		console.log("sending mail");
+		let result = await sendConfirmationCode(newTempUser.emailConfirmation, newTempUser.email);
+		console.log("back from sending mail");
 		res.render('sign_up_success.html', {user: req.session.user});
 		return;
 	} catch (err) {
@@ -568,7 +587,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 	*/
 });
 
-app.post('/email_confirmation_status', tempUsersOnlyMiddleware, express.urlencoded({extended:true}), async function(req, res) {
+app.post('/email_confirmation_status', express.urlencoded({extended:true}), async function(req, res) {
 	let email = req.session.user.email;
 	let emailConfirmationCode = req.body.emailConfirmation;
 	
@@ -597,33 +616,33 @@ app.post('/email_confirmation_status', tempUsersOnlyMiddleware, express.urlencod
 				let docs = await userDB.insert(newUser);
 				console.log(`added new user: ${temp_docs[0].username}`);
 				
+				let oldInfo = req.session.user;
 				req.session.regenerate(function (err) {
 					if (err) {
 						console.log(err);
 						return false;
 					}
 					
-					req.session.user = Object.assign(oldInfo, userInfo, {
+					req.session.user = Object.assign(oldInfo, newUser, {
 						role: "user",
-						firstName: temp_docs[0].firstName,
-						lastName: temp_docs[0].lastName,
-						email: temp_docs[0].email,
-						username: temp_docs[0].username
+						firstName: newUser.firstName,
+						lastName: newUser.lastName,
+						email: newUser.email,
+						username: newUser.username
 					});
 					console.log("user upgraded to " + req.session.user.role);
 					res.render("gift-ee_profile.html", {user: req.session.user});
 					return;
-				});				
-				
-				
-				
-				res.render('gift-ee_profile', {user: req.session.user});
-				return;
+				});
 			} catch (err) {
 				console.log(err);
 				res.render('error.html');
 				return;
 			}
+		} else {
+			console.log("wrong email confirmation code");
+			res.render('error.html');
+			return;
 		}
 	} catch (err) {
 		console.log(err);
