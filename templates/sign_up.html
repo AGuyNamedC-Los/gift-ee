@@ -14,10 +14,28 @@
 					<label><input type="text", id="username", name="username", placeholder="Username"></label>
 					<label><input type="text", id="first_name", name="firstName", placeholder="First Name"></label>
 					<label><input type="text", id="last_name", name="lastName", placeholder="Last Name"></label>
-					<label><input type="text", id="password", name="password" placeholder="Password"></label>
+					<p id="tooShort">Password must be more than 5 characters</p>
+					<label><input type="password", onkeydown="validPassword()", id="password", name="password" placeholder="Password"></label>
 					<input class="sign_up_btn" type="submit" value="Sign Up">
 				</div>
 			</fieldset>
 		</form>
 	</div>
+	
+	<script>
+		input.onblur = function() {
+			if (!input.value.includes('@')) { // not email
+				input.classList.add('invalid');
+				error.innerHTML = 'Please enter a correct email.'
+			}
+		};
+
+		input.onfocus = function() {
+			if (this.classList.contains('invalid')) {
+			// remove the "error" indication, because the user wants to re-enter something
+			this.classList.remove('invalid');
+			error.innerHTML = "";
+			}
+		};
+	</script>
 {% endblock %}
