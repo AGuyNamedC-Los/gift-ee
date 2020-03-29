@@ -14,8 +14,8 @@
 					<label><input type="text", id="username", name="username", placeholder="Username"></label>
 					<label><input type="text", id="first_name", name="firstName", placeholder="First Name"></label>
 					<label><input type="text", id="last_name", name="lastName", placeholder="Last Name"></label>
-					<p id="tooShort">Password must be more than 5 characters</p>
-					<label><input type="password", onkeydown="validPassword()", id="password", name="password" placeholder="Password"></label>
+					<p id="password_error"></p>
+					<label><input type="password", onblur="validPassword()", id="password", name="password" placeholder="Password"></label>
 					<input class="sign_up_btn" type="submit" value="Sign Up">
 				</div>
 			</fieldset>
@@ -23,19 +23,33 @@
 	</div>
 	
 	<script>
-		input.onblur = function() {
-			if (!input.value.includes('@')) { // not email
-				input.classList.add('invalid');
-				error.innerHTML = 'Please enter a correct email.'
+		function validPassword() {
+			var errorMessage = "";
+			var passwordError = document.getElementById("password_error");
+			var badCharacters = ["/", "\\", "\'", "\"", " "];
+			var password = document.getElementById("password").value;
+			
+			// check for password length
+			if(password.length <= 5) {
+				console.log("password length: " + password.length + " too short!");
+				errorMessage = "password length: " + password.length + " too short!";
+			} else if (password.length > 100) { 
+				console.log("password length: " + password.length + " too long!");
+				errorMessage = "password length: " + password.length + " too long!";
+			} else {
+				console.log("password.length is acceptable!");
+				errorMessage = "";
 			}
-		};
-
-		input.onfocus = function() {
-			if (this.classList.contains('invalid')) {
-				// remove the "error" indication, because the user wants to re-enter something
-				this.classList.remove('invalid');
-				error.innerHTML = "";
+			
+			for(i = 0; i < password.length; i++) {
+				if(password.includes(badCharacters[i])) {
+					console.log("invalid password, includes [" + badCharacters[i] + "] character");
+					errorMessage = errorMessage + "invalid password, includes [" + badCharacters[i] + "] character";
+					break;
+				}
 			}
-		};
+			
+			passwordError.innerHTML = errorMessage;
+		}
 	</script>
 {% endblock %}

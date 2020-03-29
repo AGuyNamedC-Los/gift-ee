@@ -353,7 +353,6 @@ app.post('/logout_status', express.urlencoded({extended:true}), function(req, re
 });
 
 app.get('/sign-up', guestsOnlyMiddleware, function (req, res) {
-    /* TEMP EMAIL STUFF - DELETE AFTER TESTING IS DONE */
 	res.render('sign_up.html', {user: req.session.user});
 	return;
 });
@@ -454,6 +453,15 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 		console.log("sending mail");
 		let result = await sendConfirmationCode(newTempUser.emailConfirmation, newTempUser.email);
 		console.log("back from sending mail");
+		
+		let oldInfo = req.session.user;
+		req.session.user = Object.assign(oldInfo, newTempUser, {
+			role: "temp_user",
+			firstName: newTempUser.firstName,
+			lastName: newTempUser.lastName,
+			email: newTempUser.email,
+			username: newTempUser.username
+		});
 		res.render('sign_up_success.html', {user: req.session.user});
 		return;
 	} catch (err) {
