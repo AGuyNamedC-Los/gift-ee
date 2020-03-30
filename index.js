@@ -286,9 +286,64 @@ app.post('/login_status', express.urlencoded({extended:true}), async function(re
 /*
 	displays whether a user logged out properly
 */
-app.post('/logout_status', express.urlencoded({extended:true}), function(req, res) {
+app.post('/logout_status', express.urlencoded({extended:true}), async function(req, res) {
 	let email = req.session.user.email;
+	let oldInfo = req.session.user;
 	
+	console.log("logging out...");
+	console.log("searching through temp_userDB");
+	try {
+		let temp_docs = await temp_userDB.find({'email': email});
+		
+		if(temp_docs.length == 0) {
+			console.log("could not find user in temp_userDB");
+		} else {
+			console.log("found user in temp_userDB");
+			req.session.user = Object.assign(oldInfo, temp_docs, {
+				role: "guest",
+				firstName: "",
+				lastName: "",
+				email: "",
+				username: ""
+			});
+			
+			res.render("logout.html", {user: req.session.user});
+			return;
+		}
+	} catch (err) {
+		console.log("error: " + err);
+		res.render('error.html');
+		return;
+	}
+	
+	console.log("searching through userDB");
+	try {
+		let docs = await userDB.find({'email': email});
+		
+		if(docs.length == 0) {
+			console.log("could not find user in userDB");
+			res.render("logout.html", {user: req.session.user});
+			return
+		} else {
+			console.log("found user in userDB");
+			req.session.user = Object.assign(oldInfo, temp_docs, {
+				role: "guest",
+				firstName: "",
+				lastName: "",
+				email: "",
+				username: ""
+			});
+			res.render("logout.html", {user: req.session.user});
+			return;
+		}
+	} catch (err) {
+		console.log("error: " + err);
+		res.render('error.html');
+		return;
+	}
+	
+	
+	/*
 	userDB.find({"email": email}, function (err, docs) {
 		if (err) {
 			res.render('error.html');
@@ -350,6 +405,8 @@ app.post('/logout_status', express.urlencoded({extended:true}), function(req, re
 			});
 		}
 	});
+	
+	*/
 });
 
 app.get('/sign-up', guestsOnlyMiddleware, function (req, res) {
@@ -663,30 +720,32 @@ app.post('/email_confirmation_status', express.urlencoded({extended:true}), asyn
 	permissions: logged in user's
 	displays a user's profile
 */
-app.get('/profile', loggedInMiddleware, function (req, res) {
+app.get('/profile', loggedInMiddleware, async function (req, res) {
 	let email = req.session.user.email;		// get the logged in user's email
 	
-	userDB.find({"email": email}, function (err, docs) {
-		if (err) {
-			console.log("something is wrong");
-		} else {
-			console.log("We found " + docs.length + " email that matches");
-			if(docs.length == 0) {		// no email matched
-				res.render('error.html', {user: req.session.user});
-				return;
-			}
-			
-			console.log(docs[0].giftListContent);
-			res.render("gift-ee_profile.html", {giftList: docs[0].giftListContent, user: req.session.user});
+	try {
+		let docs = await userDB.find({'email': email});
+		console.log("We found " + docs.length + " email that matches");
+		
+		if(docs.length == 0) {		// no email matched
+			res.render('error.html', {user: req.session.user});
 			return;
 		}
-	});
+			
+		console.log(docs[0].giftListContent);
+		res.render("gift-ee_profile.html", {giftList: docs[0].giftListContent, user: req.session.user});
+		return;
+	} catch (err) {
+		console.log("error");
+		res.render('error.html');
+		return;
+	}
 });
 
 /*
 	gets displayed after a user has added a gift to their gift list
 */
-app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:true}), function(req, res) {
+app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:true}), async function(req, res) {
 	let itemName = req.body.itemName;
 	let link = req.body.link;
 	let qty = req.body.qty;
@@ -694,22 +753,72 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 	let color = req.body.color;
 	let email = req.session.user.email;		// get the logged in user's email
 	
+	let newItem = {			
+		"itemName": itemName,
+		"link": link, 
+		"qty": qty, 
+		"size": size, 
+		"color": color
+	};
+	
+	try {
+		let docs = await userDB.update({"email": email}, {$addToSet: {giftListContent: newItem }}, {}, function () {});
+		res.render("added_gift_success.html", {user: req.session.user});
+		return;
+	} catch (err) {
+		console.log("error: " + err);
+		res.render("error.html");
+		return;
+	}
+	
+	/*
 	userDB.update({"email": email}, {$addToSet: {giftListContent: {"itemName": itemName, "link": link, "qty": qty, "size": size, "color": color} }}, {}, function () {
 		userDB.ensureIndex({fieldName: "username", unique: true});
 		res.render("added_gift_success.html", {user: req.session.user});
 		return;
 	});
+	*/
 });
 
 /*
 	gets displayed after a user has deleted an item from their gift list
 */
-app.post('/deleted_gift_status', loggedInMiddleware, express.urlencoded({extended:true}), function(req, res) {
+app.post('/deleted_gift_status', loggedInMiddleware, express.urlencoded({extended:true}), async function(req, res) {
 	let email = req.session.user.email;
 	let itemNum = req.body.itemNum;
 	// check for case of removing something out of bounds for itemNum
 	console.log("item number: " + itemNum);
 	
+	try {
+		let docs = await userDB.find({'email': email});
+		if (docs.length == 0) {
+			console.log("error: " + err);
+			res.render("error.html");
+			return;	
+		} else {
+			console.log(itemNum);
+			console.log(docs[0].giftListContent[0].itemName);
+			var newGiftList = docs[0].giftListContent;
+			var deletedItem = newGiftList.splice(itemNum, 1);		// removing an item from a user's gift list
+		}
+	} catch (err) {
+		console.log("error: " + err);
+		res.render("error.html");
+		return;
+	}
+	
+	try {
+		let docs = await userDB.update({"email": email}, {$set: {giftListContent: newGiftList}}, {}, function (err, numReplaced) {});
+		console.log(deletedItem[0].itemName);
+		res.render("deleted_gift_success.html", {deletedItem: deletedItem[0]});
+		
+	} catch (err) {
+		console.log("error: " + err);
+		res.render("error.html");
+		return;
+	}
+	
+	/*
 	userDB.find({"email": email}, function (err, docs) {
 		if (err) {
 			console.log("something is wrong");
@@ -735,6 +844,8 @@ app.post('/deleted_gift_status', loggedInMiddleware, express.urlencoded({extende
 			});
 		}
 	});
+	
+	*/
 }); 
 
 /*
