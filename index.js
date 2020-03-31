@@ -234,12 +234,13 @@ app.post('/login_status', express.urlencoded({extended:true}), async function(re
 				let docs = await userDB.find({'email': email});
 				console.log("finished searching through userDB");
 				
-				let userFound = await docs.length;
+				let userFound = docs.length;
 				if(userFound) {
 					let passVerified = bcrypt.compareSync(password, docs[0].password);
 					if (passVerified) {		// found user and correct password
 						console.log("matching password and email found for user");
 						let userInfo = {firstname: docs[0].firstName, lastName: docs[0].lastName, username: docs[0].username, email: docs[0].email};
+						let oldInfo = req.session.user;
 						req.session.regenerate(function (err) {
 							if (err) {
 								console.log(err);
@@ -257,9 +258,6 @@ app.post('/login_status', express.urlencoded({extended:true}), async function(re
 							res.render("gift-ee_profile.html", {user: req.session.user});
 							return;
 						});
-						console.log("user upgraded to user");
-						res.render("gift-ee_profile.html", {user: req.session.user});
-						return;
 					} else {		// found user but wrong password
 						console.log("incorrect password for user in userDB");
 						res.render("error.html");
@@ -289,7 +287,20 @@ app.post('/login_status', express.urlencoded({extended:true}), async function(re
 app.post('/logout_status', express.urlencoded({extended:true}), async function(req, res) {
 	let email = req.session.user.email;
 	let oldInfo = req.session.user;
+	req.session.regenerate(function (err) {
+		if (err) {
+			console.log(err);
+			res.render('error.html', {user: req.session.user});
+			return;
+		}
+		
+		req.session.user = {role: "guest", firstName: "", lastName: "", email: "", username: ""};
+		console.log("user upgraded to " + req.session.user.role);
+		res.render("logout.html", {user: req.session.user});
+		return;
+	});
 	
+	/*
 	console.log("logging out...");
 	console.log("searching through temp_userDB");
 	try {
@@ -341,71 +352,6 @@ app.post('/logout_status', express.urlencoded({extended:true}), async function(r
 		res.render('error.html');
 		return;
 	}
-	
-	
-	/*
-	userDB.find({"email": email}, function (err, docs) {
-		if (err) {
-			res.render('error.html');
-			return;
-		}
-	
-		if(docs.length == 0) {		// no email matched in main userDB
-			temp_userDB.find({"email": email}, function (err, temp_docs) {		// check inside temp_userDB for user
-				if (err) {
-					res.render('error.html');
-					return;
-				}
-				if(temp_docs.length == 1) {		// email found in temp_userDB, begin to log out temp user
-					let oldInfo = req.session.user;
-					req.session.regenerate(function (err) {
-						if (err) {
-							console.log(err);
-							res.render('error.html', {user: req.session.user});
-							return;
-						}
-						
-						req.session.user = Object.assign(oldInfo, docs, {
-							role: "guest",
-							firstName: "",
-							lastName: "",
-							email: "",
-							username: ""
-						});
-						console.log("You've been demoted to a guest!");
-						res.render("logout.html", {user: req.session.user});
-						return;
-					});
-				} else {
-					console.log("Not sure what happened but we couldn't log you out?!");
-					res.render('error.html', {user: req.session.user});
-					return;
-				}					
-			});
-		} else {
-			// sign out the user from the userDB
-			let oldInfo = req.session.user;
-			req.session.regenerate(function (err) {
-				if (err) {
-					console.log(err);
-					res.render('error.html', {user: req.session.user});
-					return;
-				}
-				
-				req.session.user = Object.assign(oldInfo, docs, {
-					role: "guest",
-					firstName: "",
-					lastName: "",
-					email: "",
-					username: ""
-				});
-				console.log("You've been demoted to a guest!");
-				res.render("logout.html", {user: req.session.user});
-				return;
-			});
-		}
-	});
-	
 	*/
 });
 
@@ -415,9 +361,10 @@ app.get('/sign-up', guestsOnlyMiddleware, function (req, res) {
 });
 
 app.post('/sign_up_status', express.urlencoded({extended:true}), async function(req, res) {
+	let email = req.body.email;
 	var badCharacters = ["/", "\\", "\'", "\"", " "];
 	var specialCharacters = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-	let email = req.body.email;
+	
 	// check for the proper @email suffix
 	if(!email.includes("@")) {
 		res.render("sign_up_error.html");
@@ -461,13 +408,14 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 	// check for lowercase
 	// check for uppercase
 	
+	
 	try {
 		console.log("searching temp_userDB");
 		let temp_docs = await temp_userDB.find({'email': email}, {'username': username});
 		console.log("tempUserFound: " + temp_docs.length);
 		let tempUserFound = temp_docs.length;
 		if(tempUserFound) {		// duplicate username or email found in temp_userDB
-			res.render('sign_up_error.html');
+			res.render('sign_up_error.html', {user: req.session.user});
 			return
 		} else {		// no duplicate temp user found, check the main userDB
 			try {
@@ -476,18 +424,18 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 				let userFound = userdocs.length;
 				console.log(userdocs[0]);
 				if(userFound) {		// duplicate username or email found in userDB
-					res.render('sign_up_error.html');
+					res.render('sign_up_error.html', {user: req.session.user});
 					return;
 				}
 			} catch (err) {
 				console.log(err);
-				res.render('error.html');
+				res.render('error.html', {user: req.session.user});
 				return;
 			}
 			
 		}
 	} catch (err) {
-		res.render('error.html');
+		res.render('error.html', {user: req.session.user});
 		return;
 	}
 	
@@ -523,7 +471,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 		return;
 	} catch (err) {
 		console.log("error: " + err);
-		res.render('error.html');
+		res.render('error.html', {user: req.session.user});
 		return;
 	}
 	
@@ -671,7 +619,7 @@ app.post('/email_confirmation_status', express.urlencoded({extended:true}), asyn
 					"lastName": temp_docs[0].lastName,
 					"email": temp_docs[0].email,
 					"username": temp_docs[0].username,
-					"password": temp_docs[0].hashedPassword,
+					"password": temp_docs[0].password,
 					"followerTotal": 0,
 					"followingTotal": 0,
 					"followerList": [],
@@ -679,13 +627,14 @@ app.post('/email_confirmation_status', express.urlencoded({extended:true}), asyn
 					"giftListContent": []
 				}
 				let docs = await userDB.insert(newUser);
-				console.log(`added new user: ${temp_docs[0].username}`);
+				console.log(`added new user: ${newUser}`);
 				
 				let oldInfo = req.session.user;
 				req.session.regenerate(function (err) {
 					if (err) {
 						console.log(err);
-						return false;
+						res.render('error.html');
+						return;
 					}
 					
 					req.session.user = Object.assign(oldInfo, newUser, {
