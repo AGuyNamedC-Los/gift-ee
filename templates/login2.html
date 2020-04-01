@@ -8,14 +8,15 @@
     <body>
 		<main>
 			<div class="user_input">
-				<a href="/">Home</a>
+				<p class="home"><a href="/">Home</a></p>
+				<!-- <button onclick="document.location = '/'">Home</button> -->
 				<form class="login" action="login_status" method="POST">
 					<fieldset>
-						<div>
+							<label><p>Email</p></label>
 							<label><input type="text", id="email", name="email", placeholder="Email"></label>
-							<label><input type="password", id="password", name="password", placeholder="Password"></label>
-							<input class="login_btn" type="submit" value="Log In">
-						</div>
+							<label><p>Password</p></label>
+							<label><input type="password", id="password", name="password", placeholder="Password"></label><br>
+							<label><input class="login_btn" type="submit" value="Log In"> </label>
 					</fieldset>
 				</form>
 			</div>
