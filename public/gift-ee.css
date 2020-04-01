@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------GENERAL--------------------------------------------------------- */
 body {
-	/*background-color: #4db8ff;*/
+	/*background-color: #4db8ff;
 	/*background-color: #f2f2f2;*/
 }
 
@@ -67,18 +67,22 @@ label input {
 }
 
 /* ---------------------------------------------------------LOGIN/SIGN_UP PAGES--------------------------------------------------------- */
-.login_page {
+.user_input {
 	border: solid;
+	background: #7070db;
 }
 
 form {
+	background: white;
+	border-radius: 1.5%;
 	/*
 	position: fixed;
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -50%);
 	*/
-	margin: 30% 32% 30%;
+	padding: 2.5% 0% 2.5%;
+	margin: 10% 41% 10%;
 }
 
 legend {

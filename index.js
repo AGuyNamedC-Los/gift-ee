@@ -182,7 +182,7 @@ app.get('/', function (req, res) {
 	displays login page
 */
 app.get('/login', guestsOnlyMiddleware, function (req, res) {
-    res.render('login.html', {user: req.session.user});
+    res.render('login2.html', {user: req.session.user});
 	return;
 });
 
@@ -837,9 +837,27 @@ app.get('/search', function (req, res) {
 	permission: ALL
 	displays a user's gift list
 */
-app.post('/search_results', express.urlencoded({extended:true}), function(req, res) {
+app.post('/search_results', express.urlencoded({extended:true}), async function(req, res) {
 	let username = req.body.username;
-	
+
+	try {
+		let docs = await userDB.find({'username': username});
+
+		if(docs.length == 0) {
+			console.log("could not find user with that name!");
+			res.render('error.html', {user: req.session.user});
+			return
+		} else {
+			username = docs[0].username;
+			let giftList = docs[0].giftListContent;
+			res.render('search_result.html', {user: req.session.user});
+		}
+	} catch (err) {
+		console.log('error: ' + err);
+		res.render('search_result.html', {user: req.session.user});
+		return;
+	}
+	/*
 	userDB.find({"username": username}, function (err, docs) {
 		if (err) {
 			console.log("something is wrong");
@@ -854,6 +872,7 @@ app.post('/search_results', express.urlencoded({extended:true}), function(req, r
 			res.render("search_result.html", {username: username, giftList: giftList});
 		}
 	});
+	*/
 });
 
 const PORT = process.env.PORT || 5000;
