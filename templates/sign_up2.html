@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>gift-ee</title>
+		<link href="login_and_signup.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+		<link rel="stylesheet" type="text/html" href="//fonts.googleapis.com/css?family=Ubuntu">
+	</head>
+    <body>
+		<main>
+			<p class="home"><a href="/"><i class="fas fa-home"></i></a></p>
+			<div class="user_input">
+				<p>Signup to create a Gift-ee account!</p> 
+				<form action="sign_up_status" method="POST">
+					<fieldset>
+							<div class="input_box">
+								<i class="fas fa-envelope"></i>
+								<input type="text", id="email", name="email", placeholder="Email">
+                            </div>
+							<div class="input_box">
+								<i class="fas fa-user"></i>
+								<input type="text", id="username", name="username", placeholder="Username">
+							</div>                            
+							<div class="input_box">
+								<i class="fas fa-lock"></i>
+								<input type="password", onblur="validPassword()", id="password", name="password", placeholder="Password">
+                            </div>
+                            <div class="input_box">
+								<i class="fas fa-address-card"></i>
+								<input type="text", id="first_name", name="firstName", placeholder="First Name">
+                            </div>
+                            <div class="input_box">
+								<i class="fas fa-address-card"></i>
+								<input type="text", id="last_name", name="lastName", placeholder="Last Name">
+                            </div>
+							<input class="sign_up_btn" type="submit" value="Sign Up">
+					</fieldset>
+                </form>
+                <div id="password_error", style="display:none">
+                </div>
+			</div>
+		</main>
+	</body>
+	<script>
+        function validPassword() {
+            var passwordErrorNode = document.getElementById("password_error");
+            // remove all the previous errors if any
+            let child = passwordErrorNode.lastElementChild;
+            while(child) {
+                passwordErrorNode.removeChild(child);
+                child = passwordErrorNode.lastElementChild;
+            }
+            errorTextNode = document.createElement("P");
+            var errorMessage = "";
+			var passwordError = document.getElementById("password_error");
+			var badCharacters = ["/", "\\", "\'", "\"", " "];
+            var password = document.getElementById("password").value;
+            
+            switch (0) {
+                case 0:    // check password length
+                    if(password.length <= 5) {
+                        errorMessage = "Password must be of length 6 or more\n";
+                    } else if (password.length > 100) {
+                        errorMessage = "Password must be of length less than 100\n";
+                        passwordError.appendChild(errorTextNode);
+                    }
+                case 1:     // check for invalid characters
+                    for(i = 0; i < password.length; i++) {
+                        if(password.includes(badCharacters[i])) {
+                            errorMessage = errorMessage + "invalid password, includes [" + badCharacters[i] + "] character";
+                            break;
+                        }
+                    }
+                case 2:     // check for at least one lowercase letter
+                    let lowercaseFound = false;
+                    for(i = 0; i < password.length; i++) {
+                        if(password[i] == password[i].toLowerCase() && isNaN(password[i])) {
+                            lowercaseFound = true;
+                            break;
+                        }
+                    }
+
+                    if(!lowercaseFound) {
+                        errorMessage = errorMessage + "Password must include at least one lowercase\n";
+                    }
+
+                case 3:     // check for at least one uppercase letter
+                    let uppercaseFound = false;
+                    for(i = 0; i < password.length; i++) {
+                        if(password[i] == password[i].toUpperCase() && isNaN(password[i])) {
+                            uppercaseFound = true;
+                            break;
+                        }
+                    }
+
+                    if(!uppercaseFound) {
+                        errorMessage = errorMessage + "Password must include at least one uppercase\n";
+                    }
+
+                case 4:
+                    let numberFound = false;
+                    for(i = 0; i < password.length; i++) {
+                        if(!isNaN(password[i])) {
+                            numberFound = true;
+                            break;
+                        }
+                    }
+
+                    if(!numberFound) {
+                        errorMessage = errorMessage + "Password must include at least one number\n";
+                    }
+
+                default: 
+                    if(errorMessage.length == 0) {
+                            console.log("valid password");
+                            // turn on the button here or return true for the other input fields
+                    } else {
+                        errorTextNode.innerText = errorMessage;
+                        passwordError.appendChild(errorTextNode);
+                        passwordError.style.display = "";
+                    }
+            }
+        }
+
+		function inputSize(x) {
+			var input = document.getElementsByTagName("input");
+			if (x.matches) { // less than or equal to the viewport
+                for(i = 0; i < input.length; i++) {
+                    input[i].size = 10;
+                }
+                console.log("input size 1");
+			} else {
+                for(i = 0; i < input.length; i++) {
+                    input[i].size = 35;
+                }
+				console.log("input size 10");
+			}
+		}
+
+		var x = window.matchMedia("(max-width: 700px)");
+		inputSize(x) // Call listener function at run time
+		x.addListener(inputSize) // Attach listener function on state changes 
+	</script>
+</html>
