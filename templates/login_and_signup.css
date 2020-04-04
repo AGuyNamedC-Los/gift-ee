@@ -1,9 +1,9 @@
 body {
-	background-color: 	rgba(0, 60, 255, 0.521);
+	background-color: 	rgba(0, 60, 255, 0.582);
 }
 
 main {
-	margin: 15% 40% 15%;
+	margin: 5% 40% 15%;
 	padding-bottom: 2.5%;
 }
 
@@ -19,7 +19,7 @@ p {
 	background-color: white;
 	font-size: 400%;
 	border-color: white;
-	color: 	rgba(0, 60, 255, 0.521);
+	color: 	rgba(0, 60, 255, 0.582);
 	border-radius: 10px;
 }
 
@@ -54,11 +54,11 @@ fieldset {
 }
 
 .input_box:hover {
-	box-shadow:  0 0 0 2px rgba(0, 60, 255, 0.521);
+	box-shadow:  0 0 0 2px rgba(0, 60, 255, 0.582);
 }
 
 .input_box i {
-	color: 	rgba(0, 60, 255, 0.521);
+	color: 	rgba(0, 60, 255, 0.582);
 	margin-right: 2.5%;
 	font-size: 125%;
 }
@@ -77,9 +77,9 @@ fieldset {
 	padding-bottom: 2%; 
 }
 
-.login_btn {
+.login_btn, .sign_up_btn {
 	border-radius: 10px;
-	background-color: rgba(0, 60, 255, 0.521);
+	background-color: rgba(0, 60, 255, 0.582);
 	border: none;
 	color: white;
 	padding: 2% 20%;

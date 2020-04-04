@@ -32,7 +32,7 @@ userDB.on('load', (userDB) => {
     console.log("hi");// this event doesn't have a result
 });
 let temp_userDB = DataStore.create({filename: __dirname + '/temp_usersDB', timestampData: true, autoload: true});
-let options = { fieldName: 'createdAt', expireAfterSeconds: 60 };
+let options = { fieldName: 'createdAt', expireAfterSeconds: process.env.TIME_TO_DELETE };
 temp_userDB.ensureIndex({ fieldName: 'createdAt', expireAfterSeconds: 60 }, function (err) {	// adding an expiration date for automatic deletion of items
 });
 /*
