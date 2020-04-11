@@ -28,32 +28,33 @@
                             </div>
                             <div class="input_box">
 								<i class="fas fa-address-card"></i>
-								<input type="text", id="first_name", name="firstName", placeholder="First Name">
+								<input type="text", id="first_name", onblur="validFirstName()", name="firstName", placeholder="First Name">
                             </div>
                             <div class="input_box">
 								<i class="fas fa-address-card"></i>
-								<input type="text", id="last_name", name="lastName", placeholder="Last Name">
+								<input type="text", id="last_name", onblur="validLastName()",name="lastName", placeholder="Last Name">
                             </div>
 							<input type="submit", id="sign_up_btn", disabled="true", onmouseover="validCredentials()", value="Sign Up">
 					</fieldset>
                 </form>
-                <div id="password_error", style="display:none">
-                </div>
+                <div id="password_error", style="display:none"></div>
+                <div id="first_name_error", style="display:none"></div>
+                <div id="last_name_error", style="display:none"></div>
 			</div>
 		</main>
 	</body>
 	<script>
         var valid_password = "";    // bool flag for the function below
         function validPassword() {
-            var passwordErrorNode = document.getElementById("password_error");
+            let passwordErrorNode = document.getElementById("password_error");
             // remove all the previous errors if any
             let child = passwordErrorNode.lastElementChild;
             while(child) {
                 passwordErrorNode.removeChild(child);
                 child = passwordErrorNode.lastElementChild;
             }
-            errorTextNode = document.createElement("P");
-            var errorMessage = "";
+            let errorTextNode = document.createElement("P");
+            let errorMessage = "";
 			var passwordError = document.getElementById("password_error");
 			var badCharacters = ["/", "\\", "\'", "\"", " "];
             var password = document.getElementById("password").value;
@@ -105,32 +106,64 @@
 
         var valid_firstName = ""
         function validFirstName() {
+            let firstNameErrorNode = document.getElementById("first_name_error");
+            // remove all the previous errors if any
+            let child = firstNameErrorNode.lastElementChild;
+            while(child) {
+                firstNameErrorNode.removeChild(child);
+                child = firstNameErrorNode.lastElementChild;
+            }
+            let errorTextNode = document.createElement("P");
+            let errorMessage = "";
+			let firstNameError = document.getElementById("first_name_error");
             var firstName = document.getElementById("first_name").value;
             if(firstName != "") {
                 valid_firstName = true;
+                document.getElementsByClassName("input_box")[3].style.boxShadow = "0px 0px 0px 2px lightgray";
             } else {
+                errorMessage = "Please enter a first name";
                 valid_firstName = false;
+                errorTextNode.innerText = errorMessage;
+                firstNameError.appendChild(errorTextNode);
+                firstNameError.style.display = "";
+                document.getElementsByClassName("input_box")[3].style.boxShadow = "0px 0px 0px 2px red";
             }
         }
 
-        var valid_lastName = ""
+        var valid_lastName = "";
         function validLastName() {
+            let lastNameErrorNode = document.getElementById("last_name_error");
+            // remove all the previous errors if any
+            let child = lastNameErrorNode.lastElementChild;
+            while(child) {
+                lastNameErrorNode.removeChild(child);
+                child = lastNameErrorNode.lastElementChild;
+            }
+            let errorTextNode = document.createElement("P");
+            let errorMessage = "";
+			let lastNameError = document.getElementById("last_name_error");
             var lastName = document.getElementById("last_name").value;
             if(lastName != "") {
                 valid_lastName = true;
+                document.getElementsByClassName("input_box")[4].style.boxShadow = "0px 0px 0px 2px lightgray";
             } else {
+                errorMessage = "Please enter a last name";
                 valid_lastName = false;
+                errorTextNode.innerText = errorMessage;
+                lastNameError.appendChild(errorTextNode);
+                lastNameError.style.display = "";
+                document.getElementsByClassName("input_box")[4].style.boxShadow = "0px 0px 0px 2px red";
             }
         }
 
         function validCredentials() {
-            if(valid_password) {
+            if(valid_password && valid_firstName && valid_lastName) {
                 document.getElementById("sign_up_btn").disabled = false;
                 document.getElementById("sign_up_btn").style.backgroundColor = "rgba(0, 60, 255, 0.582)";
             } else {
                 document.getElementById("sign_up_btn").disabled = true;
                 document.getElementById("sign_up_btn").style.backgroundColor = "rgba(255, 0, 0, 0.726)";
-                console.log("BUTTON BROKEN");
+                console.log("first name: " + valid_firstName + ", last name: " + valid_lastName + ", password: " + valid_password);
             }
         }
 
@@ -140,12 +173,10 @@
                 for(i = 0; i < input.length; i++) {
                     input[i].size = 10;
                 }
-                console.log("input size 1");
 			} else {
                 for(i = 0; i < input.length; i++) {
                     input[i].size = 35;
                 }
-				console.log("input size 10");
 			}
 		}
 
