@@ -182,7 +182,7 @@ app.get('/', function (req, res) {
 	displays login page
 */
 app.get('/login', guestsOnlyMiddleware, function (req, res) {
-    res.render('login2.html', {user: req.session.user});
+    res.render('login.html', {user: req.session.user});
 	return;
 });
 

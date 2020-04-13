@@ -1,138 +1,130 @@
-/* ---------------------------------------------------------GENERAL--------------------------------------------------------- */
-body {
-	/*background-color: #4db8ff;
-	/*background-color: #f2f2f2;*/
+body{
+    margin: 0px;
+}
+
+h1, h2, p {
+    font-family: ubuntu;
+    margin: 1% 20%;
 }
 
 nav {
-	border: solid;
+    border-bottom: solid;
+    border-color: rgba(210, 211, 214, 0.582);
 }
 
-nav ul {
-	border: solid;
-	list-style: none;
-	text-align: center;
+nav div {
+    display: flex;
+    justify-content: center;
+    margin: 1% 20%;
+    align-items: baseline;
 }
 
-nav ul li {
-	display: inline-block; 
-	margin: 1% 2.5% 1%;
+nav div a {
+    border-radius: 7px;
+    border: solid;
+    padding: .5%;
+    margin: 1% .5%;
+    text-decoration: none;
+    color: blue;
 }
 
-nav ul li a {
-	text-decoration: none;
-	border: solid;
+a:nth-child(1) {
+    border: none;
+}
+
+a:nth-child(1) i {
+    color: 	rgba(0, 60, 255, 0.582);
+}
+
+a:nth-child(2) {
+    border: none;
+}
+
+a:nth-child(2) i {
+    color: orange;
+}
+
+a:nth-child(3) {
+    border: none;
+}
+
+a:nth-child(3) i{
+    color:rgba(5, 170, 120, 0.582);
+}
+
+a:visited {
+    color: black;
+}
+
+a:hover {
+    color: 	rgba(23, 8, 243, 0.747);
+}
+
+a:nth-child(4) {
+    border: none;
+    background-color: rgba(23, 8, 243, 0.747);
+    color: white;
+}
+
+a:nth-child(4):hover {
+    background-color: rgba(17, 0, 255, 0.788);
+}
+
+nav a:nth-child(5) {
+    border: none;
+    background-color:rgba(255, 51, 0, 0.651);
+    color: white;
+}
+
+nav a:nth-child(5):hover {
+    background-color:rgba(255, 51, 0, 0.767);
+    color: white;
 }
 
 main {
-	border: solid;
-	margin: 0% 22% 0%;
-	/*background: #86D4F9;*/
+    text-align: center;
+    /*margin: 0% 20%;*/
+}
+
+main div {
+    border-bottom: solid;
+    border-color: rgba(210, 211, 214, 0.582);
+}
+
+hr {
+    color: rgba(210, 211, 214, 0.582);
 }
 
 h1 {
-	text-align: center;
-	font-size: 50px;
+    font-size: 50px;
+    color: rgba(23, 8, 243, 0.747);
 }
 
 h2 {
-	text-align: center;
-	font-size: 35px;
+    font-size: 30px;
+    color: rgba(23, 8, 243, 0.747);
 }
 
-p {
-	text-align: center;
-	font-size: 23px;
+main p {
+    font-size: 18px;
 }
 
-/* ---------------------------------------------------------HOME PAGE--------------------------------------------------------- */
-.user_input {
-	text-align: center;
+main a {
+    display: flex;
+    justify-content: center;
+    margin: 1% 43%;
+    padding: .25% 0%;
+    text-decoration: none;
+    font-size: 18px;
+    background-color: rgba(23, 8, 243, 0.747);
+    border-radius: 7px;
 }
 
-label {
-	display: block;
+main a:hover {
+    color:white;
 }
 
-label p {
-	display: inline-block;
-}
-
-label input {
-	display: inline-block;
-}
-
-.login_button {
-	border: solid;
-}
-
-/* ---------------------------------------------------------LOGIN/SIGN_UP PAGES--------------------------------------------------------- */
-.user_input {
-	border: solid;
-	background: #7070db;
-}
-
-form {
-	background: white;
-	border-radius: 1.5%;
-	/*
-	position: fixed;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-	*/
-	padding: 2.5% 0% 2.5%;
-	margin: 10% 41% 10%;
-}
-
-legend {
-	font-size: 30px;
-	width: auto;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-input {		/* all input elements will look like this*/
-	width: 60%;
-	padding-top: 5px;
-	padding-bottom: 5px;
-}
-
-label:not(:nth-child(1)) {
-	padding-bottom: 2%;
-}
-
-label:nth-child(1) {
-	padding-top: 10%;
-	padding-bottom: 2%;
-}
-
-label:nth-last-child(2) {		/* label before the button */
-	padding-bottom: 10%;
-}
-
-.login_btn, .sign_up_btn{
-	margin-bottom: 10%;
-}
-
-/* ---------------------------------------------------------GIFT-EE_PROFILE PAGE--------------------------------------------------------- */
-table {
-	margin: 0 auto;
-	border: solid;
-	border-collapse: separate;
-}
-
-table thead tr th {
-	padding-top: 2%;
-	padding-bottom: 2%;
-	border: solid;
-}
-
-table tr {
-}
-
-table td {
-	border: solid;
-	padding-top: 1.5%;
-	padding-bottom: 1.5%;
+main a p {
+    display: inline-block;
+    color: white;
 }
