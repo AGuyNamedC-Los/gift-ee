@@ -83,14 +83,17 @@ nav a:nth-child(5):hover {
 }
 
 main {
-    border: solid;
     text-align: center;
-    margin: 0% 20%;
+    /*margin: 0% 20%;*/
 }
 
 main div {
     border-bottom: solid;
     border-color: rgba(210, 211, 214, 0.582);
+}
+
+hr {
+    color: rgba(210, 211, 214, 0.582);
 }
 
 h1 {
@@ -110,7 +113,7 @@ main p {
 main a {
     display: flex;
     justify-content: center;
-    margin: 3% 38%;
+    margin: 3% 43%;
     padding: .25% 0%;
     text-decoration: none;
     font-size: 18px;
