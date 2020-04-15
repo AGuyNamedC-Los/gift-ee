@@ -173,7 +173,7 @@ async function sendConfirmationCode(secretCode, email) {
 /* ----------------------------------------------------WEBPAGES---------------------------------------------------- */
 app.get('/', function (req, res) {
 	console.log("home: " + req.session.user.role);
-    res.render('home.html', {user: req.session.user});
+    res.render('home.njk', {user: req.session.user});
 	return;
 });
 

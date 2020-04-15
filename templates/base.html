@@ -48,16 +48,14 @@
 		
 		{% else %}
 			<nav>
-				<ul>
-					<li><a href="/">Home</a></li>
-					<li><a href="/profile">Profile</a></li>
-					<li><a href="/about">About</a></li>
-					<li>
-						<a onClick="document.getElementById('logout').submit()">Logout</a>
+				<div>
+					<a href="/">Home</a>
+					<a href="/profile">Profile</a>
+					<a href="/about">About</a>
+					<a href="/search">search</a>
+					<a onClick="document.getElementById('logout').submit()">Logout</a>
 						<form id="logout" action="logout_status" method="POST"></form>
-					</li>
-					<li><a href="/search">search</a></li>
-				</ul>
+				</div>
 			</nav>
 		{% endif %}
 		<main>
