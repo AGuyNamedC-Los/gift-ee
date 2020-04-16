@@ -18,20 +18,20 @@
             </div>
         </nav>
         <main>
-            <div class="grid-container">
-                <div>One</div>
-                <div>Two</div>
-                <div>Three</div>
-                <div>Four</div>
-                <div>Five</div>
-                <div>Six</div>
-                <div>Seven</div>
-                <div>Eight</div>
-              </div>
-
             <div class="gift-list">
                 <div class="gift-item">
                     <p onclick="revealContent(0)">Item Name</p>
+                    <div class="item-content">
+                        <p>Item Link</p>
+                        <p>Item Color</p>
+                        <p>Item Qty</p>
+                        <p>Item Size</p>
+                        <p>Delete</p>
+                    </div>
+                    <p class="gift-bottom">bottom</p>
+                </div>
+                <div class="gift-item">
+                    <p onclick="revealContent(1)">Item Name</p>
                     <div class="item-content">
                         <p>Item Link</p>
                         <p>Item Color</p>
@@ -55,7 +55,6 @@
             } else {
                 itemContent.style.display = "flex";
             }
-            
         }
     </script>
 </html>
