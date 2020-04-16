@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>gift-ee</title>
+		<link href="profile.css", type="text/css", rel="stylesheet">
+		<link rel="stylesheet", href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+		<link rel="stylesheet", type="text/css", href="//fonts.googleapis.com/css?family=Ubuntu">
+	</head>
+    <body>
+        <nav>
+            <div>
+                <a href="/"><i class="fas fa-gift"></i> Gift-ee</a>
+                <a href="/about"><i class="fas fa-info-circle"></i> About</a>
+                <a href="/search"><i class="fas fa-search"></i> Search</a>
+                <a class="login_btn", href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a class="signup_btn", href="/sign-up"><i class="fas fa-user-plus"></i> Sign Up</a>
+            </div>
+        </nav>
+        <main>
+            <div class="grid-container">
+                <div>One</div>
+                <div>Two</div>
+                <div>Three</div>
+                <div>Four</div>
+                <div>Five</div>
+                <div>Six</div>
+                <div>Seven</div>
+                <div>Eight</div>
+              </div>
+
+            <div class="gift-list">
+                <div class="gift-item">
+                    <p onclick="revealContent(0)">Item Name</p>
+                    <div class="item-content">
+                        <p>Item Link</p>
+                        <p>Item Color</p>
+                        <p>Item Qty</p>
+                        <p>Item Size</p>
+                        <p>Delete</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+	</body>
+
+    <script>
+        function revealContent(itemNum) {
+            let itemContent = document.getElementsByClassName("item-content")[itemNum];
+            console.log("got item number: " + itemNum);
+            if(itemContent.style.display == "none") {
+                itemContent.style.display = "flex";
+            } else if(itemContent.style.display == "flex") {
+                itemContent.style.display = "none";
+            } else {
+                itemContent.style.display = "flex";
+            }
+            
+        }
+    </script>
+</html>

@@ -1,9 +1,3 @@
-body{
-    margin: 0px;
-}
-
-h1, h2, p { margin: 1% 20%; }
-
 nav {
     border-bottom: solid;
     border-color: rgba(210, 211, 214, 0.582);
@@ -54,43 +48,55 @@ a:hover { color: rgba(23, 8, 243, 0.747); }
     color: white;
 }
 
-main { text-align: center; }
+/* PROFILE CSS */
+/*
+.grid-container {
 
-main div {
-    border-bottom: solid;
-    border-color: rgba(210, 211, 214, 0.582);
+    display: grid;
+    grid-template-columns: 2fr repeat(7, 1fr);
+  }
+  
+.grid-container {
+    border: 2px solid #f76707;
+    border-radius: 5px;
+    background-color: #fff4e6;
 }
 
-hr {
-    color: rgba(210, 211, 214, 0.582);
+.grid-container > div {
+    border: 2px solid #ffa94d;
+    border-radius: 5px;
+    background-color: #ffd8a8;
+    padding: 1em;
+    color: #d9480f;
 }
 
-h1 {
-    font-size: 50px;
-    color: rgba(23, 8, 243, 0.747);
+*/
+
+.gift-list {
+    border: solid;
+    text-align: center;
+    margin: auto;
 }
 
-h2 {
-    font-size: 30px;
-    color: rgba(23, 8, 243, 0.747);
-}
-
-main p { font-size: 20px; }
-
-main a {
-    display: flex;
-    justify-content: center;
-    margin: 1% 43%;
-    padding: .25% 0%;
-    text-decoration: none;
-    font-size: 18px;
-    background-color: rgba(23, 8, 243, 0.747);
-    border-radius: 7px;
-}
-
-main a:hover { color:white; }
-
-main a p {
+.gift-item > p {
     display: inline-block;
-    color: white;
+    border: solid;
+    padding: 1%;
+}
+
+.gift-item > p:hover {
+    cursor: pointer;
+}
+
+.item-content {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0% 42%;
+}
+
+.item-content p {
+    border: solid;
+    display: inline-block;
+    padding: 4% 0%;
 }

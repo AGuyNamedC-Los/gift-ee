@@ -25,9 +25,7 @@ p a i {
     padding: 2% 0%;
 }
 
-fieldset {
-    border: none;
-}
+fieldset { border: none; }
 
 .user_input p {
     font-size: 30px;
