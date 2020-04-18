@@ -19,8 +19,24 @@
         </nav>
         <main>
             <div class="gift-list">
+                {% for i in range(0, giftList.length) -%}
+                    <p>{{giftList[i].itemName}}</p>
+                    <div class="gift-top", onclick="revealContent({{i}})"></div>
+                    <div class="item-content">
+                        <p>{{giftList[i].link}}</p>
+                        <p>{{giftList[i].qty}}</p>
+                        <p>{{giftList[i].size}}</p>
+                        <p>{{giftList[i].color}}</p>
+                        <button type="submit">Delete</button>
+                    </div>
+                {%- endfor %}
+            </div>
+
+            <!--
+            <div class="gift-list">
                 <div class="gift-item">
-                    <p onclick="revealContent(0)">Item Name</p>
+                    <p class="item-name">Item Name</p>
+                    <div class="gift-top", onclick="revealContent(0)"></div>
                     <div class="item-content">
                         <p>Item Link</p>
                         <p>Item Color</p>
@@ -28,10 +44,11 @@
                         <p>Item Size</p>
                         <p>Delete</p>
                     </div>
-                    <p class="gift-bottom">bottom</p>
+                    <div class="gift-bottom", onclick="revealContent(0)"><p></p></div>
                 </div>
                 <div class="gift-item">
-                    <p onclick="revealContent(1)">Item Name</p>
+                    <p class="item-name">Item Name</p>
+                    <div class="gift-top", onclick="revealContent(1)"></div>
                     <div class="item-content">
                         <p>Item Link</p>
                         <p>Item Color</p>
@@ -39,8 +56,10 @@
                         <p>Item Size</p>
                         <p>Delete</p>
                     </div>
+                    <div class="gift-bottom", onclick="revealContent(1)"><p></p></div>
                 </div>
             </div>
+            -->
         </main>
 	</body>
 
