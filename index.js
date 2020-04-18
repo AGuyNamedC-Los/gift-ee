@@ -220,7 +220,7 @@ app.post('/login_status', express.urlencoded({extended:true}), async function(re
 						username: tempUserInfo.username
 					});
 					console.log("user upgraded to " + req.session.user.role);
-					res.render("gift-ee_profile.html", {user: req.session.user});
+					res.render("profile.njk", {user: req.session.user});
 					return;
 				});
 			} else {		// found temp_user but wrong password
@@ -255,7 +255,7 @@ app.post('/login_status', express.urlencoded({extended:true}), async function(re
 								username: userInfo.username
 							});
 							console.log("user upgraded to " + req.session.user.role);
-							res.render("gift-ee_profile.html", {user: req.session.user});
+							res.render("profile.njk", {user: req.session.user});
 							return;
 						});
 					} else {		// found user but wrong password
@@ -682,7 +682,7 @@ app.get('/profile', loggedInMiddleware, async function (req, res) {
 		}
 			
 		console.log(docs[0].giftListContent);
-		res.render("gift-ee_profile.html", {giftList: docs[0].giftListContent, user: req.session.user});
+		res.render("profile.njk", {giftList: docs[0].giftListContent, user: req.session.user});
 		return;
 	} catch (err) {
 		console.log("error");
