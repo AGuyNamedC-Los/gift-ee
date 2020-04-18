@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block metaStuff %}
+	<title>Profile</title>
+    <link href="profile.css", type="text/css", rel="stylesheet">
+{% endblock %}
+
+{% block main %}
+    <div class="gift-list">
+        {% for i in range(0, giftList.length) -%}
+            <div class=gift-item>
+                <p>{{giftList[i].itemName}}</p>
+                <div class="gift-top", onclick="revealContent({{i}})"></div>
+                <div class="item-content">
+                    <p>{{giftList[i].link}}</p>
+                    <p>{{giftList[i].qty}}</p>
+                    <p>{{giftList[i].size}}</p>
+                    <p>{{giftList[i].color}}</p>
+                    <button type="submit">Delete</button>
+                </div>
+                <div class="gift-bottom", onclick="revealContent({{i}})"></div>
+            </div>
+        {%- endfor %}
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    function revealContent(itemNum) {
+        let itemContent = document.getElementsByClassName("item-content")[itemNum];
+        console.log("got item number: " + itemNum);
+        if(itemContent.style.display == "none") {
+            itemContent.style.display = "flex";
+        } else if(itemContent.style.display == "flex") {
+            itemContent.style.display = "none";
+        } else {
+            itemContent.style.display = "flex";
+        }
+    }
+{% endblock %}
