@@ -22,15 +22,11 @@
 			
 		{% elif (user.role == "temp_user") %}
 			<nav>
-				<ul>
-					<li><a href="/">Home</a></li>
-					<li><a href="/about">About</a></li>
-					<li>
-						<a onClick="document.getElementById('logout').submit()">Logout</a>
-						<form id="logout" action="logout_status" method="POST"></form>
-					</li>
-					<li><a href="/search">Search</a></li>
-				</ul>
+				<a href="/"><i class="fas fa-gift"></i> Gift-ee</a>
+				<a href="/about"><i class="fas fa-info-circle"></i> About</a>
+				<a href="/search"><i class="fas fa-search"></i> Search</a>
+				<a onClick="document.getElementById('logout').submit()">Logout</a>
+					<form id="logout" action="logout_status" method="POST"></form>
 			</nav>
 			
 			<div class="user_input">
@@ -48,10 +44,10 @@
 		{% else %}
 			<nav>
 				<div>
-					<a href="/">Home</a>
+					<a href="/"><i class="fas fa-gift"></i> Gift-ee</a>
 					<a href="/profile">Profile</a>
-					<a href="/about">About</a>
-					<a href="/search">search</a>
+					<a href="/about"><i class="fas fa-info-circle"></i> About</a>
+					<a href="/search"><i class="fas fa-search"></i> Search</a>
 					<a onClick="document.getElementById('logout').submit()">Logout</a>
 						<form id="logout" action="logout_status" method="POST"></form>
 				</div>
