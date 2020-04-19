@@ -80,14 +80,6 @@
 	--trans4: rgba(255,255,255,0.4);
 }
 
-// Colors
-$bg-color: hsl(256,33,10);
-$dot-color: hsl(256,33,70);
-
-// Dimensions
-$dot-size: 1px;
-$dot-space: 22px;
-
 nav {
     border-bottom: solid;
     border-color: rgba(210, 211, 214, 0.582);
@@ -141,7 +133,7 @@ a:hover { color: rgba(23, 8, 243, 0.747); }
 /* PROFILE PAGE CSS */
 main {
     background-color: rgba(0, 60, 255, 0.582);
-    
+    height: 100vh;
 }
 
 .gift-list {
@@ -150,7 +142,7 @@ main {
     margin: auto;
 }
 
-.gift-item {
+.gift-item, .add-gift {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -167,7 +159,6 @@ main {
 
 .gift-top, .gift-bottom{
     border: solid;
-    border-radius: 7px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -175,13 +166,20 @@ main {
     background-color: var(--orange);
 }
 
+.gift-top:hover, .gift-bottom:hover {
+	cursor: pointer;
+}
+
 .gift-top {
-    padding: 2% 0%;
+	padding: 1.25% 0%;
+	margin: 0% 39%;
+	border-radius: 7px;
 }
 
 .gift-bottom {
     border: solid;
-    padding: 5% 0%;
+	padding: 5% 0%;
+	margin: 0% 40%;
     margin-bottom: 1%;
 }
 
@@ -205,3 +203,15 @@ main {
     padding: auto;
     background-color: white;
 }
+
+/* add-gift box */
+.item-content input {
+	border: solid;
+	border-radius: 7px;
+	margin: 1% 0%;
+}
+
+.add-gift .gift-bottom p:nth-child(2) i {
+	font-size: 40px;
+}
+

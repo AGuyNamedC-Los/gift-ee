@@ -19,18 +19,18 @@
         </nav>
         <main>
             <div class="gift-list">
-                <div class="gift-item">
-                    <p class="item-name">Item Name</p>
+                <form class="add-gift" action="added_gift_status" method="POST">
                     <div class="gift-top", onclick="revealContent(0)"></div>
-                    <div class="item-content">
-                        <p>Item Link</p>
-                        <p>Item Color</p>
-                        <p>Item Qty</p>
-                        <p>Item Size</p>
-                        <p>Delete</p>
-                    </div>
-                    <div class="gift-bottom", onclick="revealContent(0)"><p></p></div>
-                </div>
+                        <div class="item-content">
+                            <input type="text", id="item_name", name="itemName", placeholder="Item Name">
+                            <input type="text", id="link", name="link", placeholder="Link">
+                            <input type="text", id="quantity", name="qty", placeholder="Quantity">
+                            <input type="text", id="size", name="size", placeholder="Size">
+                            <input type="text", id="color", name="color", placeholder="Color">
+                            <input class="login_btn" type="submit" value="Add to gift-ee List">
+                        </div>
+                    <div class="gift-bottom", onclick="revealContent(0)"><i class="fas fa-plus"></i></div>
+                </form>
                 <div class="gift-item">
                     <p class="item-name">Item Name</p>
                     <div class="gift-top", onclick="revealContent(1)"></div>
@@ -42,6 +42,18 @@
                         <p>Delete</p>
                     </div>
                     <div class="gift-bottom", onclick="revealContent(1)"><p></p></div>
+                </div>
+                <div class="gift-item">
+                    <p class="item-name">Item Name</p>
+                    <div class="gift-top", onclick="revealContent(2)"></div>
+                    <div class="item-content">
+                        <p>Item Link</p>
+                        <p>Item Color</p>
+                        <p>Item Qty</p>
+                        <p>Item Size</p>
+                        <p>Delete</p>
+                    </div>
+                    <div class="gift-bottom", onclick="revealContent(2)"><p></p></div>
                 </div>
             </div>
         </main>
