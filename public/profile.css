@@ -137,12 +137,11 @@ main {
 }
 
 .gift-list {
-    border: solid;
     text-align: center;
-    margin: auto;
+	padding-top: .25%;
 }
 
-.gift-item {
+.gift-item, .add-gift {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -153,23 +152,25 @@ main {
 
 .item-name {
     display: inline-block;
-    background-color: white;
     margin: 1% auto;
 }
 
 .gift-top, .gift-bottom{
     border: solid;
-    border-radius: 7px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     margin: 0% 20%;
-    background-color: var(--orange);
+}
+
+.gift-top:hover, .gift-bottom:hover {
+	cursor: pointer;
 }
 
 .gift-top {
 	padding: 1.25% 0%;
 	margin: 0% 39%;
+	border-radius: 7px;
 }
 
 .gift-bottom {
@@ -177,6 +178,12 @@ main {
 	padding: 5% 0%;
 	margin: 0% 40%;
     margin-bottom: 1%;
+}
+
+.gift-bottom img {
+	object-fit: cover;
+	height: 10vh;
+	padding: 0% 1%;
 }
 
 .gift-item > p:hover {
@@ -195,7 +202,31 @@ main {
     border: solid;
     border-radius: 7px;
     display: inline-block;
-    margin: 1% 0%;
-    padding: auto;
-    background-color: white;
+    margin: 1% auto;
+    padding: .5% 1%;;
 }
+
+.gift-list i {
+	font-size: 30px;
+}
+
+/* add-gift box */
+.item-content input {
+	border: solid;
+	border-radius: 7px;
+	margin: 1% 0%;
+}
+
+.add-gift input[type=text] {
+	border: solid;
+	border-width: thin;
+	padding: .5% 1%;
+}
+
+.add-gift input[type=submit] {
+	border: solid;
+	border-width: thin;
+	padding: .5% 1%;
+	margin: 1% auto;
+}
+

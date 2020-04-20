@@ -137,9 +137,8 @@ main {
 }
 
 .gift-list {
-    border: solid;
     text-align: center;
-    margin: auto;
+	padding-top: .25%;
 }
 
 .gift-item, .add-gift {
@@ -153,7 +152,6 @@ main {
 
 .item-name {
     display: inline-block;
-    background-color: white;
     margin: 1% auto;
 }
 
@@ -163,7 +161,6 @@ main {
     flex-direction: column;
     justify-content: center;
     margin: 0% 20%;
-    background-color: var(--orange);
 }
 
 .gift-top:hover, .gift-bottom:hover {
@@ -178,9 +175,15 @@ main {
 
 .gift-bottom {
     border: solid;
-	padding: 5% 0%;
+	/* padding: 5% 0%; */
 	margin: 0% 40%;
     margin-bottom: 1%;
+}
+
+.gift-bottom img {
+	object-fit: cover;
+	height: 10vh;
+	padding: 0% 1%;
 }
 
 .gift-item > p:hover {
@@ -201,7 +204,6 @@ main {
     display: inline-block;
     margin: 1% auto;
     padding: .5% 1%;;
-    background-color: white;
 }
 
 .gift-list i {

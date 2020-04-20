@@ -700,6 +700,7 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 	let qty = req.body.qty;
 	let size = req.body.size;
 	let color = req.body.color;
+	let imgURL = req.body.imgURL;
 	let email = req.session.user.email;		// get the logged in user's email
 	
 	let newItem = {			
@@ -707,7 +708,10 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 		"link": link, 
 		"qty": qty, 
 		"size": size, 
-		"color": color
+		"color": color,
+		"giftColor": "",
+		"giftIMG": imgURL,
+		"giftListStyle": ""
 	};
 	
 	try {

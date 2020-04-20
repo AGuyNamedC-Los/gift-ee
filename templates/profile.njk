@@ -9,19 +9,40 @@
 
 
     <div class="gift-list">
-        {% for i in range(0, giftList.length) -%}
-            <div class=gift-item>
-                <p>{{giftList[i].itemName}}</p>
-                <div class="gift-top", onclick="revealContent({{i}})"></div>
+        <form class="add-gift" action="added_gift_status" method="POST">
+            <p>Add Gift to List</p>
+            <div class="gift-top", onclick="revealContent(0)"></div>
                 <div class="item-content">
-                    <p>{{giftList[i].link}}</p>
-                    <p>{{giftList[i].qty}}</p>
-                    <p>{{giftList[i].size}}</p>
-                    <p>{{giftList[i].color}}</p>
-                    <button type="submit">Delete</button>
+                    <input type="text", id="item_name", name="itemName", placeholder="Item Name">
+                    <input type="text", id="link", name="link", placeholder="Link">
+                    <input type="text", id="quantity", name="qty", placeholder="Quantity">
+                    <input type="text", id="size", name="size", placeholder="Size">
+                    <input type="text", id="color", name="color", placeholder="Color">
+                    <input type="text", id="imgURL", name="imgURL", placeholder="Image URL">
+                    <input type="submit" value="Add to gift-ee List">
                 </div>
-                <div class="gift-bottom", onclick="revealContent({{i}})"></div>
-            </div>
+            <div class="gift-bottom", onclick="revealContent(0)"><i class="fas fa-plus"></i></div>
+        </form>
+
+        {% for i in range(0, giftList.length) -%}
+            <form class="gift_list" action="deleted_gift_status" method="POST">
+                <div class="gift-item">
+                    <p>{{giftList[i].itemName}}</p>
+                    <div class="gift-top", onclick="revealContent({{i}}+1)"></div>
+                    <div class="item-content">
+                        <p>{{giftList[i].link}}</p>
+                        <p>{{giftList[i].qty}}</p>
+                        <p>{{giftList[i].size}}</p>
+                        <p>{{giftList[i].color}}</p>
+                        <button type="submit"><p><i class="fas fa-trash-alt"></i></p></button>
+                    </div>
+                    {% if giftList[i].giftIMG == "" %}
+                        <div class="gift-bottom", onclick="revealContent({{i}}+1)", style="padding: 7% 0%"></div>
+                    {% else %}
+                        <div class="gift-bottom", onclick="revealContent({{i}}+1)", style="padding: 0%;"><img src="{{giftList[i].giftIMG}}"/></div>
+                    {% endif %}
+                </div>
+            </form>
         {%- endfor %}
     </div>
 
