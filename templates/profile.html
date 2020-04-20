@@ -31,7 +31,7 @@
                             <input type="text", id="imgURL", name="imgURL", placeholder="Image URL">
                             <input type="submit" value="Add to gift-ee List">
                         </div>
-                    <div class="gift-bottom", onclick="revealContent(0)"><i class="fas fa-plus"></i></div>
+                    <div class="gift-bottom", onclick="revealContent(0)"><i class="fas fa-plus-square"></i></div>
                 </form>
                 <div class="gift-item">
                     <p class="item-name">Item Name</p>
@@ -64,13 +64,35 @@
     <script>
         function revealContent(itemNum) {
             let itemContent = document.getElementsByClassName("item-content")[itemNum];
+            let image = document.createElement('i');
             console.log("got item number: " + itemNum);
+            let giftBottom = document.getElementsByClassName("gift-bottom")[itemNum];
+            let child = giftBottom.lastElementChild;
+            if(itemNum == 0){
+                while(child) {
+                    giftBottom.removeChild(child);
+                    child = giftBottom.lastElementChild;
+                }
+            }
+
             if(itemContent.style.display == "none") {
                 itemContent.style.display = "flex";
+                if(itemNum == 0) {
+                    image.className = "fas fa-minus-square";
+                    giftBottom.appendChild(image);
+                }
             } else if(itemContent.style.display == "flex") {
                 itemContent.style.display = "none";
+                if(itemNum == 0) {
+                    image.className = "fas fa-plus-square";
+                    giftBottom.appendChild(image);
+                }
             } else {
                 itemContent.style.display = "flex";
+                if(itemNum == 0) {
+                    image.className = "fas fa-minus-square";
+                    giftBottom.appendChild(image);
+                }
             }
         }
     </script>
