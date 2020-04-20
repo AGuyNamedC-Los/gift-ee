@@ -199,9 +199,13 @@ main {
     border: solid;
     border-radius: 7px;
     display: inline-block;
-    margin: 1% 0%;
-    padding: auto;
+    margin: 1% auto;
+    padding: .5% 1%;;
     background-color: white;
+}
+
+.gift-list i {
+	font-size: 30px;
 }
 
 /* add-gift box */
@@ -211,7 +215,16 @@ main {
 	margin: 1% 0%;
 }
 
-.add-gift .gift-bottom p:nth-child(2) i {
-	font-size: 40px;
+.add-gift input[type=text] {
+	border: solid;
+	border-width: thin;
+	padding: .5% 1%;
+}
+
+.add-gift input[type=submit] {
+	border: solid;
+	border-width: thin;
+	padding: .5% 1%;
+	margin: 1% auto;
 }
 
