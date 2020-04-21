@@ -10,9 +10,9 @@
     <body>
         <nav>
             <div>
-                <a href="/"><i class="fas fa-gift"></i> Gift-ee</a>
-                <a href="/about"><i class="fas fa-info-circle"></i> About</a>
-                <a href="/search"><i class="fas fa-search"></i> Search</a>
+                <a class="home_btn", href="/"><i class="fas fa-gift"></i> Gift-ee</a>
+                <a class="about_btn", href="/about"><i class="fas fa-info-circle"></i> About</a>
+                <a class="search_btn", href="/search"><i class="fas fa-search"></i> Search</a>
                 <a class="login_btn", href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
                 <a class="signup_btn", href="/sign-up"><i class="fas fa-user-plus"></i> Sign Up</a>
             </div>
@@ -33,30 +33,34 @@
                         </div>
                     <div class="gift-bottom", onclick="revealContent(0)"><i class="fas fa-plus-square"></i></div>
                 </form>
-                <div class="gift-item">
-                    <p class="item-name">Item Name</p>
-                    <div class="gift-top", onclick="revealContent(1)"></div>
-                    <div class="item-content">
-                        <p>Item Link</p>
-                        <p>Item Color</p>
-                        <p>Item Qty</p>
-                        <p>Item Size</p>
-                        <p><i class="fas fa-trash-alt"></i></p>
+                <form action="deleted_gift_status" method="POST">
+                    <div class="gift-item">
+                        <p class="item-name">Item Name</p>
+                        <div class="gift-top", onclick="revealContent(1)"></div>
+                        <div class="item-content">
+                            <a href="https://drop.com/buy/massdrop-sennheiser-hd6xx" target="_blank">Item Link</a>
+                            <p>Item Color</p>
+                            <p>Item Qty</p>
+                            <p>Item Size</p>
+                            <p><i class="fas fa-trash-alt"></i></p>
+                        </div>
+                        <div class="gift-bottom", onclick="revealContent(1)"><img src="https://massdrop-s3.imgix.net/product-images/massdrop-sennheiser-hd6xx/FP/cJolRuxYSgqdFtmFawp8_yJ6M80CfTZGYMcNKc5of_0cYrqmTrQFOf4cbRVO6t_H6xx%20Reshoot32572.png?auto=format&fm=jpg&fit=fill&w=820&h=547&bg=f0f0f0&dpr=1&q=70" alt="My Image"/></div>
                     </div>
-                    <div class="gift-bottom", onclick="revealContent(1)"><img src="https://massdrop-s3.imgix.net/product-images/massdrop-sennheiser-hd6xx/FP/cJolRuxYSgqdFtmFawp8_yJ6M80CfTZGYMcNKc5of_0cYrqmTrQFOf4cbRVO6t_H6xx%20Reshoot32572.png?auto=format&fm=jpg&fit=fill&w=820&h=547&bg=f0f0f0&dpr=1&q=70" alt="My Image"/></div>
-                </div>
-                <div class="gift-item">
-                    <p class="item-name">Item Name</p>
-                    <div class="gift-top", onclick="revealContent(2)"></div>
-                    <div class="item-content">
-                        <p>Item Link</p>
-                        <p>Item Color</p>
-                        <p>Item Qty</p>
-                        <p>Item Size</p>
-                        <p><i class="fas fa-trash-alt"></i></p>
+                </form>
+                <form action="deleted_gift_status" method="POST">
+                    <div class="gift-item">
+                        <p class="item-name">Item Name</p>
+                        <div class="gift-top", onclick="revealContent(2)"></div>
+                        <div class="item-content">
+                            <a href="https://drop.com/buy/massdrop-sennheiser-hd6xx" target="_blank">Item Link</a>
+                            <p>Item Color</p>
+                            <p>Item Qty</p>
+                            <p>Item Size</p>
+                            <p onclick="deleteFunction(2)"><i class="fas fa-trash-alt"></i></p>
+                        </div>
+                        <div class="gift-bottom", onclick="revealContent(2)"><i class="fas fa-pencil-alt"></i></div>
                     </div>
-                    <div class="gift-bottom", onclick="revealContent(2)"><i class="fas fa-pencil-alt"></i></div>
-                </div>
+                </form>
             </div>
         </main>
 	</body>
@@ -94,6 +98,12 @@
                     giftBottom.appendChild(image);
                 }
             }
+        }
+
+        function deleteFunction(itemNum) {
+            let itemToDelete = document.getElementsByTagName("form");
+            itemToDelete[itemNum].submit();
+            console.log("item deleted");
         }
     </script>
 </html>

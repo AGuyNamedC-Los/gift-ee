@@ -25,7 +25,7 @@
         </form>
 
         {% for i in range(0, giftList.length) -%}
-            <form class="gift_list" action="deleted_gift_status" method="POST">
+            <form class="gift-form" action="deleted_gift_status" method="POST">
                 <div class="gift-item">
                     <p>{{giftList[i].itemName}}</p>
                     <div class="gift-top", onclick="revealContent({{i}}+1)"></div>
@@ -34,7 +34,7 @@
                         <p>{{giftList[i].qty}}</p>
                         <p>{{giftList[i].size}}</p>
                         <p>{{giftList[i].color}}</p>
-                        <button type="submit"><p><i class="fas fa-trash-alt"></i></p></button>
+                        <p onclick="deleteFunction({{i}})"><i class="fas fa-trash-alt"></i></p>
                     </div>
                     {% if giftList[i].giftIMG == "" %}
                         <div class="gift-bottom", onclick="revealContent({{i}}+1)", style="padding: 7% 0%"></div>
@@ -49,37 +49,43 @@
 {% endblock %}
 
 {% block script %}
-    function revealContent(itemNum) {
-        let itemContent = document.getElementsByClassName("item-content")[itemNum];
-        let image = document.createElement('i');
-        console.log("got item number: " + itemNum);
-        let giftBottom = document.getElementsByClassName("gift-bottom")[itemNum];
-        let child = giftBottom.lastElementChild;
-        if(itemNum == 0){
-            while(child) {
-                giftBottom.removeChild(child);
-                child = giftBottom.lastElementChild;
-            }
-        }
-
-        if(itemContent.style.display == "none") {
-            itemContent.style.display = "flex";
-            if(itemNum == 0) {
-                image.className = "fas fa-minus-square";
-                giftBottom.appendChild(image);
-            }
-        } else if(itemContent.style.display == "flex") {
-            itemContent.style.display = "none";
-            if(itemNum == 0) {
-                image.className = "fas fa-plus-square";
-                giftBottom.appendChild(image);
-            }
-        } else {
-            itemContent.style.display = "flex";
-            if(itemNum == 0) {
-                image.className = "fas fa-minus-square";
-                giftBottom.appendChild(image);
-            }
+function revealContent(itemNum) {
+    let itemContent = document.getElementsByClassName("item-content")[itemNum];
+    let image = document.createElement('i');
+    console.log("got item number: " + itemNum);
+    let giftBottom = document.getElementsByClassName("gift-bottom")[itemNum];
+    let child = giftBottom.lastElementChild;
+    if(itemNum == 0){
+        while(child) {
+            giftBottom.removeChild(child);
+            child = giftBottom.lastElementChild;
         }
     }
+
+    if(itemContent.style.display == "none") {
+        itemContent.style.display = "flex";
+        if(itemNum == 0) {
+            image.className = "fas fa-minus-square";
+            giftBottom.appendChild(image);
+        }
+    } else if(itemContent.style.display == "flex") {
+        itemContent.style.display = "none";
+        if(itemNum == 0) {
+            image.className = "fas fa-plus-square";
+            giftBottom.appendChild(image);
+        }
+    } else {
+        itemContent.style.display = "flex";
+        if(itemNum == 0) {
+            image.className = "fas fa-minus-square";
+            giftBottom.appendChild(image);
+        }
+    }
+}
+
+function deleteFunction(index) {
+    let itemToDelete = document.getElementsByClassName("gift-form");
+    itemToDelete[index].submit();
+    console.log("item deleted: " + index);
+}
 {% endblock %}
