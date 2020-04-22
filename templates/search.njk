@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block metaStuff%}
+	<title>Search</title>
+	<link href="gift-ee.css", type="text/css", rel="stylesheet">
+{% endblock %}
+
+{% block main %}
+	<h1>Search for user's profiles</h1>
+	<input type="text", id="search", name="searchText", placeholder="Username">
+	<p>{{usernames}}</p>
+{% endblock %}
+
+{% block script %}
+
+	var search = document.getElementById('search');
+	var usernames = [];
+	usernames[0] = ('{{usernames[0]}}');
+	async function getUserNames(searchText) {
+		let matches = usernames.filter(username => {
+			const regex = new RegExp(`^${searchText}`,`gi`);
+			console.log(username + " =? " + regex);
+			return username.match(regex);
+		});
+
+		if(searchText.length == 0) {
+			matches = [];
+		}
+		console.log(matches);
+
+	}
+
+	search.addEventListener('input', () => getUserNames(search.value));
+
+	
+
+{% endblock %}
