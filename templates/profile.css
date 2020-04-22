@@ -1,88 +1,7 @@
-:root {
-	--ambrosia:						#FCDBBA;
-	--apricot: 						#FF8652;
-	--aubergine: 					#6A2352;
-	--auburn: 						#A12F2F;
-	--asparagus: 					#A0C259;
-	--beetroot:						#7F0421;
-	--blue-tack: 					#82BFE0;
-	--bloom:							#363A57;
-	--blush: 							#D67B71;
-	--bronze:							#C27940;
-	--bud:								#94C15C;
-	--burnt-orange:				#FF5F00;
-	--butter:							#F2C94C;
-	--strawberry-yogurt:	#E4BCAD;
-	--carmine:						#9A133E;
-	--chocolate: 					#8F5D38;
-	--chestnut: 					#81291F;
-	--clay: 							#7D6050;
-	--conker: 						#6F3131;
-	--coral: 							#EB4444;
-	--dusty-purple: 			#7D6391;
-	--dusty-pink: 				#E4ADAD;
-	--emerald: 						#55B95F;
-	--fern:								#4F8D08;
-	--forest: 						#2E644A;
-	--fudge:							#C28742;
-	--grassy: 						#A8D363;
-	--green:							#62B90A;
-	--hazelnut: 					#D08E5A;
-	--ink:								#292C31;
-	--ivory:							#F2EFE3;
-	--lapis:							#2B4D8D;
-	--leafy:							#318553;
-	--lemon:							#EAFC7E;
-	--lime: 							#73D645;
-	--limestone:					#C9C5B5;
-	--magenta:						#BC2767;
-	--meadow:							#7A9A3E;
-	--melon:							#F2994A;
-	--midnight:						#1B3955;
-	--mink:								#E8C9A1;
-	--mint:								#C4EA70;
-	--moss:								#7DB21C;
-	--mushroom:						#EDE8D5;
-	--navy:								#363A57;
-	--orange:							#FD8A04;
-	--pale-lemon:					#F4FFDC;
-	--peach:							#FFB190;
-	--pond-bottom:				#264A46;
-	--powder-blue:				#B5D0E0;
-	--powder-pink:				#FBD1D1;
-	--primrose:						#E1F7B0;
-	--purple:							#A95AF3;
-	--purple-slate:				#545375;
-	--rainforest:					#25422E;
-	--raspberry-jam:			#3C0D2B;
-	--robins-egg:					#B8DEE0;
-	--rouge:							#CC3737;
-	--royal:							#4169E1;
-	--ruby:								#D1314B;
-	--sage:								#87A376;
-	--sakura:							#FFE4E4;
-	--sea-glass:					#7FD1AE;
-	--sea-foam:						#5D998B;
-	--sea-fog:						#758C92;
-	--slate:							#7184A5;
-	--spearmint:					#94E0CF;
-	--spring:							#5ACB65;
-	--succulent:					#83A944;
-	--twilight:						#203763;
-	--vavavoom:						#BF0D0D;
-	--white:							#FFFFFF;
-	--yellow:							#FFE03D;
-	
-	--trans: transparent;
-	--trans05: rgba(255,255,255,0.05);
-	--trans1: rgba(255,255,255,0.1);
-	--trans2: rgba(255,255,255,0.2);
-	--trans4: rgba(255,255,255,0.4);
-}
-
 nav {
-    border-bottom: solid;
-    border-color: rgba(210, 211, 214, 0.582);
+    border: solid;
+	border-color: rgba(210, 211, 214, 0.582);
+	background-color: white;
 }
 
 nav div {
@@ -101,17 +20,21 @@ nav div a {
     color: black;
 }
 
-a:nth-child(1) { border: none; }
+.home_btn { border: none; }
 
-a:nth-child(1) i { color: 	rgba(0, 60, 255, 0.582); }
+.home_btn i { color: rgba(0, 60, 255, 0.582); }
 
-a:nth-child(2) { border: none; }
+.about_btn { border: none; }
 
-a:nth-child(2) i { color: orange; }
+.about_btn i { color: orange; }
 
-a:nth-child(3) { border: none; }
+.profile_btn { border: none; }
 
-a:nth-child(3) i{ color:rgba(5, 170, 120, 0.582); }
+.profile_btn i{ color: rgba(80, 5, 129, 0.582);}
+
+.search_btn { border: none; }
+
+.search_btn i { color:rgba(5, 170, 120, 0.582); }
 
 nav div a:hover { color: rgba(23, 8, 243, 0.747); }
 
@@ -131,10 +54,12 @@ nav div a:hover { color: rgba(23, 8, 243, 0.747); }
 }
 
 /* PROFILE PAGE CSS */
-main {
-    background-color: rgba(0, 60, 255, 0.582);
-    height: 100vh;
+body {
+	background-color: rgba(0, 60, 255, 0.582);
+	margin: 0px;
 }
+
+main { height: 100vh; }
 
 .gift-list {
     text-align: center;

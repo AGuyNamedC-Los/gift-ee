@@ -6,8 +6,6 @@
 {% endblock %}
 
 {% block main %}
-
-
     <div class="gift-list">
         <form class="add-gift" action="added_gift_status" method="POST">
             <p>Add Gift to List</p>
@@ -18,6 +16,7 @@
                     <input type="text", id="quantity", name="qty", placeholder="Quantity">
                     <input type="text", id="size", name="size", placeholder="Size">
                     <input type="text", id="color", name="color", placeholder="Color">
+                    <input type="text", id="price", name="price", placeholder="Price">
                     <input type="text", id="imgURL", name="imgURL", placeholder="Image URL">
                     <input type="submit" value="Add to gift-ee List">
                 </div>
@@ -30,10 +29,11 @@
                     <p>{{giftList[i].itemName}}</p>
                     <div class="gift-top", onclick="revealContent({{i}}+1)"></div>
                     <div class="item-content">
-                        <a href="{{giftList[i].link}}" target="_blank">Item Link</a>
+                        <a href="{{giftList[i].link}}" target="_blank">Store Link</a>
                         <p>{{giftList[i].qty}}</p>
                         <p>{{giftList[i].size}}</p>
                         <p>{{giftList[i].color}}</p>
+                        <p>{{giftList[i].price}}</p>
                         <p onclick="deleteFunction({{i}})"><i class="fas fa-trash-alt"></i></p>
                     </div>
                     {% if giftList[i].giftIMG == "" %}

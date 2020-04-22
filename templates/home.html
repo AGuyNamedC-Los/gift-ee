@@ -10,15 +10,48 @@
     <body>
         <nav>
             <div>
-                <a href="/"><i class="fas fa-gift"></i> Gift-ee</a>
-                <a href="/about"><i class="fas fa-info-circle"></i> About</a>
-                <a href="/search"><i class="fas fa-search"></i> Search</a>
+                <a class="home_btn", href="/"><i class="fas fa-gift"></i> Gift-ee</a>
+                <a class="about_btn", href="/about"><i class="fas fa-info-circle"></i> About</a>
+                <a class="search_btn", href="/search"><i class="fas fa-search"></i> Search</a>
                 <a class="login_btn", href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
                 <a class="signup_btn", href="/sign-up"><i class="fas fa-user-plus"></i> Sign Up</a>
             </div>
         </nav>
         <main>
             <h1>Gift-ee!</h1>
+            <div class="slideShow">
+                <div class="slide">
+                    <h2>Build your own gift list!</h2>
+                    <p>
+                        Don't be tied up to managing multiple website store's wish lists. Gift-ee lets you manage one 
+                        gift list and can include items from any number of online stores no matter how obscure they are!
+                    </p>
+                    <div class="store-logos">
+                        <i class="fab fa-amazon"></i>
+                        <i class="fab fa-steam"></i>
+                        <img src="https://s3.amazonaws.com/images.gearjunkie.com/uploads/2019/11/backcountry-logo1.jpg" alt="backcountry">
+                        <img src="https://lh3.googleusercontent.com/proxy/pIB95Hr7cjhRxQweinCWmYSP1RK8ZMxSYc3CyU8fgvaFeKDMLqciANmi_TpoXwyCAPdt2Q40eeucgf-gw2FllweoL57p-Dvl8-geKDQVQtf_P2h2XUcs" alt="nike">
+                    </div>
+                    <i class="fas fa-chevron-down"></i><br>
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div class="slide", style="display: none;">
+                    <h2>Creating your own gift list is easy!</h2>
+                    <p></p>
+                </div>
+                <div class="slide", style="display: none;">
+                    <h2>Share your gift list with your friends and family!</h2>
+                    <p></p>
+                </div>
+            </div>
+            <div class="slideShow-btns">
+                <button onclick="slideChoice(0)"></button>
+                <button onclick="slideChoice(1)"></button>
+                <button onclick="slideChoice(2)"></button>
+            </div>
+           
+            <!--
+
             <p>Build your own personalized gift list</p>
             <p>Include items from any shopping website!</p>
             <p>Share with your friends and family</p>
@@ -31,6 +64,20 @@
             <hr>
             <h2>Already have an account?</h2>
             <a class="login_btn", href="/login"><p>LOGIN</p></a>
+            -->
+
         </main>
-	</body>
+    </body>
+    
+    <script>
+        function slideChoice(index) {
+            let slides = document.getElementsByClassName("slide");
+            for(i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+
+            slides[index].style.display = "";
+        }
+
+    </script>
 </html>

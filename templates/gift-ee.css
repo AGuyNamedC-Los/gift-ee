@@ -2,11 +2,10 @@ body{
     margin: 0px;
 }
 
-h1, h2, p { margin: 1% 20%; }
-
 nav {
-    border-bottom: solid;
-    border-color: rgba(210, 211, 214, 0.582);
+    border: solid;
+	border-color: rgba(210, 211, 214, 0.582);
+	background-color: white;
 }
 
 nav div {
@@ -25,19 +24,23 @@ nav div a {
     color: black;
 }
 
-a:nth-child(1) { border: none; }
+.home_btn { border: none; }
 
-a:nth-child(1) i { color: 	rgba(0, 60, 255, 0.582); }
+.home_btn i { color: rgba(0, 60, 255, 0.582); }
 
-a:nth-child(2) { border: none; }
+.about_btn { border: none; }
 
-a:nth-child(2) i { color: orange; }
+.about_btn i { color: orange; }
 
-a:nth-child(3) { border: none; }
+.profile_btn { border: none; }
 
-a:nth-child(3) i{ color:rgba(5, 170, 120, 0.582); }
+.profile_btn i{ color: rgba(80, 5, 129, 0.582);}
 
-a:hover { color: rgba(23, 8, 243, 0.747); }
+.search_btn { border: none; }
+
+.search_btn i { color:rgba(5, 170, 120, 0.582); }
+
+nav div a:hover { color: rgba(23, 8, 243, 0.747); }
 
 .login_btn { border: none; }
 
@@ -56,41 +59,52 @@ a:hover { color: rgba(23, 8, 243, 0.747); }
 
 main { text-align: center; }
 
-main div {
-    border-bottom: solid;
-    border-color: rgba(210, 211, 214, 0.582);
+.slideShow {
+    border: solid;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 }
 
-hr {
-    color: rgba(210, 211, 214, 0.582);
+.slide {
+    width: 30%;
 }
 
-h1 {
-    font-size: 50px;
-    color: rgba(23, 8, 243, 0.747);
+.slide p, .slide h2 {
+    text-align: center;
 }
 
-h2 {
-    font-size: 30px;
-    color: rgba(23, 8, 243, 0.747);
-}
-
-main p { font-size: 20px; }
-
-main a {
+.store-logos {
     display: flex;
     justify-content: center;
-    margin: 1% 43%;
-    padding: .25% 0%;
-    text-decoration: none;
-    font-size: 18px;
-    background-color: rgba(23, 8, 243, 0.747);
-    border-radius: 7px;
+    align-items: baseline;
+    justify-content: space-evenly;
 }
 
-main a:hover { color:white; }
+.store-logos i, .store-logos img {
+}
 
-main a p {
-    display: inline-block;
-    color: white;
+.slide i {
+    font-size: 400%;
+}
+
+.store-logos img {
+    height: 6vh;
+}
+
+.slideShow-btns {
+    display: flex;
+    justify-content: center;
+}
+
+.slideShow-btns button {
+    border: solid;
+    border-width: thin;
+    border-radius: 50%;
+    padding: 5px;
+    margin: 1% .5%;
+}
+
+.slideShow-btns button:hover {
+    cursor: pointer;
 }
