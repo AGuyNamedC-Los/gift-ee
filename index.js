@@ -24,7 +24,7 @@ const DataStore = require('nedb-promises');
 async function loadDatabases() {
 	
 }
-let userDB = DataStore.create({filename: __dirname + '/usersDB', autoload: true});
+let userDB = DataStore.create({filename: __dirname + '/usersDB.json', autoload: true});
 userDB.on('update', (DataStore, result, query, update, options) => {
 	console.log("hi");
 });
@@ -448,8 +448,8 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 			"username": username,
 			"password": hashedPassword,
 			"emailConfirmation": hash(email+username),
-			"followerTotal": 0,
-			"followingTotal": 0,
+			"followerTotal": "0",
+			"followingTotal": "0",
 			"followerList": [],
 			"followingList": [],
 			"giftListContent": []
@@ -834,9 +834,23 @@ app.get('/userlist', function (req, res) {
 /* 
 	allows users and guests to search for user's gift list
  */
-app.get('/search', function (req, res) {
-	res.render('search.html', {user: req.session.user});
-	return;
+app.get('/search', async function (req, res) {
+	try {
+		let usernamesList = [];
+		let docs = await userDB.find({});
+		for(i = 0; i < docs.length; i++) {
+			console.log(docs[i].username);
+			usernamesList[i] = docs[i].username;
+			console.log(usernamesList);
+		}
+		console.log(usernamesList);
+		res.render('search.njk', {user: req.session.user, usernames: usernamesList});
+		return;
+	} catch(err) {
+		console.log(err);
+		res.render("error.html");
+		return;
+	}
 });
 
 /*
