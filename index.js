@@ -807,7 +807,7 @@ app.post('/deleted_gift_status', loggedInMiddleware, express.urlencoded({extende
 	displays the about page
 */
 app.get('/about', function (req, res) {
-    res.render('about.html', {user: req.session.user});
+    res.render('about.njk', {user: req.session.user});
 	return;
 });
 
