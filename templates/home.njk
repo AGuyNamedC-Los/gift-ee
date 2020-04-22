@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block main %}
-<h1>Gift-ee!</h1>
+	<h1>Gift-ee!</h1>
 	<div class="slideShow">
 		<div class="slide">
 			<h2>Build your own gift list!</h2>
@@ -15,10 +15,11 @@
 				gift list and can include items from any number of online stores no matter how obscure they are!
 			</p>
 			<div class="store-logos">
-				<i class="fab fa-amazon"></i>
-				<i class="fab fa-steam"></i>
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQOVmfT_FI76xMfnYymgTnJF6zFxVYmBDGtwkmAY3jrBU_icaI2&usqp=CAU", alt="amazon">
+				<img src="https://logodix.com/logo/881341.jpg", alt="steam"/>
 				<img src="https://s3.amazonaws.com/images.gearjunkie.com/uploads/2019/11/backcountry-logo1.jpg" alt="backcountry">
-				<img src="https://lh3.googleusercontent.com/proxy/pIB95Hr7cjhRxQweinCWmYSP1RK8ZMxSYc3CyU8fgvaFeKDMLqciANmi_TpoXwyCAPdt2Q40eeucgf-gw2FllweoL57p-Dvl8-geKDQVQtf_P2h2XUcs" alt="nike">
+				<img src="https://1000logos.net/wp-content/uploads/2017/03/Nike-Logo.png" alt="nike">
+				<img src="https://cdn.thecollegeinvestor.com/wp-content/uploads/2013/04/JCPenny-Logo.jpg", alt="jcp">
 			</div>
 			<i class="fas fa-chevron-down"></i><br>
 			<i class="fas fa-gift"></i>
@@ -37,6 +38,17 @@
 		<button onclick="slideChoice(1)"></button>
 		<button onclick="slideChoice(2)"></button>
 	</div>
+
+	<h2>This website was creating using</h2>
+	<div class="tools">
+		<img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png", alt="js"/>
+		<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/HTML5_logo_and_wordmark.svg/1200px-HTML5_logo_and_wordmark.svg.png", alt="html5">
+		<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/CSS3_logo_and_wordmark.svg/1200px-CSS3_logo_and_wordmark.svg.png", alt="css">
+		<img src="https://img.stackshare.io/service/1637/Microsoft.VisualStudio.Services.Icons.Default", alt="nunjucks">
+	</div>
+
+	<h2>If you'd like to see more projects made by me please checkout my github</h2>
+	<a href="https://github.com/AGuyNamedC-Los", target="_blank"><img src="https://pngimg.com/uploads/github/github_PNG20.png", alt="github"></a>
 {% endblock %}
 
 {% script %}

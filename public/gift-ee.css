@@ -1,6 +1,4 @@
-body{
-    margin: 0px;
-}
+body{ margin: 0px; }
 
 nav {
     border: solid;
@@ -81,9 +79,6 @@ main { text-align: center; }
     justify-content: space-evenly;
 }
 
-.store-logos i, .store-logos img {
-}
-
 .slide i {
     font-size: 400%;
 }
@@ -107,4 +102,8 @@ main { text-align: center; }
 
 .slideShow-btns button:hover {
     cursor: pointer;
+}
+
+.tools img, a img{
+    height: 7vh;
 }
