@@ -108,3 +108,7 @@ main { text-align: center; }
 .slideShow-btns button:hover {
     cursor: pointer;
 }
+
+.tools img, a img{
+    height: 7vh;
+}
