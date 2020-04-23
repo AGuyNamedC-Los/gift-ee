@@ -859,6 +859,7 @@ app.get('/search', async function (req, res) {
 */
 app.post('/search_results', express.urlencoded({extended:true}), async function(req, res) {
 	let username = req.body.username;
+	console.log("username: " + username);
 
 	try {
 		let docs = await userDB.find({'username': username});

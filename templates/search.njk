@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block script %}
-
+<script>
 	var search = document.getElementById('search');
 	var usernameListElem = document.getElementById("usernameList");
 	var usernames = [];
@@ -30,6 +30,7 @@
 		if(searchText.length == 0) {
 			matches = [];
 			usernameListElem.innerHTML = " ";
+			return;
 		}
 		console.log(matches);
 		outputHTML(matches);
@@ -37,11 +38,21 @@
 
 	const outputHTML = matches => {
 		if(matches.length > 0) {
-		var html = matches.map(match => `<p>${match}</p>`).join(" ");
+			var html = matches.map(match => 
+				`
+				<form action="search_results" method="POST">
+					<input style="display: none;" type="text" id="username" name="username" value="${match}">
+					<input type="submit" value="${match}">
+				</form>
+				`
+				
+				).join(" ");
+			usernameList.innerHTML = html;
+		} else {
+			usernameList.innerHTML = "no users with that name";
 		}
-
-		usernameList.innerHTML = html;
 	}
 
 	search.addEventListener('input', () => getUserNames(search.value));
+</script>
 {% endblock %}

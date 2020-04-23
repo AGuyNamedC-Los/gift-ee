@@ -49,43 +49,46 @@
 {% endblock %}
 
 {% block script %}
-function revealContent(itemNum) {
-    let itemContent = document.getElementsByClassName("item-content")[itemNum];
-    let image = document.createElement('i');
-    console.log("got item number: " + itemNum);
-    let giftBottom = document.getElementsByClassName("gift-bottom")[itemNum];
-    let child = giftBottom.lastElementChild;
-    if(itemNum == 0){
-        while(child) {
-            giftBottom.removeChild(child);
-            child = giftBottom.lastElementChild;
+<script>
+    function revealContent(itemNum) {
+        let itemContent = document.getElementsByClassName("item-content")[itemNum];
+        let image = document.createElement('i');
+        console.log("got item number: " + itemNum);
+        let giftBottom = document.getElementsByClassName("gift-bottom")[itemNum];
+        let child = giftBottom.lastElementChild;
+        if(itemNum == 0){
+            while(child) {
+                giftBottom.removeChild(child);
+                child = giftBottom.lastElementChild;
+            }
+        }
+
+        if(itemContent.style.display == "none") {
+            itemContent.style.display = "flex";
+            if(itemNum == 0) {
+                image.className = "fas fa-minus-square";
+                giftBottom.appendChild(image);
+            }
+        } else if(itemContent.style.display == "flex") {
+            itemContent.style.display = "none";
+            if(itemNum == 0) {
+                image.className = "fas fa-plus-square";
+                giftBottom.appendChild(image);
+            }
+        } else {
+            itemContent.style.display = "flex";
+            if(itemNum == 0) {
+                image.className = "fas fa-minus-square";
+                giftBottom.appendChild(image);
+            }
         }
     }
 
-    if(itemContent.style.display == "none") {
-        itemContent.style.display = "flex";
-        if(itemNum == 0) {
-            image.className = "fas fa-minus-square";
-            giftBottom.appendChild(image);
-        }
-    } else if(itemContent.style.display == "flex") {
-        itemContent.style.display = "none";
-        if(itemNum == 0) {
-            image.className = "fas fa-plus-square";
-            giftBottom.appendChild(image);
-        }
-    } else {
-        itemContent.style.display = "flex";
-        if(itemNum == 0) {
-            image.className = "fas fa-minus-square";
-            giftBottom.appendChild(image);
-        }
+    function deleteFunction(index) {
+        let itemToDelete = document.getElementsByClassName("gift-form");
+        itemToDelete[index].submit();
+        console.log("item deleted: " + index);
     }
-}
 
-function deleteFunction(index) {
-    let itemToDelete = document.getElementsByClassName("gift-form");
-    itemToDelete[index].submit();
-    console.log("item deleted: " + index);
-}
+</script>
 {% endblock %}

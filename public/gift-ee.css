@@ -44,6 +44,8 @@ nav div a:hover { color: rgba(23, 8, 243, 0.747); }
 
 .login_btn i { color: rgba(17, 0, 255, 0.788); }
 
+/* HOME PAGE */
+
 .signup_btn {
     border: none;
     background-color: rgba(23, 8, 243, 0.747);
@@ -108,4 +110,4 @@ main { text-align: center; }
     height: 7vh;
 }
 
-/* search page */
+/* SEARCH PAGE */
