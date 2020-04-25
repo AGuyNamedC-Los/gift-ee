@@ -299,60 +299,6 @@ app.post('/logout_status', express.urlencoded({extended:true}), async function(r
 		res.render("logout.html", {user: req.session.user});
 		return;
 	});
-	
-	/*
-	console.log("logging out...");
-	console.log("searching through temp_userDB");
-	try {
-		let temp_docs = await temp_userDB.find({'email': email});
-		
-		if(temp_docs.length == 0) {
-			console.log("could not find user in temp_userDB");
-		} else {
-			console.log("found user in temp_userDB");
-			req.session.user = Object.assign(oldInfo, temp_docs, {
-				role: "guest",
-				firstName: "",
-				lastName: "",
-				email: "",
-				username: ""
-			});
-			
-			res.render("logout.html", {user: req.session.user});
-			return;
-		}
-	} catch (err) {
-		console.log("error: " + err);
-		res.render('error.html');
-		return;
-	}
-	
-	console.log("searching through userDB");
-	try {
-		let docs = await userDB.find({'email': email});
-		
-		if(docs.length == 0) {
-			console.log("could not find user in userDB");
-			res.render("logout.html", {user: req.session.user});
-			return
-		} else {
-			console.log("found user in userDB");
-			req.session.user = Object.assign(oldInfo, temp_docs, {
-				role: "guest",
-				firstName: "",
-				lastName: "",
-				email: "",
-				username: ""
-			});
-			res.render("logout.html", {user: req.session.user});
-			return;
-		}
-	} catch (err) {
-		console.log("error: " + err);
-		res.render('error.html');
-		return;
-	}
-	*/
 });
 
 app.get('/sign-up', guestsOnlyMiddleware, function (req, res) {
@@ -474,130 +420,6 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 		res.render('error.html', {user: req.session.user});
 		return;
 	}
-	
-	/*
-	// find duplicate emails or usernames in the temp_userDB
-	temp_userDB.find({$or: [{"email": email}, {"username": username}]}, function (err, temp_docs) {
-		if (err) {
-			console.log("something is wrong");
-			res.render("error.html", {user: req.session.user});
-			return;
-		}
-		
-		if(temp_docs.length > 0) {	// return a signup error if the email or username exists
-			res.render("sign_up_error.html");
-			return; 
-		} else {	// check the main userDB to see if there are duplicate emails or usernames
-			userDB.find({$or: [{"email": email}, {"username": username}]}, function (err, docs) {
-				if (err) {
-					console.log("something is wrong");
-					res.render("error.html", {user: req.session.user});
-					return;
-				}
-				
-				// return an error if the email or username exists
-				if(docs.length > 0) {
-					console.log("email or username has already been taken!");
-					res.render("sign_up_error.html");
-					return; 
-				}
-			});
-		}
-		
-		// if no duplications of the email or username were discovered in both DBs, then create the temporary account
-		if(temp_docs.length == 0) {
-			// salt and hash password
-			let hashedPassword = bcrypt.hashSync(password, parseInt(process.env.nROUNDS));
-			let verified = bcrypt.compareSync(password, hashedPassword);
-			
-			// create a new user with user inputed fields 
-			let newUser = 	{
-				"firstName": firstName,
-				"lastName": lastName,
-				"email": email,
-				"username": username,
-				"password": hashedPassword,
-				"emailConfirmation": hash(email+username),
-				"followerTotal": 0,
-				"followingTotal": 0,
-				"followerList": [],
-				"followingList": [],
-				"giftListContent": []
-			}
-			
-			temp_userDB.insert(newUser, function(err, newDocs) {
-				if (err) {
-					console.log("Something went wrong when adding to the database");
-					console.log(err);
-				} else {
-					console.log("Added a new temporary user"); 
-				}
-			});
-			
-			res.render('sign_up_success.html', {"firstName":firstName, user: req.session.user});
-			return;
-		}
-	});
-	
-	
-	/* POTENTIALLY DELETE THIS SECTION OF CODE BELOW
-	// begin to search the databse for duplicate emails or usernames
-	userDB.find({$or: [{"email": email}, {"username": username}]}, function (err, docs) {
-		if (err) {
-			console.log("something is wrong");
-			res.render("error.html", {user: req.session.user});
-			return;
-		} else {
-			console.log("We found " + docs.length + " emails or user names that matched");
-			console.log(email);
-			console.log(username);
-			
-			// return an error if the email or username exists
-			if(docs.length > 0) {
-				console.log("email or username has already been taken!");
-				res.render("sign_up_error.html");
-				return; 
-			}
-			
-			// if no duplications of the email or username were discovered, then create the account
-			if(docs.length == 0) {
-				// salt and hash password
-				let hashedPassword = bcrypt.hashSync(password, parseInt(process.env.nROUNDS));
-				let verified = bcrypt.compareSync(password, hashedPassword);
-				
-				// create a new user with user inputed fields 
-				let newUser = 	{
-					"firstName": firstName,
-					"lastName": lastName,
-					"email": email,
-					"username": username,
-					"password": hashedPassword,
-					"followerTotal": 0,
-					"followingTotal": 0,
-					"followerList": [],
-					"followingList": [],
-					"giftListContent": []
-				}
-				
-				userDB.insert(newUser, function(err, newDocs) {
-					if (err) {
-						console.log("Something went wrong when adding to the database");
-						console.log(err);
-					} else {
-						
-						console.log("Added a new user"); 
-					}
-				});
-				
-				res.render('sign_up_success.html', {"firstName":firstName, user: req.session.user});
-				return;
-			} 
-		}
-	});
-	
-	
-	
-	*/
 });
 
 app.post('/email_confirmation_status', express.urlencoded({extended:true}), async function(req, res) {
@@ -725,14 +547,6 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 		res.render("error.html");
 		return;
 	}
-	
-	/*
-	userDB.update({"email": email}, {$addToSet: {giftListContent: {"itemName": itemName, "link": link, "qty": qty, "size": size, "color": color} }}, {}, function () {
-		userDB.ensureIndex({fieldName: "username", unique: true});
-		res.render("added_gift_success.html", {user: req.session.user});
-		return;
-	});
-	*/
 });
 
 /*
@@ -860,6 +674,7 @@ app.get('/search', async function (req, res) {
 app.post('/search_results', express.urlencoded({extended:true}), async function(req, res) {
 	let username = req.body.username;
 	console.log("username: " + username);
+	console.log("req: " + req.session.user.role);
 
 	try {
 		let docs = await userDB.find({'username': username});
@@ -871,29 +686,14 @@ app.post('/search_results', express.urlencoded({extended:true}), async function(
 		} else {
 			username = docs[0].username;
 			let giftList = docs[0].giftListContent;
-			res.render('search_result.html', {user: req.session.user});
+			console.log("Found user with gift list: " + giftList);
+			res.render('search_result.njk', {user: req.session.user, username: username, giftList: giftList});
 		}
 	} catch (err) {
 		console.log('error: ' + err);
-		res.render('search_result.html', {user: req.session.user});
+		res.render('error.html', {user: req.session.user});
 		return;
 	}
-	/*
-	userDB.find({"username": username}, function (err, docs) {
-		if (err) {
-			console.log("something is wrong");
-			if(docs.length == 0) {
-				console.log("could not find a user by that name");
-				res.render('error.html');
-				return
-			}
-		} else {
-			username = docs[0].username;
-			var giftList = docs[0].giftListContent;
-			res.render("search_result.html", {username: username, giftList: giftList});
-		}
-	});
-	*/
 });
 
 const PORT = process.env.PORT || 5000;

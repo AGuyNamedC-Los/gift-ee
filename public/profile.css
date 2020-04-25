@@ -20,30 +20,21 @@ nav div a {
     color: black;
 }
 
-.home_btn { border: none; }
+.home_btn, .about_btn, .profile_btn, .search_btn, .login_btn, .signup_btn { border: none; }
 
 .home_btn i { color: rgba(0, 60, 255, 0.582); }
 
-.about_btn { border: none; }
-
 .about_btn i { color: orange; }
 
-.profile_btn { border: none; }
-
 .profile_btn i{ color: rgba(80, 5, 129, 0.582);}
-
-.search_btn { border: none; }
 
 .search_btn i { color:rgba(5, 170, 120, 0.582); }
 
 nav div a:hover { color: rgba(23, 8, 243, 0.747); }
 
-.login_btn { border: none; }
-
 .login_btn i { color: rgba(17, 0, 255, 0.788); }
 
 .signup_btn {
-    border: none;
     background-color: rgba(23, 8, 243, 0.747);
     color: white;
 }
@@ -164,3 +155,7 @@ main { height: 100vh; }
 	margin: 1% auto;
 }
 
+/* SEARCH RESULT CSS */
+.search_result p, .search_result h1 {
+    text-align: center;
+}

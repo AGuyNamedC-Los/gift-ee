@@ -45,10 +45,6 @@
                         {% if giftList[i].price != ""%}
                             <p>Price: {{giftList[i].price}}$</p>
                         {% endif %}
-                        
-                        
-                        
-                        
                         <p onclick="deleteFunction({{i}})"><i class="fas fa-trash-alt"></i></p>
                     </div>
                     {% if giftList[i].giftIMG == "" %}
