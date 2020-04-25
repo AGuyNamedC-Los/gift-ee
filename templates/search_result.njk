@@ -1,0 +1,60 @@
+{% extends "base.njk" %}
+
+{% block metaStuff%}
+	<title>Search Result</title>
+	<link href="profile.css" type="text/css" rel="stylesheet">
+{% endblock %}
+
+{% block main %}
+	<div class="search_result">
+		<h1>{{username}}'s Gift List</h1>
+		{% for i in range(0, giftList.length) -%}
+			<div class="gift-item">
+				<p>{{giftList[i].itemName}}</p>
+				<div class="gift-top" onclick="revealContent({{i}})"></div>
+				<div class="item-content">
+					{% if giftList[i].link != ""%}
+						<a href="{{giftList[i].link}}" target="_blank">Store Link</a>
+					{% endif %}
+					{% if giftList[i].qty != ""%}
+						<p>Quantity: {{giftList[i].qty}}</p>
+					{% endif %}
+					{% if giftList[i].size != ""%}
+						<p>Size: {{giftList[i].size}}</p>
+					{% endif %}
+					{% if giftList[i].color != ""%}
+						<p>Color: {{giftList[i].color}}</p>
+					{% endif %}
+					{% if giftList[i].price != ""%}
+						<p>Price: {{giftList[i].price}}$</p>
+					{% endif %}
+				</div>
+				{% if giftList[i].giftIMG == "" %}
+					<div class="gift-bottom" onclick="revealContent({{i}})" style="padding: 7% 0%"></div>
+				{% else %}
+					<div class="gift-bottom" onclick="revealContent({{i}})" style="padding: 0%;"><img src="{{giftList[i].giftIMG}}"/></div>
+				{% endif %}
+			</div>
+		{%- endfor %}
+	</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    function revealContent(itemNum) {
+        let itemContent = document.getElementsByClassName("item-content")[itemNum];
+        let image = document.createElement('i');
+        console.log("got item number: " + itemNum);
+        let giftBottom = document.getElementsByClassName("gift-bottom")[itemNum];
+        let child = giftBottom.lastElementChild;
+
+        if(itemContent.style.display == "none") {
+            itemContent.style.display = "flex";
+        } else if(itemContent.style.display == "flex") {
+            itemContent.style.display = "none";
+        } else {
+            itemContent.style.display = "flex";
+        }
+    }
+</script>
+{% endblock %}
