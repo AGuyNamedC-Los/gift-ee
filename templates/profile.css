@@ -55,7 +55,7 @@ nav div a:hover { color: rgba(23, 8, 243, 0.747); }
 
 /* PROFILE PAGE CSS */
 body {
-	background-color: rgba(0, 60, 255, 0.582);
+	background-color: rgba(241, 241, 241, 0.582);
 	margin: 0px;
 }
 
@@ -68,10 +68,12 @@ main { height: 100vh; }
 
 .gift-item, .add-gift {
     display: flex;
+    border: solid;
     flex-direction: column;
     justify-content: center;
     border-radius: 7px;
-    margin: 1% 32%;
+    margin: 1% 36%;
+    padding: 4% 0%;
     background-color: white;
 }
 
@@ -94,14 +96,14 @@ main { height: 100vh; }
 
 .gift-top {
 	padding: 1.25% 0%;
-	margin: 0% 39%;
+	margin: 0% 36%;
 	border-radius: 7px;
 }
 
 .gift-bottom {
     border: solid;
-	padding: 5% 0%;
-	margin: 0% 40%;
+	padding: 7% 0%;
+	margin: 0% 37%;
     margin-bottom: 1%;
 }
 

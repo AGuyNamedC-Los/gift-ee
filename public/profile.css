@@ -20,17 +20,25 @@ nav div a {
     color: black;
 }
 
-.home_btn, .about_btn, .profile_btn, .search_btn, .login_btn { border: none; }
+.home_btn { border: none; }
 
 .home_btn i { color: rgba(0, 60, 255, 0.582); }
 
+.about_btn { border: none; }
+
 .about_btn i { color: orange; }
 
-.profile_btn i{ color: rgba(48, 2, 78, 0.582);}
+.profile_btn { border: none; }
+
+.profile_btn i{ color: rgba(80, 5, 129, 0.582);}
+
+.search_btn { border: none; }
 
 .search_btn i { color:rgba(5, 170, 120, 0.582); }
 
 nav div a:hover { color: rgba(23, 8, 243, 0.747); }
+
+.login_btn { border: none; }
 
 .login_btn i { color: rgba(17, 0, 255, 0.788); }
 
@@ -47,7 +55,7 @@ nav div a:hover { color: rgba(23, 8, 243, 0.747); }
 
 /* PROFILE PAGE CSS */
 body {
-	background-color: rgba(0, 60, 255, 0.582);
+	background-color: rgba(241, 241, 241, 0.582);
 	margin: 0px;
 }
 
@@ -60,10 +68,12 @@ main { height: 100vh; }
 
 .gift-item, .add-gift {
     display: flex;
+    border: solid;
     flex-direction: column;
     justify-content: center;
     border-radius: 7px;
-    margin: 1% 32%;
+    margin: 1% 36%;
+    padding: 4% 0%;
     background-color: white;
 }
 
@@ -86,14 +96,14 @@ main { height: 100vh; }
 
 .gift-top {
 	padding: 1.25% 0%;
-	margin: 0% 39%;
+	margin: 0% 36%;
 	border-radius: 7px;
 }
 
 .gift-bottom {
     border: solid;
-	padding: 5% 0%;
-	margin: 0% 40%;
+	padding: 7% 0%;
+	margin: 0% 37%;
     margin-bottom: 1%;
 }
 

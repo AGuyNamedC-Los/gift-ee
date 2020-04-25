@@ -76,7 +76,7 @@ nunjucks.configure('templates', {
 
 // setting path for the base template
 const template = nunjucks.precompile(
-  './templates/base.html',
+  './templates/base.njk',
   { name: 'base' }
 );
 
