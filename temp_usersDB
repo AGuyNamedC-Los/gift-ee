@@ -1,2 +1,1 @@
-{"firstName":"carlos","email":"closcastillo95@gmail.com","username":"carlos","password":"$2a$11$BTW8dD4eco0HZruuHdAQKerr5JgV2r.9Le2/C.oOfADPvo1wISTNS","emailConfirmation":"7ca0260a270b5cd785aa7605629dbe1f165ffe95","followerTotal":"0","followingTotal":"0","followerList":[],"followingList":[],"giftListContent":[],"_id":"7erIBl9q3VsgIv0I","createdAt":{"$$date":1587596457187},"updatedAt":{"$$date":1587596457187}}
 {"$$indexCreated":{"fieldName":"createdAt","unique":false,"sparse":false}}

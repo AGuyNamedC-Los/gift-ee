@@ -717,7 +717,7 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 	};
 	
 	try {
-		let docs = await userDB.update({"email": email}, {$addToSet: {giftListContent: newItem }}, {}, function () {});
+		let docs = await userDB.update({"email": email}, {$addToSet: {giftListContent: newItem}}, {}, function () {});
 		res.render("added_gift_success.html", {user: req.session.user});
 		return;
 	} catch (err) {
