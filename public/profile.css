@@ -156,6 +156,4 @@ main { height: 100vh; }
 }
 
 /* SEARCH RESULT CSS */
-.search_result p, .search_result h1 {
-    text-align: center;
-}
+.search_result p, .search_result h1 { text-align: center; }

@@ -2,13 +2,17 @@
 
 {% block metaStuff%}
 	<title>Search</title>
-	<link href="profile.css" type="text/css" rel="stylesheet">
+	<link href="gift-ee.css" type="text/css" rel="stylesheet">
 {% endblock %}
 
 {% block main %}
 	<h1>Search for user's profiles</h1>
 
-	<input type="text" id="search" name="searchText" placeholder="Username">
+	<div class="search-container">
+		<i class="fas fa-lock"></i>
+		<input type="text" id="search-bar" name="searchText" placeholder="Username">
+	</div>
+
 	<div id="usernameList">
 
 	</div>
@@ -16,7 +20,7 @@
 
 {% block script %}
 <script>
-	var search = document.getElementById('search');
+	var search = document.getElementById('search-bar');
 	var usernameListElem = document.getElementById("usernameList");
 	var usernames = [];
 	usernames[0] = ('{{usernames[0]}}');
@@ -41,11 +45,10 @@
 			var html = matches.map(match => 
 				`
 				<form action="search_results" method="POST">
-					<input style="display: none;" type="text" id="username" name="username" value="${match}">
+					<input style="display: none;" type="text" name="username" value="${match}">
 					<input type="submit" value="${match}">
 				</form>
 				`
-				
 				).join(" ");
 			usernameList.innerHTML = html;
 		} else {
