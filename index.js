@@ -31,9 +31,9 @@ userDB.on('update', (DataStore, result, query, update, options) => {
 userDB.on('load', (userDB) => {
     console.log("hi");// this event doesn't have a result
 });
-let temp_userDB = DataStore.create({filename: __dirname + '/temp_usersDB', timestampData: true, autoload: true});
+let temp_userDB = DataStore.create({filename: __dirname + '/temp_usersDB.json', timestampData: true, autoload: true});
 let options = { fieldName: 'createdAt', expireAfterSeconds: process.env.TIME_TO_DELETE };
-temp_userDB.ensureIndex({ fieldName: 'createdAt', expireAfterSeconds: 60 }, function (err) {	// adding an expiration date for automatic deletion of temporary users
+temp_userDB.ensureIndex({ fieldName: 'createdAt', expireAfterSeconds: process.env.TIME_TO_DELETE }, function (err) {	// adding an expiration date for automatic deletion of temporary users
 });
 /*
 temp_userDB.load(function (err) {
@@ -138,7 +138,6 @@ const guestsAndTempUsersOnly = function(req, res, next) {
 	}
 };
 
-
 async function sendConfirmationCode(secretCode, email) {
 	console.log("secret code: " + secretCode);
 	try {
@@ -193,13 +192,127 @@ app.post('/login_status', express.urlencoded({extended:true}), async function(re
 	let email = req.body.email;		// get user's typed in email
 	let password = req.body.password;		// get user's typed in password
 	console.log("logging in... req: " + req.session.user.role);
-	
+
+	let tempUserFound = 0;
+	// search throug the temp_userDB
 	try {
 		console.log("searching through temp_userDB");
 		let temp_docs = await temp_userDB.find({'email': email});
 		console.log("finished searching through temp_userDB");
 		
-		let tempUserFound = await temp_docs.length;
+		tempUserFound = temp_docs.length;
+		if(tempUserFound) {
+			let saltedPassword = temp_docs[0].salt + password;
+			let passVerified = bcrypt.compareSync(saltedPassword, temp_docs[0].password);	// combine the user's salt and password to the hashed password
+			if(passVerified) {		// user was found with correct password
+				console.log("matching password and email found for temp_user");
+				// begin to update the user's role
+				let tempUserInfo = {
+					firstname: temp_docs[0].firstName, 
+					lastName: temp_docs[0].lastName, 
+					username: temp_docs[0].username, 
+					email: temp_docs[0].email
+				};
+				let oldInfo = req.session.user;
+				req.session.regenerate(function (err) {
+					if (err) {
+						console.log(err);
+						return false;
+					}
+					req.session.user = Object.assign(oldInfo, tempUserInfo, {
+						role: "temp_user",
+						firstName: tempUserInfo.firstName,
+						lastName: tempUserInfo.lastName,
+						email: tempUserInfo.email,
+						username: tempUserInfo.username
+					});
+					console.log("user upgraded to " + req.session.user.role);
+					res.render("profile.njk", {user: req.session.user});
+					tempUserFound = true;
+					//return;
+				});
+			} else {	// incorrect password for temp_user
+				console.log("incorrect password for temp_user");
+				//res.render("error.html");
+				tempUserFound = false;
+				//return;
+			}
+		} else {	// username was not found in temp_userDB
+			console.log("could not find username in temp_userDB");
+			//res.render("error.html");
+			tempUserFound = false;
+			//return;
+		}
+	} catch (err) {
+		console.log(`temp_userDB error ${err}`);
+		res.render("error.html");
+		return;
+	}
+
+	if(tempUserFound) {
+		return;
+	}
+
+	// searching through the userDB
+	try {
+		console.log("searching through userDB");
+		let docs = await userDB.find({'email': email});
+		console.log("finished searching through userDB");
+		
+		let userFound = docs.length;
+		if(userFound) {
+			let saltedPassword = docs[0].salt + password;
+			let passVerified = bcrypt.compareSync(saltedPassword, docs[0].password);	// combine the user's salt and password to the hashed password
+			if (passVerified) {		// found user and correct password
+				console.log("matching password and email found for user");
+				let userInfo = {
+					firstname: docs[0].firstName,
+					 lastName: docs[0].lastName, 
+					 username: docs[0].username, 
+					 email: docs[0].email
+				};
+				let oldInfo = req.session.user;
+				req.session.regenerate(function (err) {
+					if (err) {
+						console.log(err);
+						return false;
+					}
+					
+					req.session.user = Object.assign(oldInfo, userInfo, {
+						role: "user",
+						firstName: userInfo.firstName,
+						lastName: userInfo.lastName,
+						email: userInfo.email,
+						username: userInfo.username
+					});
+					console.log("user upgraded to " + req.session.user.role);
+					res.render("profile.njk", {user: req.session.user});
+					return;
+				});
+			} else {		// found user but wrong password
+				console.log("incorrect password for user in userDB");
+				res.render("error.html");
+				return;
+			}
+		} else {	// username was not found in userDB
+			console.log("could not find username in userDB");
+			res.render("error.html");
+			return;
+		}
+	} catch (err) {
+		console.log(`temp_userDB error ${err}`);
+		res.render("error.html");
+		return;
+	}
+
+	/*
+
+	try {
+		console.log("searching through temp_userDB");
+		let temp_docs = await temp_userDB.find({'email': email});
+		console.log("finished searching through temp_userDB");
+		
+		let tempUserFound = temp_docs.length;
 		if(tempUserFound) {		// searching through temp_userDB
 			let passVerified = bcrypt.compareSync(password, temp_docs[0].password);
 			if (passVerified) {		// found temp_user and correct password
@@ -279,6 +392,8 @@ app.post('/login_status', express.urlencoded({extended:true}), async function(re
 		res.render("error.html");
 		return;
 	}
+
+	*/
 });
 
 /*
@@ -355,6 +470,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 	// check for uppercase
 	
 	
+	/* searching through the temp_userDB */
 	try {
 		console.log("searching temp_userDB");
 		let temp_docs = await temp_userDB.find({'email': email}, {'username': username});
@@ -384,16 +500,33 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 		res.render('error.html', {user: req.session.user});
 		return;
 	}
-	
-	let hashedPassword = bcrypt.hashSync(password, parseInt(process.env.nROUNDS));
+
+	// creating salt
+	let NUM_SIZE = process.env.NUM_SIZE;
+	let rand_num1 = Math.floor(Math.random() * NUM_SIZE);
+	let rand_num2 = Math.floor(Math.random() * NUM_SIZE);
+	let rand_num3 = Math.floor(Math.random() * NUM_SIZE);
+	let rand_num4 = Math.floor(Math.random() * NUM_SIZE);
+	let salt = String(rand_num1) + String(rand_num2) + String(rand_num3) + String(rand_num4);
+	console.log("salt: " + salt);
+
+	// salting and hashing the user's password
+	let hashedPassword = bcrypt.hashSync((salt + password), parseInt(process.env.nROUNDS));
+
+	// create email verification code
+	let emailCode = "";
+	for(i = 0; i < 5; i++) {
+		emailCode = String(emailCode) + String(Math.floor(Math.random() * NUM_SIZE));
+	}
 	try {
-		let newTempUser = 	{
+		let newTempUser = {
 			"firstName": firstName,
 			"lastName": lastName,
 			"email": email,
 			"username": username,
+			"salt": salt,
 			"password": hashedPassword,
-			"emailConfirmation": hash(email+username),
+			"emailConfirmation": emailCode,
 			"followerTotal": "0",
 			"followingTotal": "0",
 			"followerList": [],
@@ -441,6 +574,7 @@ app.post('/email_confirmation_status', express.urlencoded({extended:true}), asyn
 					"lastName": temp_docs[0].lastName,
 					"email": temp_docs[0].email,
 					"username": temp_docs[0].username,
+					"salt": temp_docs[0].salt,
 					"password": temp_docs[0].password,
 					"followerTotal": 0,
 					"followingTotal": 0,
@@ -586,35 +720,6 @@ app.post('/deleted_gift_status', loggedInMiddleware, express.urlencoded({extende
 		res.render("error.html");
 		return;
 	}
-	
-	/*
-	userDB.find({"email": email}, function (err, docs) {
-		if (err) {
-			console.log("something is wrong");
-		} else {
-			console.log("We found " + docs.length + " email that matches");
-			if(docs.length == 0) {		// no email matched
-				res.render('error.html');
-				return;
-			}
-			
-			console.log(itemNum);	
-			console.log(docs[0].giftListContent[0].itemName);
-			var newGiftList = docs[0].giftListContent;
-			var deletedItem = newGiftList.splice(itemNum, 1);		// removing an item from a user's gift list
-			
-			userDB.update({"email": email}, {$set: {giftListContent: newGiftList}}, {}, function (err, numReplaced) {
-				if(err) {
-					return("error.html");
-				}
-				console.log("removed: " + numReplaced + " item");
-				console.log(deletedItem[0].itemName);
-				res.render("deleted_gift_success.html", {deletedItem: deletedItem[0]});
-			});
-		}
-	});
-	
-	*/
 }); 
 
 /*
