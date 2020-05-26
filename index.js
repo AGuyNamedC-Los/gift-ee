@@ -558,6 +558,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 app.post('/email_confirmation_status', express.urlencoded({extended:true}), async function(req, res) {
 	let email = req.session.user.email;
 	let emailConfirmationCode = req.body.emailConfirmation;
+	let userUpgraded = false;
 	
 	try {
 		console.log("searching for temp_user's email confirmation code in temp_userDB");
@@ -601,9 +602,12 @@ app.post('/email_confirmation_status', express.urlencoded({extended:true}), asyn
 						username: newUser.username
 					});
 					console.log("user upgraded to " + req.session.user.role);
-					res.render("gift-ee_profile.html", {user: req.session.user});
-					return;
+					//res.render("gift-ee_profile.html", {user: req.session.user});
+					//return;
 				});
+				console.log(userUpgraded);
+				userUpgraded = true;
+				console.log(userUpgraded);
 			} catch (err) {
 				console.log(err);
 				res.render('error.html');
@@ -618,6 +622,19 @@ app.post('/email_confirmation_status', express.urlencoded({extended:true}), asyn
 		console.log(err);
 		res.render('error.html');
 		return;
+	}
+
+	console.log("checking userupgraded statement" + userUpgraded);
+	if (userUpgraded) {
+		console.log("removing temp user since they have been added to main userDB");
+		try {
+			let temp_docs = await temp_userDB.remove({'email': email});
+			res.render("home.njk", {user: req.session.user});
+		} catch (err) {
+			console.log(err);
+			res.render('error.html');
+			return;
+		}
 	}
 });
 
