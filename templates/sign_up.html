@@ -16,36 +16,42 @@
 					<fieldset>
 							<div class="input_box">
 								<i class="fas fa-envelope"></i>
-								<input type="text", id="email", name="email", placeholder="Email">
+								<input type="text" id="email" name="email" placeholder="Email">
                             </div>
 							<div class="input_box">
 								<i class="fas fa-user"></i>
-								<input type="text", id="username", name="username", placeholder="Username">
+								<input type="text" id="username" name="username" placeholder="Username">
 							</div>                            
 							<div class="input_box">
 								<i class="fas fa-lock"></i>
-								<input type="password", onblur="validPassword()", id="password", name="password", placeholder="Password">
+								<input type="password" onblur="validPassword()" id="password" name="password" placeholder="Password">
                             </div>
                             <div class="input_box">
 								<i class="fas fa-address-card"></i>
-								<input type="text", id="first_name", onblur="validFirstName()", name="firstName", placeholder="First Name">
+								<input type="text" id="first_name" onblur="validFirstName()" name="firstName" placeholder="First Name">
                             </div>
                             <div class="input_box">
 								<i class="fas fa-address-card"></i>
-								<input type="text", id="last_name", onblur="validLastName()",name="lastName", placeholder="Last Name">
+								<input type="text" id="last_name" onblur="validLastName()" name="lastName" placeholder="Last Name">
                             </div>
-							<input type="submit", id="sign_up_btn", disabled="true", onmouseover="validCredentials()", value="Sign Up">
+							<input type="submit" id="sign_up_btn" disabled="true" onmouseover="validCredentials()" value="Sign Up">
 					</fieldset>
                 </form>
-                <div id="password_error", style="display:none"></div>
-                <div id="first_name_error", style="display:none"></div>
-                <div id="last_name_error", style="display:none"></div>
+                <p id="error_message" style="display:none"></p>
+                <p id="first_name_error", style="display:none"></p>
+                <p id="last_name_error", style="display:none"></p>
+                <p id="password_error", style="display:none"></p>
 			</div>
 		</main>
 	</body>
 	<script>
+        var passwordField = document.getElementsByClassName("Sign_up_btn");
+        
         var valid_password = "";    // bool flag for the function below
+        var passwordErrMsg = "";
         function validPassword() {
+            /*
+
             let passwordErrorNode = document.getElementById("password_error");
             // remove all the previous errors if any
             let child = passwordErrorNode.lastElementChild;
@@ -54,23 +60,27 @@
                 child = passwordErrorNode.lastElementChild;
             }
             let errorTextNode = document.createElement("P");
+            
+            */
             let errorMessage = "";
-			var passwordError = document.getElementById("password_error");
-			var badCharacters = ["/", "\\", "\'", "\"", " "];
+            var badCharacters = ["/", "\\", "\'", "\"", " "];
+            /*
+            var passwordError = document.getElementById("password_error");
+            */
             var password = document.getElementById("password").value;
             
             switch (0) {
                 case 0:    // check password length
-                    if(password.length <= 5) {
-                        errorMessage = "Password must be of length 6 or more\n";
+                    if (password.length <= 5) {
+                        errorMessage = "\nPassword must be of length 6 or more\n";
                     } else if (password.length > 100) {
-                        errorMessage = "Password must be of length less than 100\n";
-                        passwordError.appendChild(errorTextNode);
+                        errorMessage = "\nPassword must be of length less than 100\n";
+                        //passwordError.appendChild(errorTextNode);
                     }
                 case 1:     // check for invalid characters
                     for(i = 0; i < password.length; i++) {
-                        if(password.includes(badCharacters[i])) {
-                            errorMessage = errorMessage + "invalid password, includes [" + badCharacters[i] + "] character";
+                        if (password.includes(badCharacters[i])) {
+                            errorMessage = errorMessage + "\ninvalid password, includes [" + badCharacters[i] + "] character\n";
                             break;
                         }
                     }
@@ -89,23 +99,35 @@
                         errorMessage = errorMessage + "Password must include at least one number\n";
                     }
 
+                    passwordErrMsg = errorMessage;
+
                 default: 
                     if(errorMessage.length == 0) {
                             document.getElementsByClassName("input_box")[2].style.boxShadow = "0px 0px 0px 2px lightgray";
                             valid_password = true;
                             // turn on the button here or return true for the other input fields
                     } else {
+                        /*
+
                         errorTextNode.innerText = errorMessage;
                         passwordError.appendChild(errorTextNode);
                         passwordError.style.display = "";
+
+                        */
+                        let errMsgNode = document.getElementById("error_message");
+                        errMsgNode.style.display = "";
                         document.getElementsByClassName("input_box")[2].style.boxShadow = "0px 0px 0px 2px red";
                         valid_password = false;
+                        displayErrMsg();
                     }
             }
         }
 
-        var valid_firstName = ""
+        var valid_firstName = "";
+        var firstNameErrMsg= "";
         function validFirstName() {
+            /*
+
             let firstNameErrorNode = document.getElementById("first_name_error");
             // remove all the previous errors if any
             let child = firstNameErrorNode.lastElementChild;
@@ -114,24 +136,42 @@
                 child = firstNameErrorNode.lastElementChild;
             }
             let errorTextNode = document.createElement("P");
+
+            */
             let errorMessage = "";
-			let firstNameError = document.getElementById("first_name_error");
+            
+            /*
+            let firstNameError = document.getElementById("first_name_error");
+            */
             var firstName = document.getElementById("first_name").value;
+
             if(firstName != "") {
                 valid_firstName = true;
                 document.getElementsByClassName("input_box")[3].style.boxShadow = "0px 0px 0px 2px lightgray";
             } else {
-                errorMessage = "Please enter a first name";
+                errorMessage = "\nPlease enter a first name\n";
+                firstNameErrMsg = errorMessage;
                 valid_firstName = false;
+                /*
+
                 errorTextNode.innerText = errorMessage;
                 firstNameError.appendChild(errorTextNode);
                 firstNameError.style.display = "";
+
+                */
+
+                let errMsgNode = document.getElementById("error_message");
+                errMsgNode.style.display = "";
                 document.getElementsByClassName("input_box")[3].style.boxShadow = "0px 0px 0px 2px red";
+                displayErrMsg();
             }
         }
 
         var valid_lastName = "";
+        var lastNameErrMsg= "";
         function validLastName() {
+            /*
+
             let lastNameErrorNode = document.getElementById("last_name_error");
             // remove all the previous errors if any
             let child = lastNameErrorNode.lastElementChild;
@@ -140,23 +180,47 @@
                 child = lastNameErrorNode.lastElementChild;
             }
             let errorTextNode = document.createElement("P");
+
+            */
             let errorMessage = "";
-			let lastNameError = document.getElementById("last_name_error");
+            /*
+            let lastNameError = document.getElementById("last_name_error");
+            */
             var lastName = document.getElementById("last_name").value;
             if(lastName != "") {
                 valid_lastName = true;
                 document.getElementsByClassName("input_box")[4].style.boxShadow = "0px 0px 0px 2px lightgray";
             } else {
-                errorMessage = "Please enter a last name";
+                errorMessage = "\nPlease enter a last name\n";
+                lastNameErrMsg = errorMessage;
                 valid_lastName = false;
+                /*
+
                 errorTextNode.innerText = errorMessage;
                 lastNameError.appendChild(errorTextNode);
                 lastNameError.style.display = "";
+
+                */
+                let errMsgNode = document.getElementById("error_message");
+                errMsgNode.style.display = "";
+                displayErrMsg();
                 document.getElementsByClassName("input_box")[4].style.boxShadow = "0px 0px 0px 2px red";
             }
         }
 
+        function displayErrMsg() {
+            let errNode = document.getElementById("error_message");
+            errNode.innerText = passwordErrMsg + "\n" + firstNameErrMsg + "\n" + lastNameErrMsg;
+        }
+
+        var submitButton = document.getElementById("Sign_up_btn");
+        submitButton.addEventListener(inputType, validCredentials);
         function validCredentials() {
+            // functions are called in the case of auto filled fields which would not trigger these functions otherwise
+            validPassword();
+            validFirstName();
+            validLastName();
+
             if(valid_password && valid_firstName && valid_lastName) {
                 document.getElementById("sign_up_btn").disabled = false;
                 document.getElementById("sign_up_btn").style.backgroundColor = "rgba(0, 60, 255, 0.582)";
