@@ -44,11 +44,15 @@
 <script>
 	function slideChoice(index) {
 		let slides = document.getElementsByClassName("slide");
+		let slideButtons = document.getElementsByClassName("slideShow-btns")[0].getElementsByTagName("button");
 		for(i = 0; i < slides.length; i++) {
+			console.log(index);
 			slides[i].style.display = "none";
+			slideButtons[i].style.backgroundColor = "white";
 		}
 
 		slides[index].style.display = "";
+		slideButtons[index].style.backgroundColor = "black";
 	}
 </script>
 {% endblock %}
