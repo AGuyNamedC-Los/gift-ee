@@ -19,51 +19,21 @@ const session = require('express-session');
 const nunjucks = require('nunjucks');
 const bcrypt = require('bcryptjs');
 var hash = require('object-hash');
-
 const DataStore = require('nedb-promises');
-async function loadDatabases() {
-	
-}
+
 let userDB = DataStore.create({filename: __dirname + '/usersDB.json', autoload: true});
+/*
 userDB.on('update', (DataStore, result, query, update, options) => {
 	console.log("hi");
 });
-userDB.on('load', (userDB) => {
-    console.log("hi");// this event doesn't have a result
-});
+
+userDB.on('load', (userDB) => {});
+*/
+
 let temp_userDB = DataStore.create({filename: __dirname + '/temp_usersDB.json', timestampData: true, autoload: true});
 let options = { fieldName: 'createdAt', expireAfterSeconds: process.env.TIME_TO_DELETE };
 temp_userDB.ensureIndex({ fieldName: 'createdAt', expireAfterSeconds: process.env.TIME_TO_DELETE }, function (err) {	// adding an expiration date for automatic deletion of temporary users
 });
-/*
-temp_userDB.load(function (err) {
-    temp_userDB.find({}, function(err, docs) {
-        console.log(err || docs);
-    });
-});
-*/
-
-/*
-const DataStore = require('nedb');
-// creating and loading in the usersDB
-const userDB = new DataStore({filename: __dirname + '/usersDB', autoload: true});		
-userDB.loadDatabase(function (err) {
-    userDB.find({}, function(err, docs) {
-        console.log(err || docs);
-    });
-});
-
-// creating and loading the the temp_usersDB
-const temp_userDB = new DataStore({filename: __dirname + '/temp_usersDB', timestampData: true, autoload: true});		// adding a time stamp to each insertion
-userDB.loadDatabase(function (err) {
-    userDB.find({}, function(err, docs) {
-        console.log(err || docs);
-    });
-});
-temp_userDB.ensureIndex({ fieldName: 'createdAt', expireAfterSeconds: 60 }, function (err) {	// adding an expiration date for automatic deletion of items
-});
-
-*/
 
 var app = express();
 app.use(express.static('public'));
@@ -286,7 +256,7 @@ app.post('/login_status', express.urlencoded({extended:true}), async function(re
 						username: userInfo.username
 					});
 					console.log("user upgraded to " + req.session.user.role);
-					res.render("profile.njk", {user: req.session.user});
+					res.render("home.njk", {user: req.session.user});
 					return;
 				});
 			} else {		// found user but wrong password
@@ -546,7 +516,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 			email: newTempUser.email,
 			username: newTempUser.username
 		});
-		res.render('sign_up_success.html', {user: req.session.user});
+		res.render('home.njk', {user: req.session.user});
 		return;
 	} catch (err) {
 		console.log("error: " + err);
