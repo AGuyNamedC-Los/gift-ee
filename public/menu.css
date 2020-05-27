@@ -20,13 +20,13 @@ nav div a {
     color: black;
 }
 
-.home_btn, .about_btn, .profile_btn, .search_btn, .login_btn, .signup_btn { border: none; }
+.home_btn, .about_btn, .profile_btn, .search_btn, .login_btn, .signup_btn, .logout_btn { border: none; }
 
 .home_btn i { color: rgba(0, 60, 255, 0.582); }
 
 .about_btn i { color: orange; }
 
-.profile_btn i{ color: rgba(80, 5, 129, 0.582);}
+.profile_btn i{ color: rgba(131, 8, 94, 0.795);}
 
 .search_btn i { color:rgba(5, 170, 120, 0.582); }
 
@@ -42,6 +42,17 @@ nav div a:hover { color: rgba(23, 8, 243, 0.747); }
 .signup_btn:hover {
     background-color: rgba(17, 0, 255, 0.788);
     color: white;
+}
+
+.logout_btn { 
+    background-color: rgba(212, 10, 10, 0.747); 
+    color: white;
+}
+
+.logout_btn:hover {
+    background-color: rgba(192, 6, 6, 0.747);
+    color: white; 
+    cursor: pointer;
 }
 
 body {
