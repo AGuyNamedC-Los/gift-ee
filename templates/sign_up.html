@@ -50,23 +50,8 @@
         var valid_password = "";    // bool flag for the function below
         var passwordErrMsg = "";
         function validPassword() {
-            /*
-
-            let passwordErrorNode = document.getElementById("password_error");
-            // remove all the previous errors if any
-            let child = passwordErrorNode.lastElementChild;
-            while(child) {
-                passwordErrorNode.removeChild(child);
-                child = passwordErrorNode.lastElementChild;
-            }
-            let errorTextNode = document.createElement("P");
-            
-            */
             let errorMessage = "";
             var badCharacters = ["/", "\\", "\'", "\"", " "];
-            /*
-            var passwordError = document.getElementById("password_error");
-            */
             var password = document.getElementById("password").value;
             
             switch (0) {
@@ -75,7 +60,6 @@
                         errorMessage = "\nPassword must be of length 6 or more\n";
                     } else if (password.length > 100) {
                         errorMessage = "\nPassword must be of length less than 100\n";
-                        //passwordError.appendChild(errorTextNode);
                     }
                 case 1:     // check for invalid characters
                     for(i = 0; i < password.length; i++) {
@@ -107,13 +91,6 @@
                             valid_password = true;
                             // turn on the button here or return true for the other input fields
                     } else {
-                        /*
-
-                        errorTextNode.innerText = errorMessage;
-                        passwordError.appendChild(errorTextNode);
-                        passwordError.style.display = "";
-
-                        */
                         let errMsgNode = document.getElementById("error_message");
                         errMsgNode.style.display = "";
                         document.getElementsByClassName("input_box")[2].style.boxShadow = "0px 0px 0px 2px red";
@@ -126,23 +103,7 @@
         var valid_firstName = "";
         var firstNameErrMsg= "";
         function validFirstName() {
-            /*
-
-            let firstNameErrorNode = document.getElementById("first_name_error");
-            // remove all the previous errors if any
-            let child = firstNameErrorNode.lastElementChild;
-            while(child) {
-                firstNameErrorNode.removeChild(child);
-                child = firstNameErrorNode.lastElementChild;
-            }
-            let errorTextNode = document.createElement("P");
-
-            */
             let errorMessage = "";
-            
-            /*
-            let firstNameError = document.getElementById("first_name_error");
-            */
             var firstName = document.getElementById("first_name").value;
 
             if(firstName != "") {
@@ -152,14 +113,6 @@
                 errorMessage = "\nPlease enter a first name\n";
                 firstNameErrMsg = errorMessage;
                 valid_firstName = false;
-                /*
-
-                errorTextNode.innerText = errorMessage;
-                firstNameError.appendChild(errorTextNode);
-                firstNameError.style.display = "";
-
-                */
-
                 let errMsgNode = document.getElementById("error_message");
                 errMsgNode.style.display = "";
                 document.getElementsByClassName("input_box")[3].style.boxShadow = "0px 0px 0px 2px red";
@@ -170,22 +123,7 @@
         var valid_lastName = "";
         var lastNameErrMsg= "";
         function validLastName() {
-            /*
-
-            let lastNameErrorNode = document.getElementById("last_name_error");
-            // remove all the previous errors if any
-            let child = lastNameErrorNode.lastElementChild;
-            while(child) {
-                lastNameErrorNode.removeChild(child);
-                child = lastNameErrorNode.lastElementChild;
-            }
-            let errorTextNode = document.createElement("P");
-
-            */
             let errorMessage = "";
-            /*
-            let lastNameError = document.getElementById("last_name_error");
-            */
             var lastName = document.getElementById("last_name").value;
             if(lastName != "") {
                 valid_lastName = true;
@@ -194,13 +132,6 @@
                 errorMessage = "\nPlease enter a last name\n";
                 lastNameErrMsg = errorMessage;
                 valid_lastName = false;
-                /*
-
-                errorTextNode.innerText = errorMessage;
-                lastNameError.appendChild(errorTextNode);
-                lastNameError.style.display = "";
-
-                */
                 let errMsgNode = document.getElementById("error_message");
                 errMsgNode.style.display = "";
                 displayErrMsg();
