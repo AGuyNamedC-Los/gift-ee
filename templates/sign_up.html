@@ -45,26 +45,27 @@
 		</main>
 	</body>
 	<script>
-        var passwordField = document.getElementsByClassName("Sign_up_btn");
+        var passwordField = document.getElementsByClassName("input_box")[2].getElementsByTagName("input");
+        passwordField.addEventListener('input', validCredentials);
         
         var valid_password = "";    // bool flag for the function below
         var passwordErrMsg = "";
         function validPassword() {
-            let errorMessage = "";
+            let errorMessage = [];
             var badCharacters = ["/", "\\", "\'", "\"", " "];
             var password = document.getElementById("password").value;
             
             switch (0) {
                 case 0:    // check password length
                     if (password.length <= 5) {
-                        errorMessage = "\nPassword must be of length 6 or more\n";
+                        errorMessage.push("Password must be of length 6 or more");
                     } else if (password.length > 100) {
-                        errorMessage = "\nPassword must be of length less than 100\n";
+                        errorMessage.push("Password must be of length less than 100");
                     }
                 case 1:     // check for invalid characters
                     for(i = 0; i < password.length; i++) {
                         if (password.includes(badCharacters[i])) {
-                            errorMessage = errorMessage + "\ninvalid password, includes [" + badCharacters[i] + "] character\n";
+                            errorMessage.push("invalid password, includes [" + badCharacters[i] + "] character");
                             break;
                         }
                     }
@@ -73,26 +74,17 @@
                     var uppercaseFound = /(.*[A-Z].*)/.test(password);
                     var numberFound = /(.*[0-9].*)/.test(password);
                     
-                    if(!lowercaseFound) {
-                        errorMessage = errorMessage + "Password must include at least one lowercase\n";
-                    }
-                    if(!uppercaseFound) {
-                        errorMessage = errorMessage + "Password must include at least one uppercase\n";
-                    }
-                    if(!numberFound) {
-                        errorMessage = errorMessage + "Password must include at least one number\n";
-                    }
+                    if(!lowercaseFound) { errorMessage.push("Password must include at least one lowercase"); }
+                    if(!uppercaseFound) { errorMessage.push("Password must include at least one uppercase"); }
+                    if(!numberFound) { errorMessage.push("Password must include at least one number"); }
 
-                    passwordErrMsg = errorMessage;
-
+                    passwordErrMsg = errorMessage.join("\n");
                 default: 
                     if(errorMessage.length == 0) {
                             document.getElementsByClassName("input_box")[2].style.boxShadow = "0px 0px 0px 2px lightgray";
                             valid_password = true;
                             // turn on the button here or return true for the other input fields
                     } else {
-                        let errMsgNode = document.getElementById("error_message");
-                        errMsgNode.style.display = "";
                         document.getElementsByClassName("input_box")[2].style.boxShadow = "0px 0px 0px 2px red";
                         valid_password = false;
                         displayErrMsg();
@@ -110,11 +102,9 @@
                 valid_firstName = true;
                 document.getElementsByClassName("input_box")[3].style.boxShadow = "0px 0px 0px 2px lightgray";
             } else {
-                errorMessage = "\nPlease enter a first name\n";
+                errorMessage = "Please enter a first name";
                 firstNameErrMsg = errorMessage;
                 valid_firstName = false;
-                let errMsgNode = document.getElementById("error_message");
-                errMsgNode.style.display = "";
                 document.getElementsByClassName("input_box")[3].style.boxShadow = "0px 0px 0px 2px red";
                 displayErrMsg();
             }
@@ -129,23 +119,24 @@
                 valid_lastName = true;
                 document.getElementsByClassName("input_box")[4].style.boxShadow = "0px 0px 0px 2px lightgray";
             } else {
-                errorMessage = "\nPlease enter a last name\n";
+                errorMessage = "Please enter a last name";
                 lastNameErrMsg = errorMessage;
                 valid_lastName = false;
-                let errMsgNode = document.getElementById("error_message");
-                errMsgNode.style.display = "";
                 displayErrMsg();
                 document.getElementsByClassName("input_box")[4].style.boxShadow = "0px 0px 0px 2px red";
             }
         }
 
         function displayErrMsg() {
-            let errNode = document.getElementById("error_message");
-            errNode.innerText = passwordErrMsg + "\n" + firstNameErrMsg + "\n" + lastNameErrMsg;
+            if ((passwordErrMsg + firstNameErrMsg + lastNameErrMsg) != "") {    // if there is an error, display it
+                let errMsgNode = document.getElementById("error_message");
+                errMsgNode.style.display = "";
+                errMsgNode.innerText = "\n" + passwordErrMsg + "\n" + firstNameErrMsg + "\n" + lastNameErrMsg + "\n";
+            }
         }
 
-        var submitButton = document.getElementById("Sign_up_btn");
-        submitButton.addEventListener(inputType, validCredentials);
+        var submitButton = document.getElementById("sign_up_btn");
+        //submitButton.addEventListener(inputType, validCredentials);
         function validCredentials() {
             // functions are called in the case of auto filled fields which would not trigger these functions otherwise
             validPassword();
