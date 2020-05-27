@@ -20,7 +20,7 @@
                             </div>
 							<div class="input_box">
 								<i class="fas fa-user"></i>
-								<input type="text" id="username" name="username" placeholder="Username">
+								<input type="text" onblur="validUsername()" id="username" name="username" placeholder="Username">
 							</div>                            
 							<div class="input_box">
 								<i class="fas fa-lock"></i>
@@ -42,8 +42,39 @@
 		</main>
 	</body>
 	<script>
-        //var passwordField = document.getElementsByClassName("input_box")[2].getElementsByTagName("input");
-        //passwordField.addEventListener('input', validCredentials);
+        var valid_username = "";
+        var usernameErrMsg = "";
+        function validUsername() {
+            let errorMessage = [];
+            var badCharacters = ["/", "\\", "\'", "\"", " "];
+            var username = document.getElementById("username").value;
+
+            switch (0) {
+                case 0:    // check username length
+                    if (username.length < 1) {
+                        errorMessage.push("Username must be of length 1 or more");
+                    } else if (username.length > 30) {
+                        errorMessage.push("Username must be of length less than 30");
+                    }
+                case 1:     // check for invalid characters
+                    for(i = 0; i < username.length; i++) {
+                        if (username.includes(badCharacters[i])) {
+                            errorMessage.push("Invalid username, includes [" + badCharacters[i] + "] character");
+                            break;
+                        }
+                    }
+                    usernameErrMsg = errorMessage.join("\n");
+                default: 
+                    if(errorMessage.length == 0) {  // valid username
+                            document.getElementsByClassName("input_box")[1].style.boxShadow = "0px 0px 0px 2px lightgray";
+                            valid_username = true;
+                    } else {    // invalid username
+                        document.getElementsByClassName("input_box")[1].style.boxShadow = "0px 0px 0px 2px red";
+                        valid_username = false;
+                        displayErrMsg();
+                    }
+            }
+        }
         
         var valid_password = "";    // bool flag for the function below
         var passwordErrMsg = "";
@@ -125,22 +156,23 @@
         }
 
         function displayErrMsg() {
-            if ((passwordErrMsg + firstNameErrMsg + lastNameErrMsg) != "") {    // if there is an error, display it
+            if ((passwordErrMsg + firstNameErrMsg + lastNameErrMsg + usernameErrMsg) != "") {    // if there is an error, display it
                 let errMsgNode = document.getElementById("error_message");
                 errMsgNode.style.display = "";
-                errMsgNode.innerText = "\n" + passwordErrMsg + "\n" + firstNameErrMsg + "\n" + lastNameErrMsg + "\n";
+                errMsgNode.innerText = "\n" + usernameErrMsg + "\n" + passwordErrMsg + "\n" + firstNameErrMsg + "\n" + lastNameErrMsg + "\n";
             }
         }
 
-        var submitButton = document.getElementById("sign_up_btn");
+        //var submitButton = document.getElementById("sign_up_btn");
         //submitButton.addEventListener(inputType, validCredentials);
         function validCredentials() {
             // functions are called in the case of auto filled fields which would not trigger these functions otherwise
+            validUsername();
             validPassword();
             validFirstName();
             validLastName();
 
-            if(valid_password && valid_firstName && valid_lastName) {
+            if(valid_username && valid_password && valid_firstName && valid_lastName) {
                 document.getElementById("sign_up_btn").disabled = false;
                 document.getElementById("sign_up_btn").style.backgroundColor = "rgba(0, 60, 255, 0.582)";
             } else {
