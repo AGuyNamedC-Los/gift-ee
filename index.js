@@ -215,7 +215,7 @@ app.post('/login_status', express.urlencoded({extended:true}), async function(re
 		}
 	} catch (err) {
 		console.log(`temp_userDB error ${err}`);
-		res.render("error.html");
+		res.render('login_error.html');
 		return;
 	}
 
@@ -261,12 +261,12 @@ app.post('/login_status', express.urlencoded({extended:true}), async function(re
 				});
 			} else {		// found user but wrong password
 				console.log("incorrect password for user in userDB");
-				res.render("error.html");
+				res.render('login_error.html');
 				return;
 			}
 		} else {	// username was not found in userDB
 			console.log("could not find username in userDB");
-			res.render("error.html");
+			res.render('login_error.html');
 			return;
 		}
 	} catch (err) {

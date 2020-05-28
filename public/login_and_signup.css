@@ -65,3 +65,30 @@ input[type=submit] {
 }
 
 input[type=submit]:hover { cursor: pointer; }
+
+/* login error page */
+.error_box {
+    background-color: white;
+    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-content: space-between;
+    margin: 2% 37%;
+    padding: 2% 0%;
+}
+
+.error_box p:nth-child(1) {
+    color: red;
+    font-size: 35px;
+}
+
+.error_box i {
+    border-style: solid;
+    border-color: rgba(0, 60, 255, 0.582);
+    padding: 0% 1%;
+}
+
+.error_box p:nth-child(4) {
+    font-size: 30px;
+}
