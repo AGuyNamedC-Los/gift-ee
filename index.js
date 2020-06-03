@@ -109,7 +109,7 @@ const guestsAndTempUsersOnly = function(req, res, next) {
 };
 
 async function sendConfirmationCode(secretCode, email) {
-	console.log("secret code: " + secretCode);
+	//console.log("secret code: " + secretCode);
 	try {
 		let transporter = nodemailer.createTransport({
 			service: 'gmail',
@@ -141,7 +141,7 @@ async function sendConfirmationCode(secretCode, email) {
 
 /* ----------------------------------------------------WEBPAGES---------------------------------------------------- */
 app.get('/', function (req, res) {
-	console.log("home: " + req.session.user.role);
+	//console.log("home: " + req.session.user.role);
     res.render('home.njk', {user: req.session.user});
 	return;
 });
@@ -438,16 +438,105 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 	// check for alphabets
 	// check for lowercase
 	// check for uppercase
-	
-	
+
+	let tempUserFound = 0;
+	let duplicateUsername = false;
 	/* searching through the temp_userDB */
+	try {
+		console.log("signing up...");
+		console.log("searching through temp_userDB");
+		let temp_docs = await temp_userDB.find({ $or: [{ 'email': email }, { 'username': username }] });
+		//let temp_docs = await temp_userDB.find({'email': email}, {'username': username});
+		tempUserFound = temp_docs.length;
+		console.log("tempUserFound: " + temp_docs.length);
+		if(tempUserFound) {
+			for(i = 0; i < temp_docs.length; i++) {
+				console.log(username + " ? " + temp_docs[i].username);
+				if(temp_docs[i].username == username) { duplicateUsername = true; }
+			}
+
+			if(duplicateUsername == true) {
+				console.log("Duplicate username in temp_userDB");
+				res.render('sign_up_error.html', {user: req.session.user, error: "username"});
+			} else {
+				console.log("Duplicate email in temp_userDB");
+				res.render('sign_up_error.html', {user: req.session.user, error: "email"});
+			}
+			
+			return;
+		}
+	} catch (err) {
+		console.log(err);
+		res.render('error.html', {user: req.session.user});
+		return;
+	}
+
+	if(tempUserFound) {
+		return;
+	}
+
+	let userFound = 0;
+	duplicateUsername = false;
+	/* search through userDB */
+	try{
+		console.log("signing up...");
+		console.log("searching through userDB");
+		
+		let docs = await userDB.find({ $or: [{ 'email': email }, { 'username': username }] });
+		//let docs = await userDB.find({'email': email}, {'username': username});
+		userFound = docs.length;
+		console.log("user found: " + docs.length);
+		if(userFound) {
+			for(i = 0; i < docs.length; i++) {
+				console.log(username + " ? " + docs[i].username);
+				if(docs[i].username == username) { duplicateUsername = true; }
+			}
+
+			if(duplicateUsername == true) {
+				console.log("Duplicate username in userDB");
+				res.render('sign_up_error.html', {user: req.session.user, error: "username"});
+			} else {
+				console.log("Duplicate email in userDB");
+				res.render('sign_up_error.html', {user: req.session.user, error: "email"});
+			}
+			
+			return;
+		}
+	} catch (err) {
+		console.log(err);
+		res.render('error.html', {user: req.session.user});
+		return;
+	}
+
+	if(userFound) {
+		return;
+	}
+
+
+	/* searching through the temp_userDB */
+	/*
 	try {
 		console.log("searching temp_userDB");
 		let temp_docs = await temp_userDB.find({'email': email}, {'username': username});
 		console.log("tempUserFound: " + temp_docs.length);
 		let tempUserFound = temp_docs.length;
+		let duplicateUsername = false;
 		if(tempUserFound) {		// duplicate username or email found in temp_userDB
-			res.render('sign_up_error.html', {user: req.session.user});
+			if(userFound) {		// duplicate username or email found in userDB
+				for(i = 0; i < temp_docs.length; i++) {
+					if(temp_docs[i].username == username) { duplicateUsername = true; }
+				}
+
+				if(duplicateUsername == true) {
+					console.log("Duplicate username in temp_userDB");
+					res.render('sign_up_error.html', {user: req.session.user, error: "username"});
+				} else {
+					console.log("Duplicate email in temp_userDB");
+					res.render('sign_up_error.html', {user: req.session.user, error: "email"});
+				}
+				
+				return;
+			}
 			return
 		} else {		// no duplicate temp user found, check the main userDB
 			try {
@@ -456,7 +545,19 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 				let userFound = userdocs.length;
 				console.log(userdocs[0]);
 				if(userFound) {		// duplicate username or email found in userDB
-					res.render('sign_up_error.html', {user: req.session.user});
+					duplicateUsername = false;
+					for(i = 0; i < userdocs.length; i++) {
+						if(userdocs[i].username == username) { duplicateUsername = true; }
+					}
+
+					if(duplicateUsername == true) {
+						console.log("Duplicate username in userDB");
+						res.render('sign_up_error.html', {user: req.session.user, error: "username"});
+					} else {
+						console.log("Duplicate email in userDB");
+						res.render('sign_up_error.html', {user: req.session.user, error: "email"});
+					}
+					
 					return;
 				}
 			} catch (err) {
@@ -470,7 +571,9 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 		res.render('error.html', {user: req.session.user});
 		return;
 	}
+	*/
 
+	console.log("CREATING SALT");
 	// creating salt
 	let NUM_SIZE = process.env.NUM_SIZE;
 	let rand_num1 = Math.floor(Math.random() * NUM_SIZE);

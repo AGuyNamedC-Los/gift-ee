@@ -1,9 +1,28 @@
-{% extends "base.njk" %}
-
-{% block metaStuff%}
-	<title>Sign Up Error!</title>
-{% endblock %}
-
-{% block main %}
-	<h1>Sign Up Error!</h1>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>gift-ee</title>
+		<link href="login_and_signup.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+		<link rel="stylesheet" type="text/html" href="//fonts.googleapis.com/css?family=Ubuntu">
+	</head>
+    <body>
+		<main>
+            <p><a href="/"><i class="fas fa-home"></i></a></p>
+			<div class="error_box">
+                {% if (error == "email") %}
+                    <p>Sorry, that email has already been taken!</p>
+                {% elif (error == "username") %}
+                    <p>Sorry, that username has already been taken!</p>
+                {% else %}
+                    <p>Trouble signing up, try again!</p>
+                {% endif %}
+                {{error}}
+                <br><br>
+                <p><a href="/sign-up"><i class="fas fa-sign-in-alt"></i></a></p>
+                <p>Back to Login</p>
+			</div>
+		</main>
+	</body>
+</html>

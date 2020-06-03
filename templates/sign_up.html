@@ -180,6 +180,11 @@
         }
 
         function validCredentials() {
+            validUsername();
+            validPassword();
+            validFirstName();
+            validLastName();
+
             if(valid_username && valid_password && valid_firstName && valid_lastName) {
                 document.getElementById("sign_up_btn").disabled = false;
                 document.getElementById("sign_up_btn").style.backgroundColor = "rgba(0, 60, 255, 0.582)";
