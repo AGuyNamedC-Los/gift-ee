@@ -398,20 +398,21 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 	
 	// check for the proper @email suffix
 	if(!email.includes("@")) {
-		res.render("sign_up_error.html");
+		console.log("no @");
+		res.render('sign_up_error.html', {user: req.session.user, error: ""});
 		return;
 	}
 	
 	let username = req.body.username;
 	// check for username length
 	if(username.length < 5 || username.length > 30) {
-		res.render("sign_up_error.html");
+		res.render('sign_up_error.html', {user: req.session.user, error: ""});
 		return;
 	}
 	// check for invalid characters for username
 	for(i = 0; i < username.length; i++) {
 		if(username.includes(badCharacters[i])) {
-			res.render("sign_up_error.html");
+			res.render('sign_up_error.html', {user: req.session.user, error: ""});
 			return;
 		}
 	}
@@ -422,13 +423,13 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 	
 	// check for password length
 	if(password.length < 5 || password.length > 30) {
-		res.render("sign_up_error.html");
+		res.render('sign_up_error.html', {user: req.session.user, error: ""});
 		return;
 	}
 	// check for invalid password characters
 	for(i = 0; i < password.length; i++) {
 		if(password.includes(badCharacters[i])) {
-			res.render("sign_up_error.html");
+			res.render('sign_up_error.html', {user: req.session.user, error: ""});
 			return;
 		}
 	}
@@ -458,22 +459,22 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 			if(duplicateUsername == true) {
 				console.log("Duplicate username in temp_userDB");
 				res.render('sign_up_error.html', {user: req.session.user, error: "username"});
+				return;
 			} else {
 				console.log("Duplicate email in temp_userDB");
 				res.render('sign_up_error.html', {user: req.session.user, error: "email"});
+				return;
 			}
 			
 			return;
 		}
 	} catch (err) {
-		console.log(err);
-		res.render('error.html', {user: req.session.user});
+		console.log(err + "problem with temp_userdb");
+		res.render('error.html', {user: req.session.user, error: ""});
 		return;
 	}
 
-	if(tempUserFound) {
-		return;
-	}
+	if(tempUserFound) { return; }
 
 	let userFound = 0;
 	duplicateUsername = false;
@@ -483,7 +484,6 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 		console.log("searching through userDB");
 		
 		let docs = await userDB.find({ $or: [{ 'email': email }, { 'username': username }] });
-		//let docs = await userDB.find({'email': email}, {'username': username});
 		userFound = docs.length;
 		console.log("user found: " + docs.length);
 		if(userFound) {
@@ -504,7 +504,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 		}
 	} catch (err) {
 		console.log(err);
-		res.render('error.html', {user: req.session.user});
+		res.render('sign_up_error.html', {user: req.session.user, error: ""});
 		return;
 	}
 
@@ -591,6 +591,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 	for(i = 0; i < 5; i++) {
 		emailCode = String(emailCode) + String(Math.floor(Math.random() * NUM_SIZE));
 	}
+
 	try {
 		let newTempUser = {
 			"firstName": firstName,
@@ -619,9 +620,10 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 			email: newTempUser.email,
 			username: newTempUser.username
 		});
-		res.render('home.njk', {user: req.session.user});
+		res.render('sign_up_success.html', {user: req.session.user});
 		return;
 	} catch (err) {
+		console.log("NO DEFAULT??");
 		console.log("error: " + err);
 		res.render('error.html', {user: req.session.user});
 		return;
