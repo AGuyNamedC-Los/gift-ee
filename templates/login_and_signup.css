@@ -25,7 +25,9 @@ p a i {
     padding: 2% 0%;
 }
 
-fieldset { border: none; }
+fieldset {
+    border: none;
+}
 
 .user_input p {
     font-size: 30px;
@@ -63,3 +65,55 @@ input[type=submit] {
 }
 
 input[type=submit]:hover { cursor: pointer; }
+
+/* login error page */
+.error_box, .success_box {
+    background-color: white;
+    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-content: space-between;
+    margin: 2% 37%;
+    padding: 2% 0%;
+}
+
+.error_box p:nth-child(1) {
+    color: red;
+    font-size: 35px;
+}
+
+.error_box i {
+    border-style: solid;
+    border-color: rgba(0, 60, 255, 0.582);
+    padding: 0% 1%;
+}
+
+.error_box p:nth-child(4) {
+    font-size: 30px;
+}
+
+fieldset {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+fieldset input {
+    box-shadow:  0 0 0 2px lightgrey;
+    border-radius: 7px;
+    margin: 2% 12%;
+    padding: 2% 0%;
+    text-align: center;
+    font-size: 125%;
+}
+
+fieldset input[type=submit] {
+    text-align: center;
+    padding: 2% 0%;
+}
+
+
+
+
+

@@ -10,11 +10,16 @@
     <body>
 		<main>
             <p><a href="/"><i class="fas fa-home"></i></a></p>
-			<div class="error_box">
+			<div class="success_box">
 				<p>You have successfully created a temporary Gift-ee account! </p>
 				<p>To take advantage of the full features of Gift-ee, please verify your email.</p>
 				<br>
-				
+				<form class="email_confirmation" action="email_confirmation_status" method="POST">
+					<fieldset>
+						<input type="text", id="emailConfirmation", name="emailConfirmation", placeholder="Enter email confirmation code">
+						<input class="login_btn" type="submit" value="Submit">
+					</fieldset>
+				</form>
 			</div>
 		</main>
 	</body>

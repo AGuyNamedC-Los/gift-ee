@@ -67,7 +67,7 @@ input[type=submit] {
 input[type=submit]:hover { cursor: pointer; }
 
 /* login error page */
-.error_box {
+.error_box, .success_box {
     background-color: white;
     border-radius: 7px;
     display: flex;
@@ -92,3 +92,28 @@ input[type=submit]:hover { cursor: pointer; }
 .error_box p:nth-child(4) {
     font-size: 30px;
 }
+
+.email_confirmation fieldset {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.email_confirmation fieldset input {
+    box-shadow:  0 0 0 2px lightgrey;
+    border-radius: 7px;
+    margin: 2% 12%;
+    padding: 2% 0%;
+    text-align: center;
+    font-size: 125%;
+}
+
+.email_confirmation fieldset input[type=submit] {
+    text-align: center;
+    padding: 2% 0%;
+}
+
+
+
+
+
