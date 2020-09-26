@@ -17,7 +17,9 @@ body{
     background-color: var(--background-color);
 }
 
-
+/*------------------------------------------ 
+    menu
+------------------------------------------*/
 header {
     background-color: white;
     border: 1px solid #DFE1E6;
@@ -29,6 +31,7 @@ a {
     text-transform: uppercase;
     text-decoration: none;
     color: inherit;
+    text-align: center;
 }
 
 nav {
@@ -39,6 +42,11 @@ nav {
     width: 100%;
     max-width: 65rem;
     margin: 0 auto;
+}
+
+nav img {
+    width: 100%;
+    max-width: 5rem;
 }
 
 nav div {
@@ -205,7 +213,24 @@ footer h5 {margin-top: 0; padding: 1rem}
     flex-direction: column;
 }
 
+.footer-content a {
+    display: block;
+    width: 100%;
+    max-width: 3rem;
+    text-align: center;
+    /* vertical-align: bottom; */
+    border-radius: 10px;
+    margin: .25rem 0;
+}
+
 .footer-content i {
     font-size: 3rem;
+    vertical-align: bottom;
+}
+
+.footer-content img {
+    width: 100%;
+    /* max-width: 2.5rem; */
+    vertical-align: bottom;
 }
 .footer-content:nth-child(1) {margin-left: 0;}
