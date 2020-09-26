@@ -1,0 +1,147 @@
+/*----------------------------
+  Gift List - Normal
+----------------------------*/
+.gift-list-normal {
+    display: flex;
+    flex-direction: column;
+    /* border: solid; */
+    justify-content: center;
+}
+
+.gift-form {
+    width: 100%;
+}
+
+.gift.normal {
+    /* border: solid; */
+    text-align: center;
+    margin: .25rem auto;
+    width: 100%;
+    max-width: 70rem;
+}
+
+.gift.normal .gift-name {
+    margin:0;
+    border: solid;
+    border-radius: 10px;
+    text-align: left;
+    padding: .5rem 0;
+    padding-left: 1rem;
+}
+
+.gift.normal .gift-name:hover {
+    cursor: pointer;
+}
+
+.gift-content-dropdown {
+    visibility: hidden;
+    position: absolute;
+    opacity: 0;
+    transition: visibility 0s, opacity 1s linear;
+}
+
+/*----------------------------
+  Gift List - Fancy
+----------------------------*/
+
+body {
+    margin: 0;
+}
+
+.gift-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 25rem;
+}
+
+@media screen and (max-width: 1600px) {
+    .gift-list {
+        grid-template-columns: repeat(4, 1fr);
+        grid-auto-rows: 25rem;
+    }
+}
+
+@media screen and (max-width: 1366px) {
+    .gift-list {
+        grid-template-columns: repeat(4, 1fr);
+        grid-auto-rows: 25rem;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .gift-list {
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: 25rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .gift-list {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 25rem;
+    }
+}
+
+@media screen and (max-width: 520px) {
+    .gift-list {
+        grid-template-columns: repeat(1, 1fr);
+        grid-auto-rows: 25rem;
+    }
+}
+
+.gift, .gift-form {
+    display: flex;
+    flex-direction: column;
+    margin: 2rem auto;
+    width: 12.5rem;
+}
+
+.gift-top, .gift-top-form {
+    border: solid;
+    margin: 0 auto;
+    width: 12rem;
+    padding: .5rem 0;
+}
+
+.gift-content{
+    position: absolute;
+    margin: 1rem auto;
+    width: 12rem;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 1s linear;
+}
+
+.gift-content-form {
+    text-align: center;
+    position: absolute;
+    margin: 2rem auto;
+    width: 12rem;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 1s linear;
+}
+
+.gift-content p {
+    text-align: center;
+}
+
+.gift-bottom, .gift-bottom-form {
+    border: solid;
+    margin: auto auto;
+    margin-top: 0rem;
+    width: 12rem;
+    height: 10rem;
+    padding: 0rem 0;
+    transition-duration: 1s;
+}
+
+.gift-bottom img {
+    object-fit: contain;
+    width:100%;
+    height:100%;
+}
+
+.gift-bottom:hover, .gift-bottom-form:hover {
+    cursor: pointer;
+}

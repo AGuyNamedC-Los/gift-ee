@@ -1,0 +1,83 @@
+{% extends "base.njk" %}
+
+{% block metaStuff %}
+	<title>Profile</title>
+{% endblock %}
+
+{% block main %}
+    <!-- add a gift to the gift list -->
+    <form class="add-gift" action="added_gift_status" method="POST">
+        <p>Add Gift to List</p>
+        <div class="gift-form">
+            <div class="gift-top-form"></div>
+            <div class="gift-content-form">
+                <input type="text" id="item_name" name="itemName" placeholder="Item Name">
+                <input type="text" id="link" name="link" placeholder="Link">
+                <input type="text" id="quantity" name="qty" placeholder="Quantity">
+                <input type="text" id="size" name="size" placeholder="Size">
+                <input type="text" id="color" name="color" placeholder="Color">
+                <input type="text" id="price" name="price" placeholder="Price">
+                <input type="text" id="imgURL" name="imgURL" placeholder="Image URL">
+                <p>leave blank to exclude attributes</p>
+                <input type="submit" value="Add to gift-ee List">
+            </div>
+            <div class="gift-bottom-form" onclick="openForm()"></div>
+        </div>
+    </form>
+
+    <!-- normal gift list -->
+    <div class="gift-list">
+        {% for i in range(0, giftList.length) -%}
+            <div class="gift-list-item">
+                <p class="gift-name" onclick="showGiftContent({{i}})">{{giftList[i].itemName}}</p>
+                <div class="gift-content-dropdown">
+                    {% if giftList[i].link != ""%}<a href="{{giftList[i].link}}" target="_blank">Store Link</a>{% endif %}
+                    {% if giftList[i].qty != ""%}<p>Quantity: {{giftList[i].qty}}</p>{% endif %}
+                    {% if giftList[i].size != ""%}<p>Size: {{giftList[i].size}}</p>{% endif %}
+                    {% if giftList[i].color != ""%}<p>Color: {{giftList[i].color}}</p>{% endif %}
+                    {% if giftList[i].price != ""%}<p>Price: {{giftList[i].price}}$</p>{% endif %}
+                    <form id="delete-gift-form" action="deleted_gift_status" method="POST">
+                        <p hidden><input type="text" name="itemNum" value="{{i}}"></p>
+                        <button type="submit">Delete</button>
+                    </form>
+                </div>
+            </div>
+        {%- endfor %}
+    </div>
+    <script>
+        function showGiftContent(index) {
+            let giftForm = document.getElementsByClassName("gift-content-dropdown")[index];
+
+            if(giftContent.style.visibility != "visible") {
+                giftContent.style.visibility = "visible";
+                giftContent.style.position = "initial";
+                giftContent.style.opacity = 1;
+            } else {
+                giftContent.style.visibility = 'hidden';
+                giftContent.style.position = "absolute";
+                giftContent.style.opacity = 0;
+            }
+        }
+
+        function deleteGift(index) {
+            let itemToDelete = document.getElementById("delete-gift-form");
+            itemToDelete[index].submit();
+            console.log("item deleted: " + index);
+        }
+
+        function openForm() {
+            let giftBottom = document.getElementsByClassName("gift-bottom-form")[0];
+            let giftContent = document.getElementsByClassName("gift-content-form")[0];
+
+            if(giftContent.style.visibility != "visible") {
+                giftBottom.style.marginTop = "17rem";   // to open the box
+                giftContent.style.visibility = "visible";
+                giftContent.style.opacity = 1;  // to fade into existence
+            } else {
+                giftBottom.style.marginTop = "0rem";    // to close the box
+                giftContent.style.visibility = "hidden";
+                giftContent.style.opacity = 0;  // to fade out of existence
+            }
+        }
+    </script>
+{% endblock %}

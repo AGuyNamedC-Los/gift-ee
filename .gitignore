@@ -114,6 +114,7 @@ node_modules
 
 # directories
 output_templates
+playgroundHTML
 
 # stuff from heroku
 .DS_Store

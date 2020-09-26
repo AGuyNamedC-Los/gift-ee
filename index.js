@@ -730,7 +730,7 @@ app.get('/profile', loggedInMiddleware, async function (req, res) {
 		}
 			
 		console.log(docs[0].giftListContent);
-		res.render("profile.njk", {giftList: docs[0].giftListContent, user: req.session.user});
+		res.render("gift-ee_profile.njk", {giftList: docs[0].giftListContent, user: req.session.user});
 		return;
 	} catch (err) {
 		console.log("error");
