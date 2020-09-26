@@ -9,6 +9,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body{
@@ -195,7 +196,7 @@ footer {
 }
 
 footer h1 {margin: 0; padding: 1rem;}
-footer h5 {margin-top: 0; padding: 1rem}
+footer h5 {margin-top: 0; margin-bottom: 0; padding: 1rem}
 
 #sub-footer {
     width: 100%;
