@@ -19,8 +19,8 @@ I thought it would be a lot simpler to have one place to see a person's gift lis
 
 ## Road Map
 
-- finish the home page demo gift list functionality
-    - add the delete button
+- ~~finish the home page demo gift list functionality~~
+    - ~~add the delete button~~
     - ~~add the apply button~~
     - ~~add links to the footer of the page~~
         - ~~maybe add icons instead of text or both~~

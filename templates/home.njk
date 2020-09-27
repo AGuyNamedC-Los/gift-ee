@@ -152,17 +152,20 @@
 	var privateGifts = privateGiftList.getElementsByClassName("gift-private");
 	var publicGiftList = document.getElementsByClassName("gift-list-public")[0];
 	var publicGifts = publicGiftList.getElementsByClassName("gift-public");
+	// these are storing functions so that the event listener has something to 
+	// reference to when it comes time to delete their event listeners
+	var openPrivateGiftButtons = [];
+	var applyChangesButtons = [];
+	var deleteGiftButtons = [];
+	var openPublicGiftButtons = [];
 
-	// to expand the contents of each item in the private and public gift lists
-	for(i = 0; i < privateGifts.length; i++) {
-		let index = i;
-		privateGifts[i].getElementsByClassName("openGiftButton")[0].addEventListener("click", () => openGift(index, "private"));
-		publicGifts[i].getElementsByClassName("openGiftButton")[0].addEventListener("click", () => openGift(index, "public"));
-	}
+	// adding appropriate event listeners to each gift
+	addEventListeners();
 	// to open the add gift form
 	document.getElementById("gift-bottom").addEventListener("click", () => expandAddGiftForm());
 
 	function openGift(index, privacy) {
+		console.log("opening " + privacy + " gift: " + index);
 		let giftContent = (privacy === "private") ? privateGifts[index].getElementsByClassName("gift-content")[0] : publicGifts[index].getElementsByClassName("gift-content")[0];
 		let currGift = (privacy === "private") ? privateGifts[index] : publicGifts[index];
 		let giftContentHeight = giftContent.scrollHeight;
@@ -222,9 +225,12 @@
 
 		addToPrivateList(inputFields);
 		addToPublicList(inputFields);
+
+		removeEventListeners();
+		addEventListeners()
 	}
 
-	// creating appropriate elements to append to the user's private gift list
+	// creating appropriate elements to append to the user's private or public gift list
 	function parseInputFields(privacy, inputFields) {
 		let newInputFields = [];
 
@@ -249,6 +255,7 @@
 		return newInputFields;
 	}
 
+	// creating a new gift element to add to the private gift list
 	function addToPrivateList(inputFields) {
 		let newInputFields = parseInputFields("private", inputFields);
 		let currGiftIndex = privateGifts.length;
@@ -265,21 +272,16 @@
 							${newInputFields[2]}
 							${newInputFields[3]}
 							${newInputFields[4]}
-							<button type="button" onclick="applyChanges(${currGiftIndex}, this.form)">Apply Changes</button>
+							<button type="button">Apply Changes</button>
 							<button type="button">Delete</button>
 						</form>
 					</div>
 				</div>`;
 			privateGiftList.insertAdjacentHTML("beforeend", newGift);
-			// getting the button of the recently added gift and adding an event listener
-			let giftButton = privateGifts[currGiftIndex].getElementsByClassName("openGiftButton")[0];
-			let applyChangesButton = privateGifts[currGiftIndex].getElementsByTagName("button")[0];
-			giftButton.addEventListener("click", () => openGift(currGiftIndex, "private"));
-			// applyChangesButton.addEventListener("click", () => applyChanges(lastIndex, this.form));
 		}
-
 	}
 
+	// creating a new gift element to add to the public gift list
 	function addToPublicList(inputFields) {
 		let newInputFields = parseInputFields("public", inputFields);
 
@@ -297,9 +299,50 @@
 				</div>`;
 			publicGiftList.insertAdjacentHTML("beforeend", newGift);
 		}
-		let lastIndex = publicGifts.length-1;
-		let giftButton = publicGifts[lastIndex].getElementsByClassName("openGiftButton")[0];
-		giftButton.addEventListener("click", () => openGift(lastIndex, "public"));
+	}
+
+	// deleting a gift from both the public and private gift lists 
+	// while also removing and reassigning their event listeners
+	function deleteGift(index) {
+		removeEventListeners();
+		privateGifts[index].remove();
+		publicGifts[index].remove();
+
+		if(privateGifts.length != 0) {addEventListeners();}
+	}
+
+	// add event listeners to all necessary compontents in regards to the private and public gift elements
+	function addEventListeners() {
+		for(i = 0; i < privateGifts.length; i++) {
+			let index = i;
+			// have to create copies of functiion with parameters so that they be referenced later for removeEventerListener
+			openPrivateGiftButtons.push(openGift.bind(null, index, "private"));
+			applyChangesButtons.push(applyChanges.bind(null, index));
+			deleteGiftButtons.push(deleteGift.bind(null, index));
+			openPublicGiftButtons.push(openGift.bind(null, index, "public"));
+
+			privateGifts[i].getElementsByClassName("openGiftButton")[0].addEventListener("click", openPrivateGiftButtons[index]);
+			privateGifts[i].getElementsByTagName("button")[0].addEventListener("click", applyChangesButtons[index]);
+			privateGifts[i].getElementsByTagName("button")[1].addEventListener("click", deleteGiftButtons[index]);
+			publicGifts[i].getElementsByClassName("openGiftButton")[0].addEventListener("click", openPublicGiftButtons[index]);
+		}
+	}
+
+	// add event listeners to all necessary compontents in regards to the private and public gift elements
+	function removeEventListeners() {
+		console.log("gifts: " + privateGifts.length);
+		for(i = 0; i < privateGifts.length; i++) {
+			let index = i;
+			privateGifts[i].getElementsByClassName("openGiftButton")[0].removeEventListener("click", openPrivateGiftButtons[index]);
+			privateGifts[i].getElementsByTagName("button")[0].removeEventListener("click", applyChangesButtons[index]);
+			privateGifts[i].getElementsByTagName("button")[1].removeEventListener("click", deleteGiftButtons[index]);
+			publicGifts[i].getElementsByClassName("openGiftButton")[0].removeEventListener("click", openPublicGiftButtons[index]);
+		}
+
+		openPrivateGiftButtons.length = 0;
+		applyChangesButtons.length = 0;
+		deleteGiftButtons.length = 0;
+		openPublicGiftButtons.length = 0;
 	}
 
 	function expandGift(index, e) {
@@ -319,11 +362,12 @@
 		}
 	}
 
-	function applyChanges(index, form) {
+	// changes made to a gift in the private gift list should be reflected to the gift in the public gift list
+	function applyChanges(index) {
 		let inputFields = [];
 		inputFields.length = 0;
-		let formInputs = form.children;
-		let itemNameInput = formInputs[0].getElementsByTagName("input")[0];
+		let formInputs = privateGifts[index].getElementsByTagName("form")[0];
+		let itemNameInput = formInputs.getElementsByTagName("input")[0];
 
 		if(itemNameInput.value == "") {
 			itemNameInput.style.borderColor = "red";
@@ -333,11 +377,11 @@
 
 		// get current input fields from the private gift's input fields
 		inputFields = ({
-			itemName: formInputs[0].getElementsByTagName("input")[0].value,
-			storeLink: formInputs[1].getElementsByTagName("input")[0].value,
-			price: formInputs[2].getElementsByTagName("input")[0].value,
-			quantity: formInputs[3].getElementsByTagName("input")[0].value,
-			size: formInputs[4].getElementsByTagName("input")[0].value
+			itemName: formInputs.getElementsByTagName("input")[0].value,
+			storeLink: formInputs.getElementsByTagName("input")[1].value,
+			price: formInputs.getElementsByTagName("input")[2].value,
+			quantity: formInputs.getElementsByTagName("input")[3].value,
+			size: formInputs.getElementsByTagName("input")[4].value
 		});
 		privateGifts[index].getElementsByTagName("h2")[0].innerHTML = inputFields.itemName; // change private gift's name
 
