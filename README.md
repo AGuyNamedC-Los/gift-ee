@@ -28,7 +28,8 @@ I thought it would be a lot simpler to have one place to see a person's gift lis
 - redo the login page
 - redo the sign up page
 - redo the profile page
-- fix the email confirmation code not being sent
+- ~~fix the email confirmation code not being sent~~
+- make the email confirmation look prettier
 - clean up backend code
 - create a profile settings functionality
     - change username
