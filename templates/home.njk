@@ -26,7 +26,6 @@
 	<h1>Try it out!</h1>
 	<h3>Add a gift to your gift list</h3>
 	<p>Omitted attributes will not be present for other users to see</p>
-	<!-- add gift -->
 	<div id="add-gift">
 		<div id="gift-top"></div>
 		<form id="add-gift-form">
@@ -58,9 +57,7 @@
 <section class="main-content content-3">
 	<h1>This is what YOU will see</h1>
 	<h3>You can edit and remove gifts that are in your private gift list</h3>
-	<!-- PRIVATE gift list -->
 	<div class="gift-list gift-list-private">
-		<!-- gift 1 -->
 		<div class="gift gift-private">
 			<i class="fas fa-eye openGiftButton"></i>
 			<h2>RTX 3090</h2>
@@ -86,7 +83,7 @@
 						<label>SIZE</label>
 						<input type="text" class="input-name" placeholder="New Size">
 					</div>
-					<button type="button" onclick="applyChanges(0, this.form)">Apply Changes</button>
+					<button type="button">Apply Changes</button>
 					<button type="button">Delete</button>
 				</form>
 			</div>
@@ -95,7 +92,6 @@
 </section>
 <section class="main-content conent-4">
 	<h1>This is what everyone else will see</h1>
-	<!-- PUBLIC gift list -->
 	<div class="gift-list gift-list-public">
 		<div class="gift gift-public">
 			<i class="fas fa-eye openGiftButton"></i>
@@ -118,7 +114,6 @@
 		</div>
 	</div>
 </section>
-<!-- footer -->
 <footer>
 	<div id="sub-footer">
 		<h1>Giftee</h1>
@@ -165,7 +160,6 @@
 	document.getElementById("gift-bottom").addEventListener("click", () => expandAddGiftForm());
 
 	function openGift(index, privacy) {
-		console.log("opening " + privacy + " gift: " + index);
 		let giftContent = (privacy === "private") ? privateGifts[index].getElementsByClassName("gift-content")[0] : publicGifts[index].getElementsByClassName("gift-content")[0];
 		let currGift = (privacy === "private") ? privateGifts[index] : publicGifts[index];
 		let giftContentHeight = giftContent.scrollHeight;
@@ -188,18 +182,20 @@
 	}
 
 	function expandAddGiftForm() {
-		let giftForm = document.getElementById("add-gift-form");
+		let bottomOfGift = document.getElementById("gift-bottom");
+		let addGiftForm = document.getElementById("add-gift-form");
+		let giftFormHeight = addGiftForm.scrollHeight;
 
-		if(giftForm.style.visibility === "visible") {
-			giftForm.style.position = "absolute";
-			giftForm.style.visibility = "hidden";
-			giftForm.style.transition = "0s";
-			giftForm.style.opacity = 0;
-		} else {
-			giftForm.style.position = "static";
-			giftForm.style.visibility = "visible";
-			giftForm.style.transition = "2s";
-			giftForm.style.opacity = 1;
+		if(addGiftForm.style.visibility === "visible") {   // close the form
+			addGiftForm.style.transition = "0s";
+			addGiftForm.style.visibility = "hidden";
+			addGiftForm.style.opacity = 0;
+			bottomOfGift.style.marginTop = "0px";
+		} else {    // open the form
+			addGiftForm.style.transition = "2s ease";
+			addGiftForm.style.visibility = "visible";
+			addGiftForm.style.opacity = 1;
+			bottomOfGift.style.marginTop = giftFormHeight + "px";
 		}
 	}
 	
