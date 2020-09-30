@@ -32,13 +32,13 @@ header {
     border: 1px solid #DFE1E6;
 }
 
-a {
+header a {
     cursor: pointer;
     font-weight: 700;
     text-transform: uppercase;
     text-decoration: none;
     color: inherit;
-    text-align: center;
+    /* text-align: center; */
 }
 
 nav {
@@ -73,11 +73,12 @@ nav div {
     text-align: center;
 }
 
-.content-1 {text-align: left; max-width: 30rem;}
-.content-2 {max-width: 30rem;}
+h1 {
+    text-align: center;
+}
 
 /*------------------------------------------ 
-    add gift form 
+    add gift form
 ------------------------------------------*/
 #add-gift {
     position: relative;
@@ -98,13 +99,37 @@ nav div {
 
 #add-gift-form {
     position: absolute;
-    width: 90%;
+    width: 100%;
+    max-width: 30rem;
+    left: 0; 
+    right: 0; 
+    margin: 1rem auto; 
+    visibility: hidden;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: .25rem 0;
+}
+
+.input-group input {
+
+}
+
+.input-group label {
+    text-align: left;
+}
+
+#add-gift-btn {
     left: 0; 
     right: 0; 
     margin-left: auto; 
     margin-right: auto; 
-    visibility: hidden;
-    opacity: 0;
 }
 
 #gift-bottom {
@@ -119,127 +144,47 @@ nav div {
 }
 
 /*------------------------------------------ 
-    giftList
+    gifts
 ------------------------------------------*/
 .gift-list {
+    width: 100%;
+    max-width: 140rem;
     margin: auto auto;
-    border-radius: 50px;
+}
+
+.gift-titles {
+    display: grid;
+    grid-template-columns: 2.5fr 4fr 1fr 1fr 1fr 1fr .5fr .5fr;
+    grid-template-rows: auto;
+    grid-gap: 1rem;
+    align-items: center;
 }
 
 .gift {
-    position: relative;
-    border: solid;
-    width: 100%;
-    max-width: 40rem;
-    margin: 1rem auto;
-    border-radius: 16px;
-    transition: .5s;
-    height: 50px;
-    padding-bottom: 0;
-    /* padding: 0rem 0; */
+    display: grid;
+    grid-template-columns: 2.5fr 4fr 1fr 1fr 1fr 1fr .5fr .5fr;
+    grid-template-rows: auto;
+    /* justify-items: center; */
+    align-items: center;
+    grid-gap: 1rem;
+    border-top: solid;
+    padding: .5rem 0;
+    border-color: var(--color-border);
 }
 
-.gift i {
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
-.gift h2 {
+.gift a {
+    display: inline-block;
+    vertical-align: bottom;
     margin: 0;
-    border-radius: 12px 12px 0px 0px;
-    /* background-color: #AE1100; */
+    padding: 0;
+    border: solid;
 }
 
-.gift-content {
-    position: absolute;
-    width: 90%;
-    left: 0; 
-    right: 0; 
-    margin-left: auto; 
-    margin-right: auto; 
-    visibility: hidden;
-    opacity: 0;
-}
-
-.gift-content, form {
-    display: flex;
-    flex-direction: column;
-}
-
-.input-group {
-    display: flex;
-    flex-direction: column;
-    width: 95%;
-    margin: .25rem auto;
-}
-
-.input-group label {
-    text-align: left;
-    font-size: .75rem;
-    font-weight: 700;
-    text-transform: capitalize;
-}
-
-.input-group input {
-    padding: .75rem .5rem;
-    border-radius: 10px;
-}
-
-form button {
-    width: 95%;
-    padding: .5rem;
-    border-radius: 10px;
-    margin: .25rem auto;
-    cursor: pointer;
-    background-color: var(--color-btn);
-}
-
-/*------------------------------------------ 
-    Footer
-------------------------------------------*/
-footer {
-    background-color: white;
-    border: 1px solid #DFE1E6;
-    width: 100%;
-}
-
-footer h1 {margin: 0; padding: 1rem;}
-footer h5 {margin-top: 0; margin-bottom: 0; padding: 1rem}
-
-#sub-footer {
-    width: 100%;
-    max-width: 70rem;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-}
-
-#footer-content-container {display: flex;}
-.footer-content {
-    margin: 0 2rem;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-}
-
-.footer-content a {
-    display: block;
-    width: 100%;
-    max-width: 3rem;
-    text-align: center;
-    /* vertical-align: bottom; */
-    border-radius: 10px;
-    margin: .25rem 0;
-}
-
-.footer-content i {
-    font-size: 3rem;
+.gift a i {
     vertical-align: bottom;
+
 }
 
-.footer-content img {
-    width: 100%;
-    /* max-width: 2.5rem; */
-    vertical-align: bottom;
+.public-gift, .public-gift-titles {
+    grid-template-columns: 2.5fr 4fr 1fr 1fr 1fr .5fr;
 }
-.footer-content:nth-child(1) {margin-left: 0;}

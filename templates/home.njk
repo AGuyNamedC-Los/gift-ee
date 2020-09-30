@@ -6,393 +6,213 @@
 {% endblock %}
 
 {% block main%}
-<section class="main-content content-1">
-	<h6>About this tool</h6>
-	<h1>Giftee</h1>
-	<p>
-		Giftee is a social media-esque gift list managing website. Instead of keeping track of 
-		your multiple online store's gift lists, like amazon, you can place them in one easy to 
-		manage place!
-	</p>
-	<h3>Why did you make this?</h3>
-	<p>
-		I got tired of managing my own gift lists across multiple online stores aswell 
-		as online stores that didnt have their own wish lists. I also saw it as an opportunity to be 
-		able to share your gift list to friends and family with all the
-		necessary information pertaining to that item in your gift list 
-	</p>
-</section>
-<section class="main-content content-2">
-	<h1>Try it out!</h1>
-	<h3>Add a gift to your gift list</h3>
-	<p>Omitted attributes will not be present for other users to see</p>
-	<div id="add-gift">
-		<div id="gift-top"></div>
-		<form id="add-gift-form">
-			<div class="input-group">
-				<label>ITEM NAME</label>
-				<input type="text" class="input-name" name="itemName" placeholder="New Item Name">
-			</div>
-			<div class="input-group">
-				<label>STORE LINK</label>
-				<input type="text" class="input-name" name="storeLink" placeholder="New Store Link">
-			</div>
-			<div class="input-group">
-				<label>PRICE</label>
-				<input type="text" class="input-name" name="price" placeholder="New Price">
-			</div>
-			<div class="input-group">
-				<label>QUANTITY</label>
-				<input type="text" class="input-name" name="quantity" placeholder="New Quanity">
-			</div>
-			<div class="input-group">
-				<label>SIZE</label>
-				<input type="text" class="input-name" name="size" placeholder="New Size">
-			</div>
-			<button id="add-gift-btn" type="button" onclick="addGift(this.form)">Add Gift</button>
-		</form>
-		<div id="gift-bottom">Add Gift</div>
-	</div>
-</section>
-<section class="main-content content-3">
-	<h1>This is what YOU will see</h1>
-	<h3>You can edit and remove gifts that are in your private gift list</h3>
-	<div class="gift-list gift-list-private">
-		<div class="gift gift-private">
-			<i class="fas fa-eye openGiftButton"></i>
-			<h2>RTX 3090</h2>
-			<div class="gift-content gift-content-private">
-				<form class="gift-form gift-form-private">
-					<div class="input-group">
-						<label>ITEM NAME</label>
-						<input type="text" class="input-name" placeholder="New Item Name" value="RTX 3090">
-					</div>
-					<div class="input-group">
-						<label>STORE LINK</label>
-						<input type="text" class="input-name" placeholder="New Store Link" value="https://www.nvidia.com/en-us/geforce/graphics-cards/30-series/rtx-3090/">
-					</div>
-					<div class="input-group">
-						<label>PRICE</label>
-						<input type="text" class="input-name" placeholder="New Price" value="1499.00">
-					</div>
-					<div class="input-group">
-						<label>QUANTITY</label>
-						<input type="text" class="input-name" placeholder="New Quanity" value="1">
-					</div>
-					<div class="input-group">
-						<label>SIZE</label>
-						<input type="text" class="input-name" placeholder="New Size">
-					</div>
-					<button type="button">Apply Changes</button>
-					<button type="button">Delete</button>
-				</form>
-			</div>
+<h1>Your Gift List</h1>
+<div id="add-gift">
+	<div id="gift-top"></div>
+	<form id="add-gift-form">
+		<div class="input-group">
+			<label>ITEM NAME</label>
+			<input type="text" class="input-name" name="itemName" placeholder="Item Name">
 		</div>
-	</div>
-</section>
-<section class="main-content conent-4">
-	<h1>This is what everyone else will see</h1>
-	<div class="gift-list gift-list-public">
-		<div class="gift gift-public">
-			<i class="fas fa-eye openGiftButton"></i>
-			<h2> RTX 3090</h2>
-			<div class="gift-content gift-content-public">
-				<a class="public-store-link" href="https://www.nvidia.com/en-us/geforce/graphics-cards/30-series/rtx-3090/" target="_blank">STORE LINK</a>
-				<div class="input-group">
-					<label>PRICE</label>
-					<input type="text" class="input-name" value="1499.99" readonly>
-				</div>
-				<div class="input-group">
-					<label>QUANTITY</label>
-					<input type="text" class="input-name" value="1" readonly>
-				</div>
-				<div class="input-group">
-					<label>SIZE</label>
-					<input type="text" class="input-name" placeholder="N/A" readonly>
-				</div>
-			</div>
+		<div class="input-group">
+			<label>NOTES</label>
+			<input type="text" class="input-name" name="notes" placeholder="Notes">
 		</div>
-	</div>
-</section>
-<footer>
-	<div id="sub-footer">
-		<h1>Giftee</h1>
-		<h5>2020-2020</h5>
-		<div id="footer-content-container">
-			<div class="footer-content footer-content-1">
-				<h3>Technologies used</h3>
-				<a href="">Javascript</a>
-				<a href="https://mozilla.github.io/nunjucks/" target="_blank">Nunjucks</a>
-				<a href="">Heroku</a>
-				<a href="">HTML5</a>
-				<a href="">CSS3</a>
-			</div>
-			<div class="footer-content footer-content-2">
-				<h3>Source code</h3>
-				<a href="https://github.com/AGuyNamedC-Los/gift-ee" target="_blank"><i class="fab fa-github-square"></i></a>
-			</div>
-			<div class="footer-content footer-content-2">
-				<h3>More projects</h3>
-				<a href="https://carlos-castillo-portfolio.herokuapp.com/#slide-2" target="_blank">Portfolio Website</a>
-				<a href="https://github.com/AGuyNamedC-Los" target="_blank"><i class="fab fa-github-square"></i></a>
-			</div>
+		<div class="input-group">
+			<label>PRICE</label>
+			<input type="text" class="input-name" name="price" placeholder="Price">
 		</div>
+		<div class="input-group">
+			<label>QUANTITY</label>
+			<input type="text" class="input-name" name="quantity" placeholder="Quanity">
+		</div>
+		<div class="input-group">
+			<label>SIZE</label>
+			<input type="text" class="input-name" name="size" placeholder="Size">
+		</div>
+		<div class="input-group">
+			<label>STORE LINK</label>
+			<input type="text" class="input-name" name="storeLink" placeholder="Store Link">
+		</div>
+		<button id="add-gift-btn" type="button" onclick="addGift(this.form)">Add Gift</button>
+	</form>
+	<div id="gift-bottom" onclick="expandAddGiftForm()">Add Gift</div>
+</div>
+<div class="gift-list private-gift-list">
+	<div class="gift-titles private-gift-titles">
+		<p>item Name</p>
+		<p>description</p>
+		<p>price</p>
+		<p>Quantity</p>
+		<p>Size</p>
+		<a>Store link</a>
+		<p>Save</p>
+		<p>delete</p>
 	</div>
-</footer>
+	<div class="gift private-gift">
+		<input type="text" placeholder="---" value="Loorings">
+		<input type="text" placeholder="---" value="cool little magnet rings! (get the 3 set option!)">
+		<input type="text" placeholder="---" value="60$">
+		<input type="text" placeholder="---" value="3 Sets">
+		<input type="text" placeholder="---" value="N/A">
+		<input type="text" placeholder="---" value="https://loorings.co/products/magnetic-rings?variant=35619155640487">
+		<i class="far fa-save"></i>
+		<i class="far fa-trash-alt"></i>
+	</div>
+</div>
+
+<h1>Your Gift List everyone else will see</h1>
+<div class="gift-list public-gift-list">
+	<div class="gift-titles public-gift-titles">
+		<p>item Name</p>
+		<p>description</p>
+		<p>price</p>
+		<p>Quantity</p>
+		<p>Size</p>
+		<a>Store link</a>
+	</div>
+	<div class="gift public-gift">
+		<p>RTX 3090</p>
+		<p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Laborum voluptatum iste dolores aperiam quisquam ut sunt commodi illum, unde totam repudiandae neque maxime delectus consequatur temporibus, facere incidunt aliquid dicta!</p>
+		<p>1499.00</p>
+		<p>1</p>
+		<p>N/A</p>
+		<i class="fas fa-shopping-cart"></i>
+	</div>
+</div>
 {% endblock %}
 
 {% block script %}
 <script>
-	var privateGiftList = document.getElementsByClassName("gift-list-private")[0];
-	var privateGifts = privateGiftList.getElementsByClassName("gift-private");
-	var publicGiftList = document.getElementsByClassName("gift-list-public")[0];
-	var publicGifts = publicGiftList.getElementsByClassName("gift-public");
-	// these are storing functions so that the event listener has something to 
-	// reference to when it comes time to delete their event listeners
-	var openPrivateGiftButtons = [];
-	var applyChangesButtons = [];
-	var deleteGiftButtons = [];
-	var openPublicGiftButtons = [];
+        var privateGiftList = document.getElementsByClassName("private-gift-list")[0];
+        var privateGifts = document.getElementsByClassName("private-gift");
+        var publicGiftList = document.getElementsByClassName("public-gift-list")[0];
+        var publicGifts = document.getElementsByClassName("public-gift");
+        var saveButtons = [];
+        var deleteButtons = [];
 
-	// adding appropriate event listeners to each gift
-	addEventListeners();
-	// to open the add gift form
-	document.getElementById("gift-bottom").addEventListener("click", () => expandAddGiftForm());
+        function addEventListeners() {
+            for(i = 0; i < privateGifts.length; i++) {
+                let index = i;
 
-	function openGift(index, privacy) {
-		let giftContent = (privacy === "private") ? privateGifts[index].getElementsByClassName("gift-content")[0] : publicGifts[index].getElementsByClassName("gift-content")[0];
-		let currGift = (privacy === "private") ? privateGifts[index] : publicGifts[index];
-		let giftContentHeight = giftContent.scrollHeight;
-		let currGiftHeight = currGift.scrollHeight;
-		currGift.style.height = currGiftHeight;
+                saveButtons.push(saveChanges.bind(null, index));
+                deleteButtons.push(deleteGift.bind(null, index));
 
-		if(giftContent.style.visibility === "visible") {   // close the form
-			let newHeight = currGiftHeight - giftContentHeight;
-			giftContent.style.transition = "0s";
-			giftContent.style.opacity = 0;
-			giftContent.style.visibility = "hidden";
-			currGift.style.height = `${newHeight}px`;
-		} else {    // open the form
-			let newHeight = currGiftHeight;
-			currGift.style.height = `${newHeight}px`;
-			giftContent.style.transition = "2s ease";
-			giftContent.style.opacity = 1;
-			giftContent.style.visibility = "visible";
-		}
-	}
+                privateGifts[i].children[6].addEventListener("click", saveButtons[index]);
+                privateGifts[i].children[7].addEventListener("click", deleteButtons[index]);
+            }
+        }
 
-	function expandAddGiftForm() {
-		let bottomOfGift = document.getElementById("gift-bottom");
-		let addGiftForm = document.getElementById("add-gift-form");
-		let giftFormHeight = addGiftForm.scrollHeight;
+        addEventListeners();
 
-		if(addGiftForm.style.visibility === "visible") {   // close the form
-			addGiftForm.style.transition = "0s";
-			addGiftForm.style.visibility = "hidden";
-			addGiftForm.style.opacity = 0;
-			bottomOfGift.style.marginTop = "0px";
-		} else {    // open the form
-			addGiftForm.style.transition = "2s ease";
-			addGiftForm.style.visibility = "visible";
-			addGiftForm.style.opacity = 1;
-			bottomOfGift.style.marginTop = giftFormHeight + "px";
-		}
-	}
-	
-	function addGift(form){
-		let inputFields = [];
-		inputFields.length = 0;
-		let formInputs = form.children;
-		let itemNameInput = formInputs[0].getElementsByTagName("input")[0];
+        function removeEventListeners() {
+            for(i = 0; i < privateGifts.length; i++) {
+                let index = i;
 
-		if(itemNameInput.value == "") {
-			console.log("must include gift name!");
-			itemNameInput.style.borderColor = "red";
-			return;
-		}
+                privateGifts[i].children[6].removeEventListener("click", saveButtons[index]);
+                privateGifts[i].children[7].removeEventListener("click", deleteButtons[index]);
+            }
 
-		inputFields = ({
-			itemName: formInputs[0].getElementsByTagName("input")[0].value,
-			storeLink: formInputs[1].getElementsByTagName("input")[0].value,
-			price: formInputs[2].getElementsByTagName("input")[0].value,
-			quantity: formInputs[3].getElementsByTagName("input")[0].value,
-			size: formInputs[4].getElementsByTagName("input")[0].value
-		});
+            saveButtons.length = 0;
+            deleteButtons.length = 0;
+        }
 
-		addToPrivateList(inputFields);
-		addToPublicList(inputFields);
+        function saveChanges(index) {
+            let inputFields = [];
+            let formInputs = privateGifts[index].children;
 
-		removeEventListeners();
-		addEventListeners()
-	}
+            inputFields = ({
+                itemName: formInputs[0].value,
+                notes: formInputs[1].value,
+                price: formInputs[2].value,
+                quantity: formInputs[3].value,
+                size: formInputs[4].value,
+                storeLink: formInputs[5].value
+            });
 
-	// creating appropriate elements to append to the user's private or public gift list
-	function parseInputFields(privacy, inputFields) {
-		let newInputFields = [];
+            publicGifts[index].children[0].innerHTML = (inputFields.itemName == "") ? "N/A" : inputFields.itemName;
+            publicGifts[index].children[1].innerHTML = (inputFields.notes == "") ? "N/A" : inputFields.notes;
+            publicGifts[index].children[2].innerHTML = (inputFields.price == "") ? "N/A" : inputFields.price;
+            publicGifts[index].children[3].innerHTML = (inputFields.quantity == "") ? "N/A" : inputFields.quantity;
+            publicGifts[index].children[4].innerHTML = (inputFields.size == "") ? "N/A" : inputFields.size;
+            publicGifts[index].children[5].innerHTML = (inputFields.storeLink == "") ? "N/A" : inputFields.storeLink;
+        }
 
-		if(privacy == "private") {
-			for (let key in inputFields) {
-				let userInput = inputFields[key];
-				newInputFields.push(`<div class="input-group">
-					<label>${key}</label>
-					<input type="text" class="input-name" placeholder="New ${key}" value="${userInput}">
-				</div>`);
-			}
-		} else {
-			for (let key in inputFields) {
-				let userInput = inputFields[key];
-				newInputFields.push(`<div class="input-group">
-					<label>${key}</label>
-					<input type="text" class="input-name" placeholder="N/A" name="${key}" value="${(userInput == "") ? "N/A" : userInput}" readonly>
-				</div>`);
-			}
-		}
+        function deleteGift(index) {
+            removeEventListeners();
+            privateGifts[index].remove();
+            publicGifts[index].remove();
 
-		return newInputFields;
-	}
+            if(privateGifts.length != 0) {addEventListeners();}
+        }
 
-	// creating a new gift element to add to the private gift list
-	function addToPrivateList(inputFields) {
-		let newInputFields = parseInputFields("private", inputFields);
-		let currGiftIndex = privateGifts.length;
+        function expandAddGiftForm() {
+            let bottomOfGift = document.getElementById("gift-bottom");
+            let addGiftForm = document.getElementById("add-gift-form");
+            let giftFormHeight = addGiftForm.scrollHeight;
 
-		if(privateGifts.length < 5) {
-			let newGift = `                    
-				<div class="gift gift-private">
-					<i class="fas fa-eye openGiftButton"></i>
-					<h2>${inputFields.itemName}</h2>
-					<div class="gift-content gift-content-private">
-						<form class="gift-form gift-form-private">
-							${newInputFields[0]}
-							${newInputFields[1]}
-							${newInputFields[2]}
-							${newInputFields[3]}
-							${newInputFields[4]}
-							<button type="button">Apply Changes</button>
-							<button type="button">Delete</button>
-						</form>
-					</div>
-				</div>`;
-			privateGiftList.insertAdjacentHTML("beforeend", newGift);
-		}
-	}
+            if(addGiftForm.style.visibility === "visible") {   // close the form
+                addGiftForm.style.transition = "0s";
+                addGiftForm.style.visibility = "hidden";
+                addGiftForm.style.opacity = 0;
+                bottomOfGift.style.marginTop = "0px";
+            } else {    // open the form
+                addGiftForm.style.transition = "2s ease";
+                addGiftForm.style.visibility = "visible";
+                addGiftForm.style.opacity = 1;
+                bottomOfGift.style.marginTop = giftFormHeight + 32 + "px";
+            }
+        }
 
-	// creating a new gift element to add to the public gift list
-	function addToPublicList(inputFields) {
-		let newInputFields = parseInputFields("public", inputFields);
+        function addGift(form) {
+            let inputFields = [];
+            let formInputs = form.children;
 
-		if(publicGifts.length < 5) {
-			let newGift = `                    
-				<div class="gift gift-public">
-					<i class="fas fa-eye openGiftButton"></i>
-					<h2>${inputFields.itemName}</h2>
-					<div class="gift-content gift-content-public">
-						<a class="public-store-link" href="${inputFields[1]}" target="_blank">STORE LINK</a>
-						${newInputFields[2]}
-						${newInputFields[3]}
-						${newInputFields[4]}
-					</div>
-				</div>`;
-			publicGiftList.insertAdjacentHTML("beforeend", newGift);
-		}
-	}
+            inputFields = ({
+                itemName: formInputs[0].getElementsByTagName("input")[0].value,
+                notes: formInputs[1].getElementsByTagName("input")[0].value,
+                price: formInputs[2].getElementsByTagName("input")[0].value,
+                quantity: formInputs[3].getElementsByTagName("input")[0].value,
+                size: formInputs[4].getElementsByTagName("input")[0].value,
+                storeLink: formInputs[5].getElementsByTagName("input")[0].value
+            });
 
-	// deleting a gift from both the public and private gift lists 
-	// while also removing and reassigning their event listeners
-	function deleteGift(index) {
-		removeEventListeners();
-		privateGifts[index].remove();
-		publicGifts[index].remove();
+            if(privateGifts.length < 5) {
+                removeEventListeners();
+                addToPrivateList(inputFields);
+                addEventListeners();
+                addToPublicList(inputFields);
+            }
+        }
 
-		if(privateGifts.length != 0) {addEventListeners();}
-	}
+        function addToPrivateList(inputFields) {
+            let newGift = `
+                <div class="gift private-gift">
+                    <input type="text" placeholder="---" value="${((inputFields.itemName == "") ? "N/A" : inputFields.itemName)}">
+                    <input type="text" placeholder="---" value="${((inputFields.notes == "") ? "N/A" : inputFields.notes)}">
+                    <input type="text" placeholder="---" value="${((inputFields.price == "") ? "N/A" : inputFields.price)}">
+                    <input type="text" placeholder="---" value="${((inputFields.quantity == "") ? "N/A" : inputFields.quantity)}">
+                    <input type="text" placeholder="---" value="${((inputFields.size == "") ? "N/A" : inputFields.size)}">
+                    <input type="text" placeholder="---" value="${((inputFields.storeLink == "") ? "N/A" : inputFields.storeLink)}">
+                    <i class="far fa-save"></i>
+                    <i class="far fa-trash-alt"></i>
+                </div>
+            `;
+            privateGiftList.insertAdjacentHTML("beforeend", newGift);
+        }
 
-	// add event listeners to all necessary compontents in regards to the private and public gift elements
-	function addEventListeners() {
-		for(i = 0; i < privateGifts.length; i++) {
-			let index = i;
-			// have to create copies of functiion with parameters so that they be referenced later for removeEventerListener
-			openPrivateGiftButtons.push(openGift.bind(null, index, "private"));
-			applyChangesButtons.push(applyChanges.bind(null, index));
-			deleteGiftButtons.push(deleteGift.bind(null, index));
-			openPublicGiftButtons.push(openGift.bind(null, index, "public"));
-
-			privateGifts[i].getElementsByClassName("openGiftButton")[0].addEventListener("click", openPrivateGiftButtons[index]);
-			privateGifts[i].getElementsByTagName("button")[0].addEventListener("click", applyChangesButtons[index]);
-			privateGifts[i].getElementsByTagName("button")[1].addEventListener("click", deleteGiftButtons[index]);
-			publicGifts[i].getElementsByClassName("openGiftButton")[0].addEventListener("click", openPublicGiftButtons[index]);
-		}
-	}
-
-	// add event listeners to all necessary compontents in regards to the private and public gift elements
-	function removeEventListeners() {
-		console.log("gifts: " + privateGifts.length);
-		for(i = 0; i < privateGifts.length; i++) {
-			let index = i;
-			privateGifts[i].getElementsByClassName("openGiftButton")[0].removeEventListener("click", openPrivateGiftButtons[index]);
-			privateGifts[i].getElementsByTagName("button")[0].removeEventListener("click", applyChangesButtons[index]);
-			privateGifts[i].getElementsByTagName("button")[1].removeEventListener("click", deleteGiftButtons[index]);
-			publicGifts[i].getElementsByClassName("openGiftButton")[0].removeEventListener("click", openPublicGiftButtons[index]);
-		}
-
-		openPrivateGiftButtons.length = 0;
-		applyChangesButtons.length = 0;
-		deleteGiftButtons.length = 0;
-		openPublicGiftButtons.length = 0;
-	}
-
-	function expandGift(index, e) {
-		// let giftContent = document.getElementsByClassName("gift-content")[index];
-		let giftContent = e.currentTarget.nextElementSibling;
-
-		if(giftContent.style.visibility === "visible") {
-			giftContent.style.position = "absolute";
-			giftContent.style.visibility = "hidden";
-			giftContent.style.transition = "0s";
-			giftContent.style.opacity = 0;
-		} else {
-			giftContent.style.position = "static";
-			giftContent.style.visibility = "visible";
-			giftContent.style.transition = "2s";
-			giftContent.style.opacity = 1;
-		}
-	}
-
-	// changes made to a gift in the private gift list should be reflected to the gift in the public gift list
-	function applyChanges(index) {
-		let inputFields = [];
-		inputFields.length = 0;
-		let formInputs = privateGifts[index].getElementsByTagName("form")[0];
-		let itemNameInput = formInputs.getElementsByTagName("input")[0];
-
-		if(itemNameInput.value == "") {
-			itemNameInput.style.borderColor = "red";
-			return;
-		}
-		itemNameInput.style.borderColor = "";   // reset the border color
-
-		// get current input fields from the private gift's input fields
-		inputFields = ({
-			itemName: formInputs.getElementsByTagName("input")[0].value,
-			storeLink: formInputs.getElementsByTagName("input")[1].value,
-			price: formInputs.getElementsByTagName("input")[2].value,
-			quantity: formInputs.getElementsByTagName("input")[3].value,
-			size: formInputs.getElementsByTagName("input")[4].value
-		});
-		privateGifts[index].getElementsByTagName("h2")[0].innerHTML = inputFields.itemName; // change private gift's name
-
-		// get the fields from the gift that is public to be changed
-		let publicGiftItemName = publicGifts[index].getElementsByTagName("h2")[0];
-		let publicGiftStoreLink = publicGifts[index].getElementsByClassName("public-store-link")[0];
-		let publicGiftPrice = publicGifts[index].getElementsByClassName("input-group")[0].getElementsByTagName("input")[0];
-		let publicGiftQuantity = publicGifts[index].getElementsByClassName("input-group")[1].getElementsByTagName("input")[0];
-		let publicGiftSize = publicGifts[index].getElementsByClassName("input-group")[2].getElementsByTagName("input")[0];
-
-		publicGiftItemName.innerHTML = inputFields.itemName;
-		publicGiftStoreLink.href = inputFields.storeLink;
-		publicGiftPrice.value = inputFields.price;
-		publicGiftQuantity.value = inputFields.quantity;
-		publicGiftSize.value = inputFields.size;
-	}
-</script>
+        function addToPublicList(inputFields) {
+            let newGift = `
+                <div class="gift public-gift">
+                    <p>${((inputFields.itemName == "") ? "N/A" : inputFields.itemName)}</p>
+                    <p>${((inputFields.notes == "") ? "N/A" : inputFields.notes)}</p>
+                    <p>${((inputFields.price == "") ? "N/A" : inputFields.price)}</p>
+                    <p>${((inputFields.quantity == "") ? "N/A" : inputFields.quantity)}</p>
+                    <p>${((inputFields.size == "") ? "N/A" : inputFields.size)}</p>
+                    <p>${((inputFields.storeLink == "") ? "N/A" : inputFields.storeLink)}</p>
+                </div>
+            `;
+            publicGiftList.insertAdjacentHTML("beforeend", newGift);
+        }
+    </script>
 {% endblock %}
