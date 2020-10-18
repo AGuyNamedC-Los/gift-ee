@@ -155,9 +155,8 @@ app.get('/login', guestsOnlyMiddleware, function (req, res) {
 	return;
 });
 
-/*  
-	displays whether a user was able to successfully log in or not
-*/
+
+// displays whether a user was able to successfully log in or not
 app.post('/login_status', express.urlencoded({extended:true}), async function(req, res) {
 	let email = req.body.email;		// get user's typed in email
 	let password = req.body.password;		// get user's typed in password
@@ -623,7 +622,6 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 		res.render('sign_up_success.html', {user: req.session.user});
 		return;
 	} catch (err) {
-		console.log("NO DEFAULT??");
 		console.log("error: " + err);
 		res.render('error.html', {user: req.session.user});
 		return;
@@ -749,7 +747,7 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 	let size = req.body.size;
 	let color = req.body.color;
 	let price = req.body.price;
-	let imgURL = req.body.imgURL;
+	let notes = req.body.notes;
 	let email = req.session.user.email;		// get the logged in user's email
 	
 	let newItem = {			
@@ -759,9 +757,7 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 		"size": size, 
 		"color": color,
 		"price": price,
-		"giftColor": "",
-		"giftIMG": imgURL,
-		"giftListStyle": ""
+		"notes": notes
 	};
 	
 	try {
