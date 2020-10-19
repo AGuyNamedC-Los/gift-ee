@@ -796,11 +796,8 @@ app.post('/save_changes_status', loggedInMiddleware, express.urlencoded({extende
 			res.render('error.html', {user: req.session.user});
 			return;
 		}
-		console.log("TRYING TO SAVE CHANGES")
-		console.log(docs[0].giftListContent[index]);
 		newGiftListContent = JSON.parse(JSON.stringify(docs[0].giftListContent));
 		newGiftListContent[index] = newItem;
-		console.log(newGiftListContent[index]);
 		await userDB.update({'email': email }, { $set: { giftListContent: newGiftListContent } }, { multi: true }, function (err, numReplaced) {});
 		res.render("added_gift_success.html", {user: req.session.user});
 		return;
