@@ -742,26 +742,66 @@ app.get('/profile', loggedInMiddleware, async function (req, res) {
 */
 app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:true}), async function(req, res) {
 	let itemName = req.body.itemName;
-	let link = req.body.link;
-	let qty = req.body.qty;
+	let link = req.body.storeLink;
+	let qty = req.body.quantity;
 	let size = req.body.size;
-	let color = req.body.color;
 	let price = req.body.price;
 	let notes = req.body.notes;
 	let email = req.session.user.email;		// get the logged in user's email
 	
 	let newItem = {			
 		"itemName": itemName,
-		"link": link, 
+		"notes": notes,
+		"price": price,
 		"qty": qty, 
 		"size": size, 
-		"color": color,
-		"price": price,
-		"notes": notes
+		"link": link
 	};
 	
 	try {
 		let docs = await userDB.update({"email": email}, {$addToSet: {giftListContent: newItem}}, {}, function () {});
+		res.render("added_gift_success.html", {user: req.session.user});
+		return;
+	} catch (err) {
+		console.log("error: " + err);
+		res.render("error.html");
+		return;
+	}
+});
+
+app.post('/save_changes_status', loggedInMiddleware, express.urlencoded({extended:true}), async function(req, res) {
+	let itemName = req.body.itemName;
+	let link = req.body.storeLink;
+	let qty = req.body.quantity;
+	let size = req.body.size;
+	let price = req.body.price;
+	let notes = req.body.notes;
+	let email = req.session.user.email;		// get the logged in user's email
+	let index = req.body.itemNum;
+	
+	let newItem = {			
+		"itemName": itemName,
+		"notes": notes,
+		"price": price,
+		"qty": qty, 
+		"size": size, 
+		"link": link
+	};
+
+	let newGiftListContent;
+	
+	try {
+		let docs = await userDB.find({'email': email});
+		if(docs.length == 0) {		// no email matched
+			res.render('error.html', {user: req.session.user});
+			return;
+		}
+		console.log("TRYING TO SAVE CHANGES")
+		console.log(docs[0].giftListContent[index]);
+		newGiftListContent = JSON.parse(JSON.stringify(docs[0].giftListContent));
+		newGiftListContent[index] = newItem;
+		console.log(newGiftListContent[index]);
+		await userDB.update({'email': email }, { $set: { giftListContent: newGiftListContent } }, { multi: true }, function (err, numReplaced) {});
 		res.render("added_gift_success.html", {user: req.session.user});
 		return;
 	} catch (err) {

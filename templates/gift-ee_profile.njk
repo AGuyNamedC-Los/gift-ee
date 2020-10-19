@@ -5,79 +5,134 @@
 {% endblock %}
 
 {% block main %}
-    <!-- add a gift to the gift list -->
-    <form class="add-gift" action="added_gift_status" method="POST">
-        <p>Add Gift to List</p>
-        <div class="gift-form">
-            <div class="gift-top-form"></div>
-            <div class="gift-content-form">
-                <input type="text" id="item_name" name="itemName" placeholder="Item Name">
-                <input type="text" id="link" name="link" placeholder="Link">
-                <input type="text" id="quantity" name="qty" placeholder="Quantity">
-                <input type="text" id="size" name="size" placeholder="Size">
-                <input type="text" id="color" name="color" placeholder="Color">
-                <input type="text" id="price" name="price" placeholder="Price">
-                <input type="text" id="imgURL" name="imgURL" placeholder="Image URL">
-                <p>leave blank to exclude attributes</p>
-                <input type="submit" value="Add to gift-ee List">
-            </div>
-            <div class="gift-bottom-form" onclick="openForm()"></div>
+<section class="main-content content-2">
+    <h1>Add a gift to your gift list</h1>
+    <p>Omitted attributes will not be present for other users to see</p>
+        <div id="add-gift">
+            <div id="gift-top"></div>
+            <form id="add-gift-form" action="added_gift_status" method="POST">
+                <div class="input-group">
+                    <label>ITEM NAME</label>
+                    <input type="text" class="input-name" name="itemName" placeholder="Item Name">
+                </div>
+                <div class="input-group">
+                    <label>NOTES</label>
+                    <input type="text" class="input-name" name="notes" placeholder="Notes">
+                </div>
+                <div class="input-group">
+                    <label>PRICE</label>
+                    <input type="text" class="input-name" name="price" placeholder="Price">
+                </div>
+                <div class="input-group">
+                    <label>QUANTITY</label>
+                    <input type="text" class="input-name" name="quantity" placeholder="Quanity">
+                </div>
+                <div class="input-group">
+                    <label>SIZE</label>
+                    <input type="text" class="input-name" name="size" placeholder="Size">
+                </div>
+                <div class="input-group">
+                    <label>STORE LINK</label>
+                    <input type="text" class="input-name" name="storeLink" placeholder="Store Link">
+                </div>
+                <input type="submit" value="Add Gift">
+            </form>
+            <div id="gift-bottom">Add Gift</div>
         </div>
-    </form>
-
-    <!-- normal gift list -->
-    <div class="gift-list">
+</section>
+<section class="main-content content-3">
+    <div class="gift-list gift-list-private">
         {% for i in range(0, giftList.length) -%}
-            <div class="gift-list-item">
-                <p class="gift-name" onclick="showGiftContent({{i}})">{{giftList[i].itemName}}</p>
-                <div class="gift-content-dropdown">
-                    {% if giftList[i].link != ""%}<a href="{{giftList[i].link}}" target="_blank">Store Link</a>{% endif %}
-                    {% if giftList[i].qty != ""%}<p>Quantity: {{giftList[i].qty}}</p>{% endif %}
-                    {% if giftList[i].size != ""%}<p>Size: {{giftList[i].size}}</p>{% endif %}
-                    {% if giftList[i].color != ""%}<p>Color: {{giftList[i].color}}</p>{% endif %}
-                    {% if giftList[i].price != ""%}<p>Price: {{giftList[i].price}}$</p>{% endif %}
-                    <form id="delete-gift-form" action="deleted_gift_status" method="POST">
-                        <p hidden><input type="text" name="itemNum" value="{{i}}"></p>
-                        <button type="submit">Delete</button>
-                    </form>
+            <div class="gift gift-private">
+                <i class="fas fa-eye openGiftButton" onclick="openGift({{i}}, 'private')"></i>
+                <h2>{{giftList[i].itemName}}</h2>
+                <div class="gift-content gift-content-private">
+                    <div class="gift-form gift-form-private">
+                        <form id="save-changes-form" action="save_changes_status" method="POST">
+                            <div class="input-group">
+                                <label>ITEM NAME</label>
+                                <input type="text" class="input-name" name="itemName" placeholder="Item Name" value="{{giftList[i].itemName}}">
+                            </div>
+                            <div class="input-group">
+                                <label>NOTES</label>
+                                <input type="text" class="input-name" name="notes" placeholder="Notes" value="{{giftList[i].notes}}">
+                            </div>
+                            <div class="input-group">
+                                <label>PRICE</label>
+                                <input type="text" class="input-name" name="price" placeholder="Price" value="{{giftList[i].price}}">
+                            </div>
+                            <div class="input-group">
+                                <label>QUANTITY</label>
+                                <input type="text" class="input-name" name="quantity" placeholder="Quanity" value="{{giftList[i].qty}}">
+                            </div>
+                            <div class="input-group">
+                                <label>SIZE</label>
+                                <input type="text" class="input-name" name="size" placeholder="Size" value="{{giftList[i].size}}">
+                            </div>
+                            <div class="input-group">
+                                <label>STORE LINK</label>
+                                <input type="text" class="input-name" name="storeLink" placeholder="Store Link" value="{{giftList[i].storeLink}}">
+                            </div>
+                        
+                            <p hidden><input type="text" name="itemNum" value="{{i}}"></p>
+                            <button type="click">Apply Changes</button>
+                        </form>
+                        <form id="delete-gift-form" action="deleted_gift_status" method="POST">
+                            <p hidden><input type="text" name="itemNum" value="{{i}}"></p>
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         {%- endfor %}
     </div>
-    <script>
-        function showGiftContent(index) {
-            let giftForm = document.getElementsByClassName("gift-content-dropdown")[index];
+</section>
+{% endblock %}
 
-            if(giftContent.style.visibility != "visible") {
-                giftContent.style.visibility = "visible";
-                giftContent.style.position = "initial";
-                giftContent.style.opacity = 1;
-            } else {
-                giftContent.style.visibility = 'hidden';
-                giftContent.style.position = "absolute";
-                giftContent.style.opacity = 0;
-            }
-        }
+{% block script %}
+<script>
+var privateGiftList = document.getElementsByClassName("gift-list-private")[0];
+var privateGifts = privateGiftList.getElementsByClassName("gift-private");
+document.getElementById("gift-bottom").addEventListener("click", () => expandAddGiftForm());    // to open the add gift form
 
-        function deleteGift(index) {
-            let itemToDelete = document.getElementById("delete-gift-form");
-            itemToDelete[index].submit();
-            console.log("item deleted: " + index);
-        }
+function openGift(index, privacy) {
+    let giftContent = (privacy === "private") ? privateGifts[index].getElementsByClassName("gift-content")[0] : publicGifts[index].getElementsByClassName("gift-content")[0];
+    let currGift = (privacy === "private") ? privateGifts[index] : publicGifts[index];
+    let giftContentHeight = giftContent.scrollHeight;
+    let currGiftHeight = currGift.scrollHeight;
+    currGift.style.height = currGiftHeight;
 
-        function openForm() {
-            let giftBottom = document.getElementsByClassName("gift-bottom-form")[0];
-            let giftContent = document.getElementsByClassName("gift-content-form")[0];
+    if(giftContent.style.visibility === "visible") {   // close the form
+        let newHeight = currGiftHeight - giftContentHeight;
+        giftContent.style.transition = "0s";
+        giftContent.style.opacity = 0;
+        giftContent.style.visibility = "hidden";
+        currGift.style.height = `${newHeight}px`;
+    } else {    // open the form
+        let newHeight = currGiftHeight;
+        currGift.style.height = `${newHeight}px`;
+        giftContent.style.transition = "2s ease";
+        giftContent.style.opacity = 1;
+        giftContent.style.visibility = "visible";
+    }
+}
 
-            if(giftContent.style.visibility != "visible") {
-                giftBottom.style.marginTop = "17rem";   // to open the box
-                giftContent.style.visibility = "visible";
-                giftContent.style.opacity = 1;  // to fade into existence
-            } else {
-                giftBottom.style.marginTop = "0rem";    // to close the box
-                giftContent.style.visibility = "hidden";
-                giftContent.style.opacity = 0;  // to fade out of existence
-            }
-        }
-    </script>
+function expandAddGiftForm() {
+    let bottomOfGift = document.getElementById("gift-bottom");
+    let addGiftForm = document.getElementById("add-gift-form");
+    let giftFormHeight = addGiftForm.scrollHeight;
+
+    if(addGiftForm.style.visibility === "visible") {   // close the form
+        addGiftForm.style.transition = "0s";
+        addGiftForm.style.visibility = "hidden";
+        addGiftForm.style.opacity = 0;
+        bottomOfGift.style.marginTop = "0px";
+    } else {    // open the form
+        addGiftForm.style.transition = "2s ease";
+        addGiftForm.style.visibility = "visible";
+        addGiftForm.style.opacity = 1;
+        bottomOfGift.style.marginTop = giftFormHeight + "px";
+    }
+}
+</script>
 {% endblock %}

@@ -35,28 +35,23 @@
             </nav>
         </header>
 		{% elif (user.role == "temp_user") %}
-			<nav>            
-				<a class="menu-item item-1" href="/">
-                    <img src="https://cdn1.iconfinder.com/data/icons/doodle-business-shop-finance-set-1/91/Doodle_Business_-_Shop_-_Finance_05-512.png">
-                </a>
-                <a class="menu-item item-2" href="/">
-                    <i class="fas fa-home"></i>
-                    <p>Home</p>
-                </a>
-                <a class="menu-item item-3" href="/about">
-                    <i class="far fa-question-circle"></i>
-                    <p>About</p>
-                </a>
-                <a class="menu-item item-4" herf="/search">
-                    <i class="fas fa-search"></i>
-                    <p>Search</p>
-                </a>
-				<a class="logout_btn" onClick="document.getElementById('logout').submit()">
-					<i class="fas fa-sign-out-alt"></i>
-					<p>Logout</p>
-				</a>
-				<form id="logout" action="logout_status" method="POST"></form>
+        <header>
+            <nav>
+                <a href="/"><img src="https://raw.githubusercontent.com/AGuyNamedC-Los/gift-ee/master/public/website_images/giftee-logo.png" alt="Giftee"></a>
+                <div>
+                    <a href="/search">Search</a>
+                    <a href="/profile">Profile</a>
+                    <a onClick="document.getElementById('logout').submit()">Logout</a>
+						<form id="logout" action="logout_status" method="POST"></form>
+                </div>  
             </nav>
+            <form class="email_confirmation" action="email_confirmation_status" method="POST">
+				<fieldset>
+					<input type="text", id="emailConfirmation", name="emailConfirmation", placeholder="Enter email confirmation code">
+					<input class="login_btn" type="submit" value="Submit">
+				</fieldset>
+			</form>
+        </header>
 
 			{# <nav>
 				<div>
@@ -74,47 +69,24 @@
 				</fieldset>
 			</form> #}
 		{% else %}
-			<nav>            
-				<a class="menu-item item-1" href="/">
-                    <img src="https://cdn1.iconfinder.com/data/icons/doodle-business-shop-finance-set-1/91/Doodle_Business_-_Shop_-_Finance_05-512.png">
-                </a>
-                <a class="menu-item item-2" href="/">
-                    <i class="fas fa-home"></i>
-                    <p>Home</p>
-                </a>
-                <a class="menu-item item-3" href="/about">
-                    <i class="far fa-question-circle"></i>
-                    <p>About</p>
-                </a>
-                <a class="menu-item item-4" herf="/search">
-                    <i class="fas fa-search"></i>
-                    <p>Search</p>
-                </a>
-				<a class="menu-item item-5" href="/profile">
-					<i class="fas fa-user-circle"></i> 
-					<p>Profile</p>
-				</a>
-				<a class="menu-item item-6" onClick="document.getElementById('logout').submit()">
-					<i class="fas fa-sign-out-alt"></i>
-					<p>Logout</p>
-				</a>
-				<form id="logout" action="logout_status" method="POST"></form>
-            </nav>
-			{# <nav>
-				<div>
-					<a class="home_btn", href="/"><i class="fas fa-gift"></i> Gift-ee</a>
-					<a class="about_btn", href="/about"><i class="fas fa-info-circle"></i> About</a>
-					<a class="search_btn", href="/search"><i class="fas fa-search"></i> Search</a>
-					<a class="profile_btn" href="/profile"><i class="fas fa-user-circle"></i> Profile</a>
-					<a class="logout_btn" onClick="document.getElementById('logout').submit()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <header>
+            <nav>
+                <a href="/"><img src="https://raw.githubusercontent.com/AGuyNamedC-Los/gift-ee/master/public/website_images/giftee-logo.png" alt="Giftee"></a>
+                <div>
+                    <a href="/search">Search</a>
+                    <a href="/profile">Profile</a>
+                    <a onClick="document.getElementById('logout').submit()">Logout</a>
 						<form id="logout" action="logout_status" method="POST"></form>
-				</div>
-			</nav> #}
+                </div>  
+            </nav>
+        </header>
 		{% endif %}
+
 		<main>
 		{% block main %}
 		{% endblock %}
 		</main>
+
 		{% block script %}
 		{% endblock %}
     </body>
