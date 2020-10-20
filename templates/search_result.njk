@@ -2,60 +2,65 @@
 
 {% block metaStuff%}
 	<title>Search Result</title>
-	<link href="gift-ee.css" type="text/css" rel="stylesheet">
-	<link href="profile.css" type="text/css" rel="stylesheet">
+	<link href="giftee.css" type="text/css" rel="stylesheet">
 {% endblock %}
 
-{% block main %}
-	<div class="search_result">
-		<h1>{{username}}'s Gift List</h1>
+{% block main%}
+<section class="main-content conent-4">
+	<div class="gift-list gift-list-public">
 		{% for i in range(0, giftList.length) -%}
-			<div class="gift-item">
-				<p>{{giftList[i].itemName}}</p>
-				<div class="gift-top" onclick="revealContent({{i}})"></div>
-				<div class="item-content">
-					{% if giftList[i].link != ""%}
-						<a href="{{giftList[i].link}}" target="_blank">Store Link</a>
-					{% endif %}
-					{% if giftList[i].qty != ""%}
-						<p>Quantity: {{giftList[i].qty}}</p>
-					{% endif %}
-					{% if giftList[i].size != ""%}
-						<p>Size: {{giftList[i].size}}</p>
-					{% endif %}
-					{% if giftList[i].color != ""%}
-						<p>Color: {{giftList[i].color}}</p>
-					{% endif %}
-					{% if giftList[i].price != ""%}
-						<p>Price: {{giftList[i].price}}$</p>
-					{% endif %}
+			<div class="gift gift-public">
+				<i class="fas fa-eye openGiftButton" onclick="openGift({{i}})"></i>
+				<h2>{{giftList[i].itemName}}</h2>
+				<div class="gift-content gift-content-public">
+					<div class="input-group">
+						<label>NOTES</label>
+						<input type="text" class="input-name" value="{{giftList[i].notes}}" readonly>
+					</div>
+					<div class="input-group">
+						<label>PRICE</label>
+						<input type="text" class="input-name" value="{{giftList[i].price}}" readonly>
+					</div>
+					<div class="input-group">
+						<label>QUANTITY</label>
+						<input type="text" class="input-name" value={{giftList[i].qty}} readonly>
+					</div>
+					<div class="input-group">
+						<label>SIZE</label>
+						<input type="text" class="input-name" value="{{giftList[i].size}}" readonly>
+					</div>
+					<a class="public-store-link" href="{{giftList[i].storeLink}}" target="_blank">BUY</a>
 				</div>
-				{% if giftList[i].giftIMG == "" %}
-					<div class="gift-bottom" onclick="revealContent({{i}})" style="padding: 7% 0%"></div>
-				{% else %}
-					<div class="gift-bottom" onclick="revealContent({{i}})" style="padding: 0%;"><img src="{{giftList[i].giftIMG}}"/></div>
-				{% endif %}
 			</div>
 		{%- endfor %}
 	</div>
+</section>
 {% endblock %}
 
 {% block script %}
 <script>
-    function revealContent(itemNum) {
-        let itemContent = document.getElementsByClassName("item-content")[itemNum];
-        let image = document.createElement('i');
-        console.log("got item number: " + itemNum);
-        let giftBottom = document.getElementsByClassName("gift-bottom")[itemNum];
-        let child = giftBottom.lastElementChild;
+	var publicGiftList = document.getElementsByClassName("gift-list-public")[0];
+	var publicGifts = publicGiftList.getElementsByClassName("gift-public");
+	function openGift(index) {
+		let giftContent = publicGifts[index].getElementsByClassName("gift-content")[0];
+		let currGift = publicGifts[index];
+		let giftContentHeight = giftContent.scrollHeight;
+		let currGiftHeight = currGift.scrollHeight;
+		currGift.style.height = currGiftHeight;
 
-        if(itemContent.style.display == "none") {
-            itemContent.style.display = "flex";
-        } else if(itemContent.style.display == "flex") {
-            itemContent.style.display = "none";
-        } else {
-            itemContent.style.display = "flex";
-        }
-    }
+		if(giftContent.style.visibility === "visible") {   // close the form
+			let newHeight = currGiftHeight - giftContentHeight;
+			giftContent.style.transition = "0s";
+			giftContent.style.opacity = 0;
+			giftContent.style.visibility = "hidden";
+			currGift.style.height = `${newHeight}px`;
+		} else {    // open the form
+			let newHeight = currGiftHeight;
+			currGift.style.height = `${newHeight}px`;
+			giftContent.style.transition = "2s ease";
+			giftContent.style.opacity = 1;
+			giftContent.style.visibility = "visible";
+		}
+	}
 </script>
 {% endblock %}
