@@ -374,8 +374,6 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 				res.render('sign_up_error.html', {user: req.session.user, error: "email"});
 				return;
 			}
-			
-			return;
 		}
 	} catch (err) {
 		console.log(err + "problem with temp_userdb");
