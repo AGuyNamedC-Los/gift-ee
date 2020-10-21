@@ -121,3 +121,7 @@ playgroundHTML
 /*.env
 .env
 
+# database stuff
+temp_usersDB.json
+usersDB.json
+

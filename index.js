@@ -69,7 +69,7 @@ app.use(setUpSessionMiddleware);
 // restricts paths to only logged in users
 const loggedInMiddleware = function(req, res, next) {
 	if(req.session.user.role == "guest") {
-		res.render("users_only.html", {user: req.session.user});
+		res.render("users_only.njk", {user: req.session.user});
 	} else {
 		next();
 	}
@@ -77,7 +77,7 @@ const loggedInMiddleware = function(req, res, next) {
 
 const guestsOnlyMiddleware = function(req, res, next) {
 	if(req.session.user.role != "guest") {
-		res.render("users_only.html", {user: req.session.user});
+		res.render("users_only.njk", {user: req.session.user});
 	} else {
 		next();
 	}
@@ -85,7 +85,7 @@ const guestsOnlyMiddleware = function(req, res, next) {
 
 const usersOnlyMiddleware = function(req, res, next) {
 	if(req.session.user.role != "user") {
-		res.render("users_only.html", {user: req.session.user});
+		res.render("users_only.njk", {user: req.session.user});
 	} else {
 		next();
 	}
@@ -93,7 +93,7 @@ const usersOnlyMiddleware = function(req, res, next) {
 
 const tempUsersOnlyMiddleware = function(req, res, next) {
 	if(req.session.user.role != "temp_user") {
-		res.render("users_only.html", {user: req.session.user});
+		res.render("users_only.njk", {user: req.session.user});
 	} else {
 		next();
 	}
@@ -290,7 +290,7 @@ app.post('/logout_status', express.urlencoded({extended:true}), async function(r
 		
 		req.session.user = {role: "guest", firstName: "", lastName: "", email: "", username: ""};
 		console.log("user upgraded to " + req.session.user.role);
-		res.render("logout.html", {user: req.session.user});
+		res.render("logout.njk", {user: req.session.user});
 		return;
 	});
 });
@@ -607,7 +607,7 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 	
 	try {
 		let docs = await userDB.update({"email": email}, {$addToSet: {giftListContent: newItem}}, {}, function () {});
-		res.render("added_gift_success.html", {user: req.session.user});
+		res.render("added_gift_success.njk", {user: req.session.user});
 		return;
 	} catch (err) {
 		console.log("error: " + err);
@@ -646,7 +646,7 @@ app.post('/save_changes_status', loggedInMiddleware, express.urlencoded({extende
 		newGiftListContent = JSON.parse(JSON.stringify(docs[0].giftListContent));
 		newGiftListContent[index] = newItem;
 		await userDB.update({'email': email }, { $set: { giftListContent: newGiftListContent } }, { multi: true }, function (err, numReplaced) {});
-		res.render("added_gift_success.html", {user: req.session.user});
+		res.render("added_gift_success.njk", {user: req.session.user});
 		return;
 	} catch (err) {
 		console.log("error: " + err);
@@ -685,7 +685,7 @@ app.post('/deleted_gift_status', loggedInMiddleware, express.urlencoded({extende
 	try {
 		let docs = await userDB.update({"email": email}, {$set: {giftListContent: newGiftList}}, {}, function (err, numReplaced) {});
 		console.log(deletedItem[0].itemName);
-		res.render("deleted_gift_success.html", {deletedItem: deletedItem[0]});
+		res.render("deleted_gift_success.njk", {deletedItem: deletedItem[0]});
 		
 	} catch (err) {
 		console.log("error: " + err);
