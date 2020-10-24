@@ -1,51 +1,27 @@
-<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>gift-ee</title>
-		<link href="login_and_signup.css" rel="stylesheet">
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
-		<link rel="stylesheet" type="text/html" href="//fonts.googleapis.com/css?family=Ubuntu">
-	</head>
-    <body>
-		<main>
-			<p><a href="/"><i class="fas fa-home"></i></a></p>
-			<div class="user_input">
-				<p>Login to your account</p> 
-				<!-- <button onclick="document.location = '/'">Home</button> -->
-				<form action="login_status" method="POST">
-					<fieldset>
-							<div class="input_box">
-								<i class="fas fa-envelope"></i>
-								<input type="text", id="email", name="email", placeholder="Email">
-							</div>
-							<div class="input_box">
-								<i class="fas fa-lock"></i>
-								<input type="password", id="password", name="password", placeholder="Password">
-							</div>
-							<input class="login_btn" type="submit" value="Log In">
-					</fieldset>
-				</form>
-			</div>
-		</main>
-	</body>
-	
-	<script>
-		function inputSize(x) {
-			var input = document.getElementsByTagName("input");
-			if (x.matches) { // less than or equal to the viewport
-				console.log("input size 1");
-				input[0].size = 10;
-				input[1].size = 10;
-			} else {
-				input[0].size = 30;
-				input[1].size = 30;
-				console.log("input size 10");
-			}
-		}
-
-		var x = window.matchMedia("(max-width: 700px)");
-		inputSize(x) // Call listener function at run time
-		x.addListener(inputSize) // Attach listener function on state changes 
-	</script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="login_and_signup.css", type="text/css", rel="stylesheet">
+    <title>Document</title>
+</head>
+<body>
+    <main>
+        <a href="/"><img src="https://raw.githubusercontent.com/AGuyNamedC-Los/gift-ee/master/public/website_images/giftee-logo.png" alt="giftee-logo"></a>
+        <form action="login_status" method="POST">
+            <h1>Login</h1>
+            <div class="input-box">
+                <input type="text" name="email" required>
+                <label>Email</label>
+            </div>
+            <div class="input-box">
+                <input type="password" name="password" required>
+                <label>Password</label>
+            </div>
+            <div class="input-box">
+                <input id="button" type="submit" value="Login">
+            </div>
+        </form>
+    </main>
+</body>
 </html>

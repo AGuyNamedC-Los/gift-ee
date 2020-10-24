@@ -301,53 +301,49 @@ app.get('/sign-up', guestsOnlyMiddleware, function (req, res) {
 });
 
 app.post('/sign_up_status', express.urlencoded({extended:true}), async function(req, res) {
+	// get form inputs
 	let email = req.body.email;
-	var badCharacters = ["/", "\\", "\'", "\"", " "];
-	var specialCharacters = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-	
-	// check for the proper @email suffix
-	if(!email.includes("@")) {
-		console.log("no @");
-		res.render('sign_up_error.html', {user: req.session.user, error: ""});
-		return;
-	}
-	
+	let firstName = req.body.firstname;
+	let lastName = req.body.lastname;
 	let username = req.body.username;
-	// check for username length
-	if(username.length < 5 || username.length > 30) {
-		res.render('sign_up_error.html', {user: req.session.user, error: ""});
-		return;
-	}
-	// check for invalid characters for username
-	for(i = 0; i < username.length; i++) {
-		if(username.includes(badCharacters[i])) {
-			res.render('sign_up_error.html', {user: req.session.user, error: ""});
-			return;
-		}
-	}
-	
-	let firstName = req.body.firstName;
-	let lastName = req.body.lastName;
 	let password = req.body.password;
-	
-	// check for password length
-	if(password.length < 5 || password.length > 30) {
-		res.render('sign_up_error.html', {user: req.session.user, error: ""});
+	let errorMessage = "";
+
+	// regex to test for string inputs
+	let hasBadChars = /^(?=.*[`{}\\[\]:";',./-])/;
+	let hasSpaces = /^[\S]+$/;
+	let hasDigit = /^(?=.*\d)/;
+	let hasLowercase = /^(?=.*[a-z])/;
+	let hasUppercase = /^(?=.*[A-Z])/;
+
+	// check for valid username
+	let badUsername = false;
+
+	if (username.length < 3) { errorMessage = "Username needs at least 3 characters!"; badUsername = true; }
+	if (username.length > 40) { errorMessage = "Username can't exceed 30 characters!"; badUsername = true; }
+	if (hasBadChars.test(username)) { errorMessage = `Username can't contain \` {} \\ [\] : " ; ' , . "`; badUsername = true; }
+	else if (!hasSpaces.test(username)) { errorMessage = "Username can't contain spaces"; badUsername = true;}
+
+	if (badUsername) {
+		res.render("sign_up_error.html", {error: errorMessage});
 		return;
 	}
-	// check for invalid password characters
-	for(i = 0; i < password.length; i++) {
-		if(password.includes(badCharacters[i])) {
-			res.render('sign_up_error.html', {user: req.session.user, error: ""});
-			return;
-		}
+
+	// check for valid password
+	badPassword = false;
+
+	if (password.length < 8) { errorMessage = "password needs at least 8 characters!"; badPassword = true; }
+	if (password.length > 128) { errorMessage = "passwords can't exceed 128 characters!"; badPassword = true; }
+	if (hasBadChars.test(password)) { errorMessage = `password can't contain \` {} \\ [\] : " ; ' , . "`; badPassword = true; }
+	else if (!hasSpaces.test(password)) { errorMessage = "password can't contain spaces"; badPassword = true;}
+	else if (!hasDigit.test(password)) { errorMessage = "password must contain a digit!"; badPassword = true; }
+	else if (!hasLowercase.test(password)) { errorMessage = "password must contain a lowercase letter"; badPassword = true; }
+	else if (!hasUppercase.test(password)) { errorMessage = "password must contain a uppercase letter"; badPassword = true; }
+
+	if (badPassword) {
+		res.render("sign_up_error.html", {error: errorMessage});
+		return;
 	}
-	
-	// check for special characters
-	// check for numbers
-	// check for alphabets
-	// check for lowercase
-	// check for uppercase
 
 	let tempUserFound = 0;
 	let duplicateUsername = false;

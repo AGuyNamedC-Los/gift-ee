@@ -25,9 +25,9 @@ I thought it would be a lot simpler to have one place to see a person's gift lis
     - ~~add links to the footer of the page~~
         - ~~maybe add icons instead of text or both~~
 - finish css for the homepage
-- redo the login page
-- redo the sign up page
-- redo the profile page
+- ~~redo the login page~~
+- ~~redo the sign up page~~
+- ~~redo the profile page~~
 - ~~fix the email confirmation code not being sent~~
 - make the email confirmation look prettier
 - clean up backend code

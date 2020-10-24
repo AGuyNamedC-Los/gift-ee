@@ -115,6 +115,7 @@ node_modules
 # directories
 output_templates
 playgroundHTML
+deprecated
 
 # stuff from heroku
 .DS_Store

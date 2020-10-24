@@ -1,216 +1,204 @@
-<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>gift-ee</title>
-		<link href="login_and_signup.css" rel="stylesheet">
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
-		<link rel="stylesheet" type="text/html" href="//fonts.googleapis.com/css?family=Ubuntu">
-	</head>
-    <body>
-		<main>
-			<p class="home"><a href="/"><i class="fas fa-home"></i></a></p>
-			<div class="user_input">
-				<p>Signup to create a Gift-ee account!</p> 
-				<form action="sign_up_status" method="POST">
-					<fieldset>
-							<div class="input_box">
-								<i class="fas fa-envelope"></i>
-								<input type="text" id="email" name="email" placeholder="Email">
-                            </div>
-							<div class="input_box">
-								<i class="fas fa-user"></i>
-								<input type="text" onblur="validUsername()" id="username" name="username" placeholder="Username">
-							</div>                            
-							<div class="input_box">
-								<i class="fas fa-lock"></i>
-								<input type="password" onblur="validPassword()" id="password" name="password" placeholder="Password">
-                            </div>
-                            <div class="input_box">
-								<i class="fas fa-address-card"></i>
-								<input type="text" id="first_name" onblur="validFirstName()" name="firstName" placeholder="First Name">
-                            </div>
-                            <div class="input_box">
-								<i class="fas fa-address-card"></i>
-								<input type="text" id="last_name" onblur="validLastName()" name="lastName" placeholder="Last Name">
-                            </div>
-							<input type="submit" id="sign_up_btn" disabled="true" onmouseover="validCredentials()" value="Sign Up">
-					</fieldset>
-                </form>
-                <p id="error_message" style="display:none"></p>
-			</div>
-		</main>
-	</body>
-	<script>
-        var successColor = "#5cd65c";
-        var failureColor = "red";
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="login_and_signup.css", type="text/css", rel="stylesheet">
+    <link rel="stylesheet", href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+    <title>Gifee Sign Up</title>
+</head>
+<body>
+    <main>
+        <a href="/"><img src="https://raw.githubusercontent.com/AGuyNamedC-Los/gift-ee/master/public/website_images/giftee-logo.png" alt="giftee-logo"></a>
+        <form id="signup-form" action="sign_up_status" method="POST">
+            <h1>Sign Up</h1>
+            <h2>Create your Giftee account</h2>
+            <div class="input-box">
+                <input type="text" name="email" id="email" oninput="validEmail()" required>
+                <label>Email</label>
+                <p class="message">message</p>
+            </div>
+            <div class="input-box-group">
+                <div class="input-box">
+                    <input type="text" name="firstName" id="firstName" onblur="validFirstName()" required>
+                    <label>First Name</label>
+                    <p class="message">message</p>
+                </div>
+                <div class="input-box">
+                    <input type="text" name="LastName" id="lastName" onblur="validLastName()" required>
+                    <label>Last Name</label>
+                    <p class="message">message</p>
+                </div>
+            </div>
+            <div class="input-box">
+                <input type="text" name="username" id="username" oninput="validUsername()" autocomplete="off" required>
+                <label>Username</label>
+                <p class="message">message</p>
+            </div>
+            <div class="input-box-group">
+                <div class="input-box">
+                    <input type="password" name="password" id="password" oninput="validPassword()" required>
+                    <label>Password</label>
+                    <p class="message">Use up to 8 characters with a mix of letters, numbers, and symbols</p>
+                </div>
+                <div class="input-box">
+                    <input type="password" name="confirm" id="confirm" required>
+                    <label>Confirm</label>
+                    <p class="message">Use up to 8 characters with a mix of letters, numbers, and symbols</p>
+                </div>
+                <i class="far fa-eye-slash" onclick="showPassword()"></i>
+            </div>
+            <div class="input-box">
+                <input id="button" type="button" value="Sign Up" onclick="isFormValid()">
+            </div>
+        </form>
+    </main>
+</body>
+<script>
+    var defaultColor = "#dadce0";
+    var errorColor = "#E02950";
+    var hasEmail = false;
+    var hasFirstName = false;
+    var hasLastName = false;
+    var hasUsername = false;
+    var hasPassword = false;
+    var isPassVisible = false;
+    var currLabelTag = document.getElementsByTagName("label");
+    var currInputTag = document.getElementsByTagName("input");
+    var currMessageTag = document.getElementsByClassName("message");
+    var confirmInput = document.getElementById("confirm");
 
-        var valid_username = false;
-        var usernameErrMsg = "";
-        function validUsername() {
-            let errorMessage = [];
-            var badCharacters = ["/", "\\", "\'", "\"", " "];
-            var username = document.getElementById("username").value;
+    function changeInputColor (index, message, isError) {
+        currLabelTag[index].style.color = (isError) ? errorColor : null;
+        currInputTag[index].style.border = (isError) ? `2px solid ${errorColor}` : null;
+        currMessageTag[index].innerHTML = `<i class="fas fa-exclamation-circle"></i>` + " " + message;
+        currMessageTag[index].style.color = (isError) ? `${errorColor}`: null;
+        currMessageTag[index].style.visibility = (isError) ? "visible" :"hidden";
+    }
 
-            switch (0) {
-                case 0:    // check username length
-                    if (username.length < 1) {
-                        errorMessage.push("Username must be of length 1 or more");
-                    } else if (username.length > 30) {
-                        errorMessage.push("Username must be of length less than 30");
-                    }
-                case 1:     // check for invalid characters
-                    for(i = 0; i < username.length; i++) {
-                        if (username.includes(badCharacters[i])) {
-                            errorMessage.push("Invalid username, includes [" + badCharacters[i] + "] character");
-                            break;
-                        }
-                    }
-                    usernameErrMsg = errorMessage.join("\n");
-                default: 
-                    if(errorMessage.length == 0) {  // valid username
-                        document.getElementsByClassName("input_box")[1].style.boxShadow = `0px 0px 0px 2px ${successColor}`;
-                        valid_username = true;
-                        usernameErrMsg = "";
-                        displayErrMsg();
-                    } else {    // invalid username
-                        document.getElementsByClassName("input_box")[1].style.boxShadow = `0px 0px 0px 2px ${failureColor}`;
-                        valid_username = false;
-                        displayErrMsg();
-                    }
-            }
+    function validEmail() {
+        let errorMessage = "";
+        var emailInput = document.getElementById("email").value;
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        hasEmail = re.test(emailInput);
+
+        if (hasEmail) {
+            hasEmail = true;
+            changeInputColor(0, "good", false);
+        } else {
+            hasEmail = false;
+            changeInputColor(0, "Please enter an email address", true);
         }
+    }
+
+    function validFirstName() {
+        var firstNameInput = document.getElementById("firstName").value;
         
-        var valid_password = false;    // bool flag for the function below
-        var passwordErrMsg = "";
-        function validPassword() {
-            let errorMessage = [];
-            var badCharacters = ["/", "\\", "\'", "\"", " "];
-            var password = document.getElementById("password").value;
-            
-            switch (0) {
-                case 0:    // check password length
-                    if (password.length <= 5) {
-                        errorMessage.push("Password must be of length 6 or more");
-                    } else if (password.length > 100) {
-                        errorMessage.push("Password must be of length less than 100");
-                    }
-                case 1:     // check for invalid characters
-                    for(i = 0; i < password.length; i++) {
-                        if (password.includes(badCharacters[i])) {
-                            errorMessage.push("invalid password, includes [" + badCharacters[i] + "] character");
-                            break;
-                        }
-                    }
-                case 2:     // check for at least one lowercase, uppercase, and number
-                    var lowercaseFound = /(.*[a-z].*)/.test(password);
-                    var uppercaseFound = /(.*[A-Z].*)/.test(password);
-                    var numberFound = /(.*[0-9].*)/.test(password);
-                    
-                    if(!lowercaseFound) { errorMessage.push("Password must include at least one lowercase"); }
-                    if(!uppercaseFound) { errorMessage.push("Password must include at least one uppercase"); }
-                    if(!numberFound) { errorMessage.push("Password must include at least one number"); }
-
-                    passwordErrMsg = errorMessage.join("\n");
-                default: 
-                    if(errorMessage.length == 0) {
-                            document.getElementsByClassName("input_box")[2].style.boxShadow = `0px 0px 0px 2px ${successColor}`;
-                            valid_password = true;
-                            displayErrMsg();
-                            // turn on the button here or return true for the other input fields
-                    } else {
-                        document.getElementsByClassName("input_box")[2].style.boxShadow = `0px 0px 0px 2px ${failureColor}`;
-                        valid_password = false;
-                        displayErrMsg();
-                    }
-            }
+        if (firstNameInput != "") {
+            hasFirstName = true;
+            changeInputColor(1, "good", false);
+        } else {
+            hasFirstName = false;
+            changeInputColor(1, "Please enter a first name", true);
         }
+    }
 
-        var valid_firstName = false;
-        var firstNameErrMsg= "";
-        function validFirstName() {
-            let errorMessage = "";
-            var firstName = document.getElementById("first_name").value;
-
-            if(firstName != "") {
-                valid_firstName = true;
-                document.getElementsByClassName("input_box")[3].style.boxShadow = `0px 0px 0px 2px ${successColor}`;
-                firstNameErrMsg = "";
-                displayErrMsg();
-            } else {
-                errorMessage = "Please enter a first name";
-                firstNameErrMsg = errorMessage;
-                valid_firstName = false;
-                document.getElementsByClassName("input_box")[3].style.boxShadow = `0px 0px 0px 2px ${failureColor}`;
-                displayErrMsg();
-            }
+    function validLastName() {
+        var lastNameInput = document.getElementById("lastName").value;
+        
+        if (lastNameInput != "") {
+            hasLastName = true;
+            changeInputColor(2, "good", false);
+        } else {
+            hasLastName = false;
+            changeInputColor(2, "Please enter a last name", true);
         }
+    }
 
-        var valid_lastName = false;
-        var lastNameErrMsg= "";
-        function validLastName() {
-            let errorMessage = "";
-            var lastName = document.getElementById("last_name").value;
-            if(lastName != "") {
-                valid_lastName = true;
-                document.getElementsByClassName("input_box")[4].style.boxShadow = `0px 0px 0px 2px ${successColor}`;
-                lastNameErrMsg = "";
-                displayErrMsg();
-            } else {
-                errorMessage = "Please enter a last name";
-                lastNameErrMsg = errorMessage;
-                valid_lastName = false;
-                displayErrMsg();
-                document.getElementsByClassName("input_box")[4].style.boxShadow = `0px 0px 0px 2px ${failureColor}`;
-            }
+    function validUsername() {
+        var usernameInput = document.getElementById("username").value;
+        let errorMessage = "good";
+
+        // let hasBadChars = /^(?=.*[!@#$%^&*()_+|~=`{}\\[\]:";'<>?,./-])/.test(passwordText);
+        let hasBadChars = /^(?=.*[`{}\\[\]:";',./-])/.test(usernameInput);
+        let hasSpaces = !/^[\S]+$/.test(usernameInput);
+        console.log("has space: " + hasSpaces)
+        badUsername = false;
+
+        if (usernameInput.length < 3) { errorMessage = "Username needs at least 3 characters!"; badUsername = true; }
+        if (usernameInput.length > 40) { errorMessage = "Username can't exceed 30 characters!"; badUsername = true; }
+        if (hasBadChars) { errorMessage = `Username can't contain \` {} \\ [\] : " ; ' , . "`; badUsername = true; }
+        else if (hasSpaces) { errorMessage = "Username can't contain spaces"; badUsername = true;}
+
+        if (badUsername) {
+            hasUsername = false;
+            changeInputColor(3, errorMessage, true);
+        } else {
+            hasUsername = true;
+            changeInputColor(3, errorMessage, false);
         }
+    }
 
-        function displayErrMsg() {
-            let errorMessage = [""];
-            if ((passwordErrMsg + firstNameErrMsg + lastNameErrMsg + usernameErrMsg) != "") {    // if there is an error, display it
-                let errMsgNode = document.getElementById("error_message");
-                errMsgNode.style.display = "";
-                //errMsgNode.innerText = "\n" + usernameErrMsg + "\n" + passwordErrMsg + "\n" + firstNameErrMsg + "\n" + lastNameErrMsg + "\n";
-                if(usernameErrMsg != "") { errorMessage.push(usernameErrMsg); }
-                if(passwordErrMsg != "") { errorMessage.push(passwordErrMsg); }
-                if(firstNameErrMsg != "") { errorMessage.push(firstNameErrMsg); }
-                if(lastNameErrMsg != "") { errorMessage.push(lastNameErrMsg); }
-                errMsgNode.innerText = errorMessage.join("\n");
-            }
+    function validPassword() {
+        let errorMessage = "good";
+        var passwordInput = document.getElementById("password").value;
+        // let hasBadChars = /^(?=.*[!@#$%^&*()_+|~=`{}\\[\]:";'<>?,./-])/.test(passwordText);
+        let hasBadChars = /^(?=.*[`{}\\[\]:";',./-])/.test(passwordInput);
+        let hasSpaces = !/^[\S]+$/.test(passwordInput);
+        let hasDigit = /^(?=.*\d)/.test(passwordInput);
+        let hasLowercase = /^(?=.*[a-z])/.test(passwordInput);
+        let hasUppercase = /^(?=.*[A-Z])/.test(passwordInput);
+        badPassword = false;
+
+        if (passwordInput.length < 8) { errorMessage = "password needs at least 8 characters!"; badPassword = true; }
+        if (passwordInput.length > 128) { errorMessage = "passwords can't exceed 128 characters!"; badPassword = true; }
+        if (hasBadChars) { errorMessage = `password can't contain \` {} \\ [\] : " ; ' , . "`; badPassword = true; }
+        else if (hasSpaces) { errorMessage = "password can't contain spaces"; badPassword = true;}
+        else if (!hasDigit) { errorMessage = "password must contain a digit!"; badPassword = true; }
+        else if (!hasLowercase) { errorMessage = "password must contain a lowercase letter"; badPassword = true; }
+        else if (!hasUppercase) { errorMessage = "password must contain a uppercase letter"; badPassword = true; }
+
+        if (badPassword) {
+            hasPassword = false;
+            changeInputColor(4, errorMessage, true);
+            currMessageTag[5].innerHTML = errorMessage;
+        } else {
+            hasPassword = true;
+            changeInputColor(4, errorMessage, false);
+            currMessageTag[5].innerHTML = errorMessage;
         }
+    }
 
-        function validCredentials() {
-            validUsername();
-            validPassword();
+    function showPassword() {
+        let eyeBall = document.getElementsByTagName("i")[0];
+        let passwordInputField = document.getElementById("password");
+
+        if (isPassVisible) {
+            eyeBall.className = "far fa-eye-slash";
+            passwordInputField.type = "password";
+            confirmInput.type = "password";
+            isPassVisible = false;
+        } else {
+            eyeBall.className = "far fa-eye";
+            passwordInputField.type = "text";
+            confirmInput.type = "text";
+            isPassVisible = true;
+        }
+    }
+
+    function isFormValid() {
+        let passwordInput = document.getElementById("password").value;
+        let confirmInput = document.getElementById("confirm").value;
+        if (passwordInput != confirmInput) { console.log("password do not match"); return; }
+
+        if (hasEmail && hasFirstName && hasLastName && hasUsername && hasPassword) {
+            document.getElementById("signup-form").submit();
+        } else {
+            validEmail();
             validFirstName();
             validLastName();
-
-            if(valid_username && valid_password && valid_firstName && valid_lastName) {
-                document.getElementById("sign_up_btn").disabled = false;
-                document.getElementById("sign_up_btn").style.backgroundColor = "rgba(0, 60, 255, 0.582)";
-            } else {
-                document.getElementById("sign_up_btn").disabled = true;
-                document.getElementById("sign_up_btn").style.backgroundColor = "rgba(255, 0, 0, 0.726)";
-                displayErrMsg();
-                console.log("first name: " + valid_firstName + ", last name: " + valid_lastName + ", password: " + valid_password);
-            }
+            validUsername();
+            validPassword();
         }
-
-		function inputSize(x) {
-			var input = document.getElementsByTagName("input");
-			if (x.matches) { // less than or equal to the viewport
-                for(i = 0; i < input.length; i++) {
-                    input[i].size = 10;
-                }
-			} else {
-                for(i = 0; i < input.length; i++) {
-                    input[i].size = 35;
-                }
-			}
-		}
-
-		var x = window.matchMedia("(max-width: 700px)");
-		inputSize(x) // Call listener function at run time
-		x.addListener(inputSize) // Attach listener function on state changes 
-	</script>
+    }
+</script>
 </html>

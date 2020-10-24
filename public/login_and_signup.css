@@ -1,119 +1,121 @@
-body {  background-color: rgba(0, 60, 255, 0.582); }
-
-main {
-    text-align: center;
-    padding: 5% 5%;
+:root {
+    --input-border: #0060E0;
 }
 
-p a i {
-    color: 	rgba(0, 60, 255, 0.582);
-    text-align: center;
-    font-size: 70px;
-    background-color: white;
-    border-radius: 7px;
-    padding: 0% .25%;
+html {
+    font-family: "GTWalsheim", system-ui, sans-serif;
+    text-rendering: optimizelegibility;
 }
 
-.user_input {
-    background-color: white;
-    border-radius: 7px;
+a {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 15rem;
+    margin: 3rem auto;  
+}
+
+img {
+    width: 100%;
+    max-width: 8rem;
+    margin: 0 auto;
+}
+
+form {
+    border: solid;
+    width: 100%;
+    max-width: 35rem;
+    margin: 0 auto;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    text-align: center;
+}
+
+h1 {
+    text-align: center;
+}
+
+.input-box {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    justify-content: space-between;
-    margin: 2% 37%;
-    padding: 2% 0%;
+    margin: 1.5rem auto;
+    width: 100%;
+    max-width: 80%;
 }
 
-fieldset {
-    border: none;
-}
-
-.user_input p {
-    font-size: 30px;
-    margin: -2% 0%;
-}
-
-.input_box {
-    box-shadow:  0 0 0 2px lightgrey;
-    border-radius: 7px;
-    margin: 5% 12%;
-    padding: 2% 0%;
+.message {
+    position: relative;
+    transform: translate(0, .5rem);
+    width: 100%;
+    margin: 0;
+    padding: 0;
     text-align: left;
+    font-size: .9rem;
+    visibility: hidden;
 }
 
-.input_box:hover {  box-shadow:  0 0 0 2px rgba(0, 60, 255, 0.582); }
-
-.input_box i {
-    margin-left: 5%;
-    color: 	rgba(0, 60, 255, 0.582);
+h2 {
+    margin: 0;
+    padding: 0;
+    text-align: center;
 }
 
-input { border: none; }
-
-input[type=submit] {
-	border-radius: 10px;
-	background-color: 	rgba(0, 60, 255, 0.582);
-	border: none;
-	color: white;
-	padding: 2% 10%;
-	text-align: center;
-	text-decoration: none;
-	display: inline-block;
-	font-family: ubuntu;
-	font-size: 125%;
+form label {
+    padding: .75rem 1rem;
+    position: absolute;
+    z-index: 2;
+    transition: .25s;
+    pointer-events: none;
 }
 
-input[type=submit]:hover { cursor: pointer; }
+form input {
+    position: relative;
+    z-index: 3;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: .75rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
+}
 
-/* login error page */
-.error_box, .success_box {
+form input:focus { outline: none; }
+
+form input:focus ~ label,
+form input:not(:focus):valid ~ label { 
+    transform: translate(.75rem, -.5rem);
+    padding: 0;
     background-color: white;
-    border-radius: 7px;
+    z-index: 4;
+    font-size: .9rem;
+}
+
+.input-box:not(:last-child) input:focus {
+    border: 2px solid var(--input-border);
+}
+
+.input-box input:focus ~ label {
+    color: var(--input-border);
+}
+
+.input-box-group .input-box {
+    max-width: 45%;
+    margin: 0;
+}
+
+.input-box-group {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    width: 100%;
+    max-width: 80%;
+    margin: 2.5rem auto;
     justify-content: space-between;
-    margin: 2% 37%;
-    padding: 2% 0%;
+    align-items: center;
 }
 
-.error_box p:nth-child(1) {
-    color: red;
-    font-size: 35px;
+#button, i { cursor: pointer; }
+#button {
+    color: white;
+    background-color: #0060E0;
 }
-
-.error_box i {
-    border-style: solid;
-    border-color: rgba(0, 60, 255, 0.582);
-    padding: 0% 1%;
-}
-
-.error_box p:nth-child(4) {
-    font-size: 30px;
-}
-
-.email_confirmation fieldset {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.email_confirmation fieldset input {
-    box-shadow:  0 0 0 2px lightgrey;
-    border-radius: 7px;
-    margin: 2% 12%;
-    padding: 2% 0%;
-    text-align: center;
-    font-size: 125%;
-}
-
-.email_confirmation fieldset input[type=submit] {
-    text-align: center;
-    padding: 2% 0%;
-}
-
-
-
-
-
+.far { transform: translate(0, -1rem); }
+.message i { transform: translate(0, 0rem); }
