@@ -17,7 +17,8 @@ html {
 body{
     margin: 0;
     padding: 0;
-    font-family: Inter,sans-serif;
+    font-family: "GTWalsheim", system-ui, sans-serif;
+    text-rendering: optimizelegibility;
     background-color: var(--background-color);
 }
 
@@ -65,10 +66,14 @@ nav div {
     justify-content: space-between;
 }
 
+/*------------------------------------------ 
+    landing page
+------------------------------------------*/
+
 .main-content {
     background-color: white;
     border: 1px solid #DFE1E6;
-    max-width: 75rem;
+    max-width: 45rem;
     margin: 1rem auto;
     border-radius: 5px;
     padding: 1rem;
