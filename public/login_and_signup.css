@@ -1,5 +1,6 @@
 :root {
     --input-border: #0060E0;
+    --grey: #666a72;
 }
 
 html {
@@ -67,6 +68,7 @@ form label {
     z-index: 2;
     transition: .25s;
     pointer-events: none;
+    color: var(--grey);
 }
 
 form input {
