@@ -30,28 +30,28 @@
         <div id="gift-top"></div>
         <form id="add-gift-form">
             <div class="input-box">
-                <input type="text" class="input-name" name="itemName" required>
-                <label>ITEM NAME</label>
+                <input type="text" name="itemName" autocomplete="off" required>
+                <label>Item Name</label>
             </div>
             <div class="input-box">
-                <input type="text" class="input-name" name="notes" required>
-                <label>NOTES</label>
+                <input type="text" name="notes" autocomplete="off" required>
+                <label>Notes</label>
             </div>
             <div class="input-box">
-                <input type="text" class="input-name" name="price" required>
-                <label>PRICE</label>
+                <input type="text" name="price" autocomplete="off" required>
+                <label>Price</label>
             </div>
             <div class="input-box">
-                <input type="text" class="input-name" name="quantity" required>
-                <label>QUANTITY</label>
+                <input type="text" name="quantity" autocomplete="off" required>
+                <label>Quantity</label>
             </div>
             <div class="input-box">
-                <input type="text" class="input-name" name="size" required>
-                <label>SIZE</label>
+                <input type="text" name="size" autocomplete="off" required>
+                <label>Size</label>
             </div>
             <div class="input-box">
-                <input type="text" class="input-name" name="storeLink" required>
-                <label>STORE LINK</label>
+                <input type="text" name="storeLink" autocomplete="off" required>
+                <label>Store Link</label>
             </div>
             <button id="add-gift-btn" type="button" onclick="addGift(this.form)">Add Gift</button>
         </form>
@@ -64,32 +64,32 @@
     <div class="gift-list gift-list-private">
         <div class="gift gift-private">
             <i class="far fa-arrow-alt-circle-down openGiftButton"></i>
-            <h2>RTX 3090</h2>
+            <h2>Dell 27in monitor</h2>
             <div class="gift-content gift-content-private">
                 <form class="gift-form gift-form-private">
                     <div class="input-box">
-                        <input type="text" value="RTX 3090" required>
-                        <label>ITEM NAME</label>
+                        <input type="text" value="Dell 27in monitor" required>
+                        <label>Item Name</label>
                     </div>
                     <div class="input-box">
-                        <input type="text" value="Really good GPU" required>
-                        <label>NOTES</label>
+                        <input type="text" value="really good monitor I want" required>
+                        <label>Notes</label>
                     </div>
                     <div class="input-box">
-                        <input type="text" value="1499.00" required>
-                        <label>PRICE</label>
+                        <input type="text" value="361.00" required>
+                        <label>Price</label>
                     </div>
                     <div class="input-box">
                         <input type="text" value="1" required>
-                        <label>QUANTITY</label>
+                        <label>Quantity</label>
                     </div>
                     <div class="input-box">
-                        <input type="text" required>
-                        <label>SIZE</label>
+                        <input type="text" value="" required>
+                        <label>Size</label>
                     </div>
                     <div class="input-box">
-                        <input type="text" value="https://www.nvidia.com/en-us/geforce/graphics-cards/30-series/rtx-3090/">
-                        <label>STORE LINK</label>
+                        <input type="text" value="https://smile.amazon.com/Dell-27-Inch-LED-Lit-Monitor-S2719DGF/dp/B07YC89NBT/ref=pd_di_sccai_2/137-9593566-9671203?_encoding=UTF8&pd_rd_i=B07YC89NBT&pd_rd_r=f0fa99ba-7d6c-4421-a70a-b2fdbec3adc5&pd_rd_w=f3hmv&pd_rd_wg=b2rVH&pf_rd_p=5415687b-2c9d-46da-88a4-bbcfe8e07f3c&pf_rd_r=6Y3H3CB7Q3JV0VJ5G1H1&psc=1&refRID=6Y3H3CB7Q3JV0VJ5G1H1">
+                        <label>Store Link</label>
                     </div>
                     <button class="apply-changes-btn" type="button">Apply Changes</button>
                     <button class="delete-btn" type="button">Delete</button>
@@ -103,25 +103,25 @@
     <div class="gift-list gift-list-public">
         <div class="gift gift-public">
             <i class="far fa-arrow-alt-circle-down openGiftButton"></i>
-            <h2>RTX 3090</h2>
+            <h2>Dell 27in monitor</h2>
             <div class="gift-content gift-content-public">
                 <div class="input-box">
-                    <input type="text" value="Really good GPU" readonly>
-                    <label>NOTES</label>
+                    <input type="text" value="really good monitor I want" readonly>
+                    <label>Notes</label>
                 </div>
                 <div class="input-box">
-                    <input type="text" value="1499.00" readonly>
-                    <label>PRICE</label>
+                    <input type="text" value="361.00" readonly>
+                    <label>Price</label>
                 </div>
                 <div class="input-box">
                     <input type="text" value="1" readonly>
-                    <label>QUANTITY</label>
+                    <label>Quantity</label>
                 </div>
                 <div class="input-box">
                     <input type="text" readonly>
-                    <label>SIZE</label>
+                    <label>Size</label>
                 </div>
-                <a class="buy-btn" href="https://www.nvidia.com/en-us/geforce/graphics-cards/30-series/rtx-3090/" target="_blank">BUY</a>
+                <a class="buy-btn" href="https://smile.amazon.com/Dell-27-Inch-LED-Lit-Monitor-S2719DGF/dp/B07YC89NBT/ref=pd_di_sccai_2/137-9593566-9671203?_encoding=UTF8&pd_rd_i=B07YC89NBT&pd_rd_r=f0fa99ba-7d6c-4421-a70a-b2fdbec3adc5&pd_rd_w=f3hmv&pd_rd_wg=b2rVH&pf_rd_p=5415687b-2c9d-46da-88a4-bbcfe8e07f3c&pf_rd_r=6Y3H3CB7Q3JV0VJ5G1H1&psc=1&refRID=6Y3H3CB7Q3JV0VJ5G1H1" target="_blank">BUY</a>
             </div>
         </div>
     </div>
@@ -259,7 +259,7 @@
                 if (privacy == "private") {
                     newInputFields.push(`
                     <div class="input-box">
-                        <input type="text" value="${userInput}" required>
+                        <input type="text" value="${userInput}" autocomplete="off" required>
                         <label>${labelName}</label>
                     </div>`);
                 } else {

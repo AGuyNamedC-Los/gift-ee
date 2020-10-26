@@ -90,20 +90,20 @@ nav div {
     position: relative;
 }
 
-#gift-top, #gift-bottom {
+#gift-top, #gift-bottom, #response-gift-top, #response-gift-bottom {
     border: solid;
     width: 100%;
     max-width: 11rem;
     margin: auto auto;
 }
 
-#gift-top {
+#gift-top, #response-gift-top {
     height: 25px;
     max-width: 12rem;
     border-radius: 10px;
 }
 
-#add-gift-form {
+#add-gift-form, #response-gift-content {
     position: absolute;
     width: 90%;
     left: 0; 
@@ -114,7 +114,7 @@ nav div {
     opacity: 0;
 }
 
-#gift-bottom {
+#gift-bottom, #response-gift-bottom {
     cursor: pointer;
     height: 140px;
     display: flex;
@@ -123,6 +123,30 @@ nav div {
     user-select: none;
     transition: 1s;
     margin-top: 0;
+}
+
+/*------------------------------------------ 
+    response page
+------------------------------------------*/
+#response-gift-top {
+    max-width: 20rem;
+    padding: 0 1rem;
+}
+
+#response-gift-bottom {
+    max-width: 19rem;
+    padding: 4rem 1rem;
+    cursor: default;
+}
+
+#response-gift-content {
+    max-width: 25rem;
+    margin: 1rem auto;
+}
+
+#response-message {
+    position: relative;
+    word-wrap: break-word;
 }
 
 /*------------------------------------------ 
@@ -224,7 +248,7 @@ nav div {
 .input-box:not(:last-child) input:focus { border: 2px solid var(--input-border); }
 .input-box input:focus ~ label { color: var(--input-border); }
 
-.apply-changes-btn, .delete-btn, #add-gift-btn, .buy-btn {
+.apply-changes-btn, .delete-btn, #add-gift-btn, .buy-btn, #back-to-btn {
     cursor: pointer;
     width: 100%;
     max-width: 80%;

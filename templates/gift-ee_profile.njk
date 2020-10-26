@@ -7,35 +7,34 @@
 {% block main %}
 <section class="main-content content-2">
     <h1>Add a gift to your gift list</h1>
-    <p>Omitted attributes will not be present for other users to see</p>
         <div id="add-gift">
             <div id="gift-top"></div>
             <form id="add-gift-form" action="added_gift_status" method="POST">
-                <div class="input-group">
-                    <label>ITEM NAME</label>
-                    <input type="text" class="input-name" name="itemName" placeholder="Item Name">
+                <div class="input-box">
+                    <input type="text" name="itemName" autocomplete="off" required>
+                    <label>Item Name</label>
                 </div>
-                <div class="input-group">
-                    <label>NOTES</label>
-                    <input type="text" class="input-name" name="notes" placeholder="Notes">
+                <div class="input-box">
+                    <input type="text" name="notes" autocomplete="off" required>
+                    <label>Notes</label>
                 </div>
-                <div class="input-group">
-                    <label>PRICE</label>
-                    <input type="text" class="input-name" name="price" placeholder="Price">
+                <div class="input-box">
+                    <input type="text" name="price" autocomplete="off" required>
+                    <label>Price</label>
                 </div>
-                <div class="input-group">
-                    <label>QUANTITY</label>
-                    <input type="text" class="input-name" name="quantity" placeholder="Quanity">
+                <div class="input-box">
+                    <input type="text" name="quantity" autocomplete="off" required>
+                    <label>Quantity</label>
                 </div>
-                <div class="input-group">
-                    <label>SIZE</label>
-                    <input type="text" class="input-name" name="size" placeholder="Size">
+                <div class="input-box">
+                    <input type="text" name="size" autocomplete="off" required>
+                    <label>Size</label>
                 </div>
-                <div class="input-group">
-                    <label>STORE LINK</label>
-                    <input type="text" class="input-name" name="storeLink" placeholder="Store Link">
+                <div class="input-box">
+                    <input type="text" name="storeLink" autocomplete="off" required>
+                    <label>Store Link</label>
                 </div>
-                <input type="submit" value="Add Gift">
+                <input id="add-gift-btn" type="button" onclick="addGift(this.form)" value="Add Gift">
             </form>
             <div id="gift-bottom">Add Gift</div>
         </div>
@@ -44,42 +43,44 @@
     <div class="gift-list gift-list-private">
         {% for i in range(0, giftList.length) -%}
             <div class="gift gift-private">
-                <i class="fas fa-eye openGiftButton" onclick="openGift({{i}}, 'private')"></i>
+                <i class="far fa-arrow-alt-circle-down openGiftButton" onclick="openGift({{i}}, 'private')"></i>
                 <h2>{{giftList[i].itemName}}</h2>
                 <div class="gift-content gift-content-private">
                     <div class="gift-form gift-form-private">
                         <form id="save-changes-form" action="save_changes_status" method="POST">
-                            <div class="input-group">
-                                <label>ITEM NAME</label>
-                                <input type="text" class="input-name" name="itemName" placeholder="Item Name" value="{{giftList[i].itemName}}">
+                            <div class="input-box">
+                                <input type="text" name="itemName" value="{{giftList[i].itemName}}" autocomplete="off" required>
+                                <label>Item Name</label>
                             </div>
-                            <div class="input-group">
-                                <label>NOTES</label>
-                                <input type="text" class="input-name" name="notes" placeholder="Notes" value="{{giftList[i].notes}}">
+                            <div class="input-box">
+                                <input type="text" name="notes" value="{{giftList[i].notes}}" autocomplete="off" required>
+                                <label>Notes</label>
                             </div>
-                            <div class="input-group">
-                                <label>PRICE</label>
-                                <input type="text" class="input-name" name="price" placeholder="Price" value="{{giftList[i].price}}">
+                            <div class="input-box">
+                                <input type="text" name="price" value="{{giftList[i].price}}" autocomplete="off" required>
+                                <label>Price</label>
                             </div>
-                            <div class="input-group">
-                                <label>QUANTITY</label>
-                                <input type="text" class="input-name" name="quantity" placeholder="Quanity" value="{{giftList[i].qty}}">
+                            <div class="input-box">
+                                <input type="text" name="qty" value="{{giftList[i].qty}}" autocomplete="off" required>
+                                <label>Quantity</label>
                             </div>
-                            <div class="input-group">
-                                <label>SIZE</label>
-                                <input type="text" class="input-name" name="size" placeholder="Size" value="{{giftList[i].size}}">
+                            <div class="input-box">
+                                <input type="text" name="size" value="{{giftList[i].size}}" autocomplete="off" required>
+                                <label>Size</label>
                             </div>
-                            <div class="input-group">
-                                <label>STORE LINK</label>
-                                <input type="text" class="input-name" name="storeLink" placeholder="Store Link" value="{{giftList[i].storeLink}}">
+                            <div class="input-box">
+                                <input type="text" name="storeLink" value="{{giftList[i].storeLink}}" autocomplete="off" required>
+                                <label>Store Link</label>
                             </div>
-                        
-                            <p hidden><input type="text" name="itemNum" value="{{i}}"></p>
-                            <button type="click">Apply Changes</button>
+                            <div class="input-box" style="display: none">
+                                <input type="text" name="index" value="{{i}}" required>
+                                <label>index</label>
+                            </div>
+                            <button class="apply-changes-btn" onclick="applyChangesToCurrGift(this.form)" type="button">Apply Changes</button>
                         </form>
                         <form id="delete-gift-form" action="deleted_gift_status" method="POST">
                             <p hidden><input type="text" name="itemNum" value="{{i}}"></p>
-                            <button type="submit">Delete</button>
+                            <button class="delete-btn" type="submit">Delete</button>
                         </form>
                     </div>
                 </div>
@@ -91,48 +92,58 @@
 
 {% block script %}
 <script>
-var privateGiftList = document.getElementsByClassName("gift-list-private")[0];
-var privateGifts = privateGiftList.getElementsByClassName("gift-private");
-document.getElementById("gift-bottom").addEventListener("click", () => expandAddGiftForm());    // to open the add gift form
+    var privateGiftList = document.getElementsByClassName("gift-list-private")[0];
+    var privateGifts = privateGiftList.getElementsByClassName("gift-private");
+    document.getElementById("gift-bottom").addEventListener("click", () => expandAddGiftForm());    // to open the add gift form
 
-function openGift(index, privacy) {
-    let giftContent = (privacy === "private") ? privateGifts[index].getElementsByClassName("gift-content")[0] : publicGifts[index].getElementsByClassName("gift-content")[0];
-    let currGift = (privacy === "private") ? privateGifts[index] : publicGifts[index];
-    let giftContentHeight = giftContent.scrollHeight;
-    let currGiftHeight = currGift.scrollHeight;
-    currGift.style.height = currGiftHeight;
+    function openGift(index, privacy) {
+        let giftContent = (privacy === "private") ? privateGifts[index].getElementsByClassName("gift-content")[0] : publicGifts[index].getElementsByClassName("gift-content")[0];
+        let currGift = (privacy === "private") ? privateGifts[index] : publicGifts[index];
+        let giftContentHeight = giftContent.scrollHeight;
+        let currGiftHeight = currGift.scrollHeight;
+        currGift.style.height = currGiftHeight;
 
-    if(giftContent.style.visibility === "visible") {   // close the form
-        let newHeight = currGiftHeight - giftContentHeight;
-        giftContent.style.transition = "0s";
-        giftContent.style.opacity = 0;
-        giftContent.style.visibility = "hidden";
-        currGift.style.height = `${newHeight}px`;
-    } else {    // open the form
-        let newHeight = currGiftHeight;
-        currGift.style.height = `${newHeight}px`;
-        giftContent.style.transition = "2s ease";
-        giftContent.style.opacity = 1;
-        giftContent.style.visibility = "visible";
+        if(giftContent.style.visibility === "visible") {   // close the form
+            let newHeight = currGiftHeight - giftContentHeight;
+            giftContent.style.transition = "0s";
+            giftContent.style.opacity = 0;
+            giftContent.style.visibility = "hidden";
+            currGift.style.height = `${newHeight}px`;
+        } else {    // open the form
+            let newHeight = currGiftHeight;
+            currGift.style.height = `${newHeight}px`;
+            giftContent.style.transition = "2s ease";
+            giftContent.style.opacity = 1;
+            giftContent.style.visibility = "visible";
+        }
     }
-}
 
-function expandAddGiftForm() {
-    let bottomOfGift = document.getElementById("gift-bottom");
-    let addGiftForm = document.getElementById("add-gift-form");
-    let giftFormHeight = addGiftForm.scrollHeight;
+    function expandAddGiftForm() {
+        let bottomOfGift = document.getElementById("gift-bottom");
+        let addGiftForm = document.getElementById("add-gift-form");
+        let giftFormHeight = addGiftForm.scrollHeight;
 
-    if(addGiftForm.style.visibility === "visible") {   // close the form
-        addGiftForm.style.transition = "0s";
-        addGiftForm.style.visibility = "hidden";
-        addGiftForm.style.opacity = 0;
-        bottomOfGift.style.marginTop = "0px";
-    } else {    // open the form
-        addGiftForm.style.transition = "2s ease";
-        addGiftForm.style.visibility = "visible";
-        addGiftForm.style.opacity = 1;
-        bottomOfGift.style.marginTop = giftFormHeight + "px";
+        if(addGiftForm.style.visibility === "visible") {   // close the form
+            addGiftForm.style.transition = "0s";
+            addGiftForm.style.visibility = "hidden";
+            addGiftForm.style.opacity = 0;
+            bottomOfGift.style.marginTop = "0px";
+        } else {    // open the form
+            addGiftForm.style.transition = "2s ease";
+            addGiftForm.style.visibility = "visible";
+            addGiftForm.style.opacity = 1;
+            bottomOfGift.style.marginTop = giftFormHeight + "px";
+        }
     }
-}
+
+    function addGift(form) {
+        console.log("Trying to submit!");
+        form.submit();
+    }
+
+    function applyChangesToCurrGift(form) {
+        console.log("trying to apply changes!");
+        form.submit();
+    }
 </script>
 {% endblock %}
