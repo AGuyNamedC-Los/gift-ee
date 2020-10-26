@@ -255,17 +255,18 @@ app.post('/login_status', express.urlencoded({extended:true}), async function(re
 						username: userInfo.username
 					});
 					console.log("user upgraded to " + req.session.user.role);
-					res.render("home.njk", {user: req.session.user});
+					// res.render("home.njk", {user: req.session.user});
+					res.render("response.njk", {user: req.session.user, title: "Login Successful", link: "/profile", message: "Successfully Logged In", buttonMsg: "GO TO GIFT LIST"});
 					return;
 				});
 			} else {		// found user but wrong password
 				console.log("incorrect password for user in userDB");
-				res.render('login_error.html');
+				res.render("response.njk", {user: req.session.user, title: "Login Failed", link: "/login", message: "Incorrect Username or Password", buttonMsg: "BACK TO LOGIN"});
 				return;
 			}
 		} else {	// username was not found in userDB
 			console.log("could not find username in userDB");
-			res.render('login_error.html');
+			res.render("response.njk", {user: req.session.user, title: "Login Failed", link: "/login", message: "Incorrect Username or Password", buttonMsg: "BACK TO LOGIN"});
 			return;
 		}
 	} catch (err) {
@@ -290,7 +291,8 @@ app.post('/logout_status', express.urlencoded({extended:true}), async function(r
 		
 		req.session.user = {role: "guest", firstName: "", lastName: "", email: "", username: ""};
 		console.log("user upgraded to " + req.session.user.role);
-		res.render("logout.njk", {user: req.session.user});
+		// res.render("logout.njk", {user: req.session.user});
+		res.render("response.njk", {user: req.session.user, title: "Logged Out", link: "/", message: "Successfully Logged Out", buttonMsg: "BACK TO HOME"});
 		return;
 	});
 });
@@ -598,7 +600,7 @@ app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:
 	try {
 		let docs = await userDB.update({"email": email}, {$addToSet: {giftListContent: newItem}}, {}, function () {});
 		// res.render("added_gift_success.njk", {user: req.session.user});
-		res.render("response.njk", {user: req.session.user, title: "Added Gift", link: "/profile", message: "Gift Added Successfully!", buttonMsg: "gift list"});
+		res.render("response.njk", {user: req.session.user, title: "Added Gift", link: "/profile", message: "Gift Added Successfully!", buttonMsg: "BACK TO GIFT LIST"});
 		return;
 	} catch (err) {
 		console.log("error: " + err);
@@ -631,7 +633,8 @@ app.post('/save_changes_status', loggedInMiddleware, express.urlencoded({extende
 		newGiftListContent = JSON.parse(JSON.stringify(docs[0].giftListContent));
 		newGiftListContent[index] = newItem;
 		await userDB.update({'email': email }, { $set: { giftListContent: newGiftListContent } }, { multi: true }, function (err, numReplaced) {});
-		res.render("added_gift_success.njk", {user: req.session.user});
+		// res.render("added_gift_success.njk", {user: req.session.user});
+		res.render("response.njk", {user: req.session.user, title: "Gift Changes Saved", link: "/profile", message: "Changes Successfully Saved", buttonMsg: "BACK TO GIFT LIST"});
 		return;
 	} catch (err) {
 		console.log("error: " + err);
@@ -670,7 +673,8 @@ app.post('/deleted_gift_status', loggedInMiddleware, express.urlencoded({extende
 	try {
 		let docs = await userDB.update({"email": email}, {$set: {giftListContent: newGiftList}}, {}, function (err, numReplaced) {});
 		console.log(deletedItem[0].itemName);
-		res.render("deleted_gift_success.njk", {deletedItem: deletedItem[0]});
+		// res.render("deleted_gift_success.njk", {deletedItem: deletedItem[0]});
+		res.render("response.njk", {user: req.session.user, title: "Gift Deleted", link: "/profile", message: "Gift Successfully Deleted!", buttonMsg: "BACK TO GIFT LIST"});
 		
 	} catch (err) {
 		console.log("error: " + err);
