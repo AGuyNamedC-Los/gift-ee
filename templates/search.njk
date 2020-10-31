@@ -7,16 +7,20 @@
 {% endblock %}
 
 {% block main %}
-	<h1>Search for user's profiles</h1>
+	<section class="main-content">
+		<div class="input-box">
+			<input type="text" id="search-bar" name="searchText" required>
+			<label><i class="fas fa-search"></i> Search For Users</label>
+		</div>
+	</section>
 
-	<div class="search-container">
-		<i class="fas fa-lock"></i>
-		<input type="text" id="search-bar" name="searchText" placeholder="Username">
-	</div>
+	<section class="main-content">
+		<div id="usernameList">
+			
+		</div>
+	</section>
+	
 
-	<div id="usernameList">
-
-	</div>
 {% endblock %}
 
 {% block script %}
@@ -25,6 +29,8 @@
 	var usernameListElem = document.getElementById("usernameList");
 	var usernames = [];
 	usernames[0] = ('{{usernames[0]}}');
+	document.getElementById("search-bar").value = "";
+
 	async function getUserNames(searchText) {
 		var matches = usernames.filter(username => {
 			const regex = new RegExp(`^${searchText}`,`gi`);
@@ -37,7 +43,6 @@
 			usernameListElem.innerHTML = " ";
 			return;
 		}
-		console.log(matches);
 		outputHTML(matches);
 	}
 
@@ -46,8 +51,10 @@
 			var html = matches.map(match => 
 				`
 				<form action="search_results" method="POST">
-					<input style="display: none;" type="text" name="username" value="${match}">
-					<input type="submit" value="${match}">
+					<div class="search-result">
+						<input type="hidden" name="username" value="${match}">
+						<input type="submit" value="${match}">
+					</div>
 				</form>
 				`
 				).join(" ");

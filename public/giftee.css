@@ -69,7 +69,6 @@ nav div {
 /*------------------------------------------ 
     landing page
 ------------------------------------------*/
-
 .main-content {
     background-color: white;
     border: 1px solid #DFE1E6;
@@ -299,7 +298,6 @@ footer h5 {margin-top: 0; margin-bottom: 0; padding: 1rem}
     width: 100%;
     max-width: 3rem;
     text-align: left;
-    /* vertical-align: bottom; */
     border-radius: 10px;
     margin: .25rem 0;
     color: black;
@@ -320,3 +318,29 @@ footer h5 {margin-top: 0; margin-bottom: 0; padding: 1rem}
 /*------------------------------------------ 
     search page
 ------------------------------------------*/
+.search-result {
+    width: 100%;
+    max-width: 80%;
+    margin: 0 auto;
+}
+
+.search-result input {
+    -webkit-appearance: none;
+    outline: none;
+    width: 100%;
+    text-align: left;
+    background-color: white;
+    padding: .75rem .75rem;
+    border-radius: 5px;
+    border: 1px solid #dadce0;
+    cursor: pointer;
+}
+
+.search-result input:hover {
+    background-color: var(--input-border);
+    border-radius: 5px;
+}
+
+.search-result:hover input {
+    color: white;
+}
