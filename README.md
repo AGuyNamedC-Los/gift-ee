@@ -32,6 +32,7 @@ I thought it would be a lot simpler to have one place to see a person's gift lis
 - ~~added appropriate response pages~~
 - redo css for search page
 - make the email confirmation look prettier
+- add a "resend email confirmation code" button
 - ~~clean up backend code~~
 - create a profile settings functionality
     - change username

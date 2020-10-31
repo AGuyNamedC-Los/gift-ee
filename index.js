@@ -61,48 +61,33 @@ app.use(setUpSessionMiddleware);
 
 // restricts paths to only logged in users
 const loggedInMiddleware = function(req, res, next) {
-	if(req.session.user.role == "guest") {
-		res.render("users_only.njk", {user: req.session.user});
+	if (req.session.user.role == "guest") {
+		res.render("response.njk", {user: req.session.user, title: "Users Only", link: "/", message: "Sorry, only logged in users may view this page", buttonMsg: "GO TO HOMEPAGE"});
 	} else {
 		next();
 	}
 };
 
 const guestsOnlyMiddleware = function(req, res, next) {
-	if(req.session.user.role != "guest") {
-		res.render("users_only.njk", {user: req.session.user});
+	if (req.session.user.role != "guest") {
+		res.render("response.njk", {user: req.session.user, title: "Guests Only", link: "/", message: "Sorry, only guests may view this page", buttonMsg: "GO TO HOMEPAGE"});
 	} else {
 		next();
 	}
 };
 
 const usersOnlyMiddleware = function(req, res, next) {
-	if(req.session.user.role != "user") {
-		res.render("users_only.njk", {user: req.session.user});
+	if (req.session.user.role != "user") {
+		res.render("response.njk", {user: req.session.user, title: "Users Only", link: "/", message: "Sorry, only users may view this page", buttonMsg: "GO TO HOMEPAGE"});
 	} else {
 		next();
 	}
 };
 
-const tempUsersOnlyMiddleware = function(req, res, next) {
-	if(req.session.user.role != "temp_user") {
-		res.render("users_only.njk", {user: req.session.user});
-	} else {
-		next();
-	}
-};
-
-const guestsAndTempUsersOnly = function(req, res, next) {
-	if(req.session.user.role == "user") {
-		console.log("users not allowed to login again!");
-		res.render("users_only.html", {user: req.session.user});
-	} else {
-		next();
-	}
-};
-
+/* ----------------------------
+	helper functions
+---------------------------- */
 async function sendConfirmationCode(secretCode, email) {
-	//console.log("secret code: " + secretCode);
 	try {
 		let transporter = nodemailer.createTransport({
 			service: 'gmail',
@@ -111,6 +96,7 @@ async function sendConfirmationCode(secretCode, email) {
 				pass: process.env.GMAIL_PASSWORD
 			}
 		});
+		
 		let mailOptions = {
 			from: '"Gift-ee" <gifteebysuperseed@gmail.com>',	// sender address
 			to: email,		// list of receivers
@@ -120,21 +106,12 @@ async function sendConfirmationCode(secretCode, email) {
 		};
 
 		transporter.sendMail(mailOptions, function(error, info){
-			if (error) {
-			console.log(error);
-			} else {
-			console.log('Email sent: ' + info.response);
-			}
+			if (error) { console.log(error); } 
+			else { console.log('Email sent: ' + info.response); }
 		}); 
-	} catch (err) {
-		console.log(err);
-	}
-
+	} catch (err) { console.log(err); }
 }
 
-/* ----------------------------
-	helper functions
----------------------------- */
 function getGift(inputs) {
 	let newGift = {
 		"itemName": (inputs.itemName == "") ? "Gift" : inputs.itemName,
@@ -159,12 +136,12 @@ app.post('/login_status', express.urlencoded({extended:true}), async function(re
 
 	// search throug the temp_userDB
 	try {
-		let temp_docs = await temp_userDB.find({'email': email});
+		let docs = await temp_userDB.find({'email': email});
 		
-		tempUserFound = temp_docs.length;
+		tempUserFound = docs.length;
 		if (tempUserFound) {
-			let saltedPassword = temp_docs[0].salt + password;
-			let passVerified = bcrypt.compareSync(saltedPassword, temp_docs[0].password);	// combine the user's salt and password to the hashed password
+			let saltedPassword = docs[0].salt + password;
+			let passVerified = bcrypt.compareSync(saltedPassword, docs[0].password);	// combine the user's salt and password to the hashed password
 			if (passVerified) {		// user was found with correct password
 				// begin to update the user's role
 				let oldInfo = req.session.user;
@@ -173,9 +150,8 @@ app.post('/login_status', express.urlencoded({extended:true}), async function(re
 						console.log(err);
 						return false;
 					}
-					req.session.user = Object.assign(oldInfo, {}, { role: "temp_user", firstname: temp_docs[0].firstName, lastName: temp_docs[0].lastName, username: temp_docs[0].username, email: temp_docs[0].email });
+					req.session.user = Object.assign(oldInfo, {}, { role: "temp_user", firstname: docs[0].firstName, lastName: docs[0].lastName, username: docs[0].username, email: docs[0].email });
 					res.render("response.njk", {user: req.session.user, title: "Login Successful", link: "/profile", message: "Successfully Logged In", buttonMsg: "GO TO HOMEPAGE"});
-
 					tempUserFound = true;
 				});
 			} else {	// incorrect password for temp_user
@@ -231,7 +207,6 @@ app.post('/logout_status', express.urlencoded({extended:true}), async function(r
 
 		req.session.user = {role: "guest", firstName: "", lastName: "", email: "", username: ""};
 		res.render("response.njk", {user: req.session.user, title: "Logged Out", link: "/", message: "Successfully Logged Out", buttonMsg: "BACK TO HOME"});
-		return;
 	});
 });
 
@@ -507,7 +482,6 @@ app.post('/deleted_gift_status', usersOnlyMiddleware, express.urlencoded({extend
 
 app.get('/about', function (req, res) { res.render('about.njk', {user: req.session.user}); });
 
-// allows users and guests to search for user's gift list
 app.get('/search', async function (req, res) {
 	try {
 		let usernamesList = [];
@@ -543,22 +517,4 @@ app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
 // app.listen(port, host, function () {
 //     console.log("Server listening on IPv4: " + host + ":" + port);
-// });
-
-// req.session.regenerate(function (err) {
-// 	if (err) {
-// 		console.log(err);
-// 		return false;
-// 	}
-	
-// 	req.session.user = Object.assign(oldInfo, userInfo, {
-// 		role: "user",
-// 		firstName: userInfo.firstName,
-// 		lastName: userInfo.lastName,
-// 		email: userInfo.email,
-// 		username: userInfo.username
-// 	});
-
-// 	res.render("response.njk", {user: req.session.user, title: "Login Successful", link: "/profile", message: "Successfully Logged In", buttonMsg: "GO TO GIFT LIST"});
-// 	return;
 // });

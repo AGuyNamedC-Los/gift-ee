@@ -19,8 +19,6 @@
 			
 		</div>
 	</section>
-	
-
 {% endblock %}
 
 {% block script %}
@@ -34,7 +32,6 @@
 	async function getUserNames(searchText) {
 		var matches = usernames.filter(username => {
 			const regex = new RegExp(`^${searchText}`,`gi`);
-			console.log(username + " =? " + regex);
 			return username.match(regex);
 		});
 

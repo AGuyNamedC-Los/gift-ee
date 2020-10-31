@@ -123,6 +123,4 @@ deprecated
 .env
 
 # database stuff
-temp_usersDB.json
-usersDB.json
 gulpfile.js
