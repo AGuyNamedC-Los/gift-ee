@@ -24,7 +24,7 @@
                     <p class="message">message</p>
                 </div>
                 <div class="input-box">
-                    <input type="text" name="LastName" id="lastName" onblur="validLastName()" required>
+                    <input type="text" name="lastName" id="lastName" onblur="validLastName()" required>
                     <label>Last Name</label>
                     <p class="message">message</p>
                 </div>
@@ -66,6 +66,8 @@
     var currInputTag = document.getElementsByTagName("input");
     var currMessageTag = document.getElementsByClassName("message");
     var confirmInput = document.getElementById("confirm");
+
+    document.getElementById("signup-form").reset();     // so all text inside inputs are cleared on page refresh or load
 
     function changeInputColor (index, message, isError) {
         currLabelTag[index].style.color = (isError) ? errorColor : null;
@@ -121,7 +123,6 @@
         // let hasBadChars = /^(?=.*[!@#$%^&*()_+|~=`{}\\[\]:";'<>?,./-])/.test(passwordText);
         let hasBadChars = /^(?=.*[`{}\\[\]:";',./-])/.test(usernameInput);
         let hasSpaces = !/^[\S]+$/.test(usernameInput);
-        console.log("has space: " + hasSpaces)
         badUsername = false;
 
         if (usernameInput.length < 3) { errorMessage = "Username needs at least 3 characters!"; badUsername = true; }
@@ -188,7 +189,10 @@
     function isFormValid() {
         let passwordInput = document.getElementById("password").value;
         let confirmInput = document.getElementById("confirm").value;
-        if (passwordInput != confirmInput) { console.log("password do not match"); return; }
+        if (passwordInput != confirmInput) {
+            changeInputColor(5, "the given passwords do not match", true);
+            return;
+        }
 
         if (hasEmail && hasFirstName && hasLastName && hasUsername && hasPassword) {
             document.getElementById("signup-form").submit();

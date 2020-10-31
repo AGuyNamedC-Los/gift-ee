@@ -72,14 +72,11 @@
                                 <input type="text" name="storeLink" value="{{giftList[i].storeLink}}" autocomplete="off" required>
                                 <label>Store Link</label>
                             </div>
-                            <div class="input-box" style="display: none">
-                                <input type="text" name="index" value="{{i}}" required>
-                                <label>index</label>
-                            </div>
+                            <p hidden><input type="text" name="index" value="{{i}}"></p>
                             <button class="apply-changes-btn" onclick="applyChangesToCurrGift(this.form)" type="button">Apply Changes</button>
                         </form>
                         <form id="delete-gift-form" action="deleted_gift_status" method="POST">
-                            <p hidden><input type="text" name="itemNum" value="{{i}}"></p>
+                            <p hidden><input type="text" name="index" value="{{i}}"></p>
                             <button class="delete-btn" type="submit">Delete</button>
                         </form>
                     </div>

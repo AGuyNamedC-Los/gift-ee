@@ -40,34 +40,18 @@
                 <a href="/"><img src="https://raw.githubusercontent.com/AGuyNamedC-Los/gift-ee/master/public/website_images/giftee-logo.png" alt="Giftee"></a>
                 <div>
                     <a href="/search">Search</a>
-                    <a href="/profile">Profile</a>
                     <a onClick="document.getElementById('logout').submit()">Logout</a>
 						<form id="logout" action="logout_status" method="POST"></form>
                 </div>  
             </nav>
-            <form class="email_confirmation" action="email_confirmation_status" method="POST">
-				<fieldset>
-					<input type="text", id="emailConfirmation", name="emailConfirmation", placeholder="Enter email confirmation code">
-					<input class="login_btn" type="submit" value="Submit">
-				</fieldset>
+            <form id="email-confirmation" action="email_confirmation_status" method="POST">
+                <div class="input-box">
+                    <input type="text" name="emailConfirmationCode" autocomplete="off" required>
+                    <label>Email Confirmation Code</label>
+                </div>
+                <button class="apply-changes-btn" type="submit">SUBMIT</button>
 			</form>
         </header>
-
-			{# <nav>
-				<div>
-					<a class="home_btn", href="/"><i class="fas fa-gift"></i> Gift-ee</a>
-					<a class="about_btn", href="/about"><i class="fas fa-info-circle"></i> About</a>
-					<a class="search_btn", href="/search"><i class="fas fa-search"></i> Search</a>
-					<a class="logout_btn" onClick="document.getElementById('logout').submit()"><i class="fas fa-sign-out-alt"></i> Logout</a>
-						<form id="logout" action="logout_status" method="POST"></form>
-				</div>
-			</nav>
-			<form class="email_confirmation" action="email_confirmation_status" method="POST">
-				<fieldset>
-					<input type="text", id="emailConfirmation", name="emailConfirmation", placeholder="Enter email confirmation code">
-					<input class="login_btn" type="submit" value="Submit">
-				</fieldset>
-			</form> #}
 		{% else %}
         <header>
             <nav>

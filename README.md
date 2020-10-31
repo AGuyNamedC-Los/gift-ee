@@ -29,8 +29,10 @@ I thought it would be a lot simpler to have one place to see a person's gift lis
 - ~~redo the sign up page~~
 - ~~redo the profile page~~
 - ~~fix the email confirmation code not being sent~~
+- ~~added appropriate response pages~~
+- redo css for search page
 - make the email confirmation look prettier
-- clean up backend code
+- ~~clean up backend code~~
 - create a profile settings functionality
     - change username
     - change email

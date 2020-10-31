@@ -22,17 +22,10 @@ var hash = require('object-hash');
 const DataStore = require('nedb-promises');
 
 let userDB = DataStore.create({filename: __dirname + '/usersDB.json', autoload: true});
-/*
-userDB.on('update', (DataStore, result, query, update, options) => {
-	console.log("hi");
-});
-
-userDB.on('load', (userDB) => {});
-*/
 
 let temp_userDB = DataStore.create({filename: __dirname + '/temp_usersDB.json', timestampData: true, autoload: true});
 let options = { fieldName: 'createdAt', expireAfterSeconds: process.env.TIME_TO_DELETE };
-temp_userDB.ensureIndex({ fieldName: 'createdAt', expireAfterSeconds: process.env.TIME_TO_DELETE }, function (err) {	// adding an expiration date for automatic deletion of temporary users
+temp_userDB.ensureIndex({fieldName: 'createdAt', expireAfterSeconds: process.env.TIME_TO_DELETE}, function (err) {	// adding an expiration date for automatic deletion of temporary users
 });
 
 var app = express();
@@ -60,7 +53,7 @@ app.use(session({
 
 const setUpSessionMiddleware = function(req, res, next) {
 	if(!req.session.user) {
-		req.session.user = {role: "guest", firstName: "", lastName: "", email: "", username: ""};
+		req.session.user = { role: "guest", firstName: "", lastName: "", email: "", username: "" };
 	}
 	next();
 };
@@ -139,107 +132,75 @@ async function sendConfirmationCode(secretCode, email) {
 
 }
 
-/* ----------------------------------------------------WEBPAGES---------------------------------------------------- */
-app.get('/', function (req, res) {
-	//console.log("home: " + req.session.user.role);
-    res.render('home.njk', {user: req.session.user});
-	return;
-});
+/* ----------------------------
+	helper functions
+---------------------------- */
+function getGift(inputs) {
+	let newGift = {
+		"itemName": (inputs.itemName == "") ? "Gift" : inputs.itemName,
+		"notes": inputs.notes,
+		"price": inputs.price,
+		"quantity": inputs.quantity, 
+		"size": inputs.size, 
+		"storeLink": inputs.storeLink
+	}
+	return newGift;
+}
 
-/*
-	permission: guests
-	displays login page
-*/
-app.get('/login', guestsOnlyMiddleware, function (req, res) {
-    res.render('login.html', {user: req.session.user});
-	return;
-});
+app.get('/', function (req, res) { res.render('home.njk', {user: req.session.user}); });
 
+app.get('/login', guestsOnlyMiddleware, function (req, res) { res.render('login.html', {user: req.session.user}); });
 
 // displays whether a user was able to successfully log in or not
 app.post('/login_status', express.urlencoded({extended:true}), async function(req, res) {
 	let email = req.body.email;		// get user's typed in email
 	let password = req.body.password;		// get user's typed in password
-	console.log("logging in... req: " + req.session.user.role);
-
 	let tempUserFound = 0;
+
 	// search throug the temp_userDB
 	try {
-		console.log("searching through temp_userDB");
 		let temp_docs = await temp_userDB.find({'email': email});
-		console.log("finished searching through temp_userDB");
 		
 		tempUserFound = temp_docs.length;
-		if(tempUserFound) {
+		if (tempUserFound) {
 			let saltedPassword = temp_docs[0].salt + password;
 			let passVerified = bcrypt.compareSync(saltedPassword, temp_docs[0].password);	// combine the user's salt and password to the hashed password
-			if(passVerified) {		// user was found with correct password
-				console.log("matching password and email found for temp_user");
+			if (passVerified) {		// user was found with correct password
 				// begin to update the user's role
-				let tempUserInfo = {
-					firstname: temp_docs[0].firstName, 
-					lastName: temp_docs[0].lastName, 
-					username: temp_docs[0].username, 
-					email: temp_docs[0].email
-				};
 				let oldInfo = req.session.user;
 				req.session.regenerate(function (err) {
 					if (err) {
 						console.log(err);
 						return false;
 					}
-					req.session.user = Object.assign(oldInfo, tempUserInfo, {
-						role: "temp_user",
-						firstName: tempUserInfo.firstName,
-						lastName: tempUserInfo.lastName,
-						email: tempUserInfo.email,
-						username: tempUserInfo.username
-					});
-					console.log("user upgraded to " + req.session.user.role);
-					res.render("profile.njk", {user: req.session.user});
+					req.session.user = Object.assign(oldInfo, {}, { role: "temp_user", firstname: temp_docs[0].firstName, lastName: temp_docs[0].lastName, username: temp_docs[0].username, email: temp_docs[0].email });
+					res.render("response.njk", {user: req.session.user, title: "Login Successful", link: "/profile", message: "Successfully Logged In", buttonMsg: "GO TO HOMEPAGE"});
+
 					tempUserFound = true;
-					//return;
 				});
 			} else {	// incorrect password for temp_user
-				console.log("incorrect password for temp_user");
-				//res.render("error.html");
 				tempUserFound = false;
-				//return;
 			}
 		} else {	// username was not found in temp_userDB
-			console.log("could not find username in temp_userDB");
-			//res.render("error.html");
 			tempUserFound = false;
-			//return;
 		}
 	} catch (err) {
-		console.log(`temp_userDB error ${err}`);
-		res.render('login_error.html');
+		res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "Error: " + err, buttonMsg: "BACK TO HOMEPAGE"});
 		return;
 	}
 
-	if(tempUserFound) {
-		return;
-	}
+	if (tempUserFound) { return; }
 
 	// searching through the userDB
 	try {
-		console.log("searching through userDB");
 		let docs = await userDB.find({'email': email});
-		console.log("finished searching through userDB");
-		
 		let userFound = docs.length;
-		if(userFound) {
+
+		if (userFound) {
 			let saltedPassword = docs[0].salt + password;
 			let passVerified = bcrypt.compareSync(saltedPassword, docs[0].password);	// combine the user's salt and password to the hashed password
+			
 			if (passVerified) {		// found user and correct password
-				console.log("matching password and email found for user");
-				let userInfo = {
-					firstname: docs[0].firstName,
-					 lastName: docs[0].lastName, 
-					 username: docs[0].username, 
-					 email: docs[0].email
-				};
 				let oldInfo = req.session.user;
 				req.session.regenerate(function (err) {
 					if (err) {
@@ -247,66 +208,40 @@ app.post('/login_status', express.urlencoded({extended:true}), async function(re
 						return false;
 					}
 					
-					req.session.user = Object.assign(oldInfo, userInfo, {
-						role: "user",
-						firstName: userInfo.firstName,
-						lastName: userInfo.lastName,
-						email: userInfo.email,
-						username: userInfo.username
-					});
-					console.log("user upgraded to " + req.session.user.role);
-					// res.render("home.njk", {user: req.session.user});
+					req.session.user = Object.assign(oldInfo, {}, { role: "user",firstname: docs[0].firstName, lastName: docs[0].lastName, username: docs[0].username, email: docs[0].email });
 					res.render("response.njk", {user: req.session.user, title: "Login Successful", link: "/profile", message: "Successfully Logged In", buttonMsg: "GO TO GIFT LIST"});
-					return;
 				});
 			} else {		// found user but wrong password
-				console.log("incorrect password for user in userDB");
 				res.render("response.njk", {user: req.session.user, title: "Login Failed", link: "/login", message: "Incorrect Username or Password", buttonMsg: "BACK TO LOGIN"});
-				return;
 			}
 		} else {	// username was not found in userDB
-			console.log("could not find username in userDB");
 			res.render("response.njk", {user: req.session.user, title: "Login Failed", link: "/login", message: "Incorrect Username or Password", buttonMsg: "BACK TO LOGIN"});
-			return;
 		}
 	} catch (err) {
-		console.log(`temp_userDB error ${err}`);
-		res.render("error.html");
-		return;
+		res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "Error: " + err, buttonMsg: "BACK TO HOMEPAGE"});
 	}
 });
 
-/*
-	displays whether a user logged out properly
-*/
 app.post('/logout_status', express.urlencoded({extended:true}), async function(req, res) {
-	let email = req.session.user.email;
-	let oldInfo = req.session.user;
 	req.session.regenerate(function (err) {
 		if (err) {
-			console.log(err);
-			res.render('error.html', {user: req.session.user});
+			res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME"});
 			return;
 		}
-		
+
 		req.session.user = {role: "guest", firstName: "", lastName: "", email: "", username: ""};
-		console.log("user upgraded to " + req.session.user.role);
-		// res.render("logout.njk", {user: req.session.user});
 		res.render("response.njk", {user: req.session.user, title: "Logged Out", link: "/", message: "Successfully Logged Out", buttonMsg: "BACK TO HOME"});
 		return;
 	});
 });
 
-app.get('/sign-up', guestsOnlyMiddleware, function (req, res) {
-	res.render('sign_up.html', {user: req.session.user});
-	return;
-});
+app.get('/sign-up', guestsOnlyMiddleware, function (req, res) { res.render('sign_up.html', {user: req.session.user}); });
 
 app.post('/sign_up_status', express.urlencoded({extended:true}), async function(req, res) {
 	// get form inputs
 	let email = req.body.email;
-	let firstName = req.body.firstname;
-	let lastName = req.body.lastname;
+	let firstName = req.body.firstName;
+	let lastName = req.body.lastName;
 	let username = req.body.username;
 	let password = req.body.password;
 	let errorMessage = "";
@@ -327,7 +262,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 	else if (!hasSpaces.test(username)) { errorMessage = "Username can't contain spaces"; badUsername = true;}
 
 	if (badUsername) {
-		res.render("sign_up_error.html", {error: errorMessage});
+		res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: "The username: " + username + " is not a valid username", buttonMsg: "BACK TO SIGN UP PAGE"});
 		return;
 	}
 
@@ -343,7 +278,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 	else if (!hasUppercase.test(password)) { errorMessage = "password must contain a uppercase letter"; badPassword = true; }
 
 	if (badPassword) {
-		res.render("sign_up_error.html", {error: errorMessage});
+		res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: "the password you have entered is not valid", buttonMsg: "BACK TO SIGN UP PAGE"});
 		return;
 	}
 
@@ -351,73 +286,54 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 	let duplicateUsername = false;
 	/* searching through the temp_userDB */
 	try {
-		console.log("signing up...");
-		console.log("searching through temp_userDB");
-		let temp_docs = await temp_userDB.find({ $or: [{ 'email': email }, { 'username': username }] });
+		let docs = await temp_userDB.find({ $or: [{ 'email': email }, { 'username': username }] });
 		//let temp_docs = await temp_userDB.find({'email': email}, {'username': username});
-		tempUserFound = temp_docs.length;
-		console.log("tempUserFound: " + temp_docs.length);
-		if(tempUserFound) {
-			for(i = 0; i < temp_docs.length; i++) {
-				console.log(username + " ? " + temp_docs[i].username);
-				if(temp_docs[i].username == username) { duplicateUsername = true; }
+		tempUserFound = docs.length;
+		if (tempUserFound) {
+			for(i = 0; i < docs.length; i++) {
+				if (docs[i].username == username) { duplicateUsername = true; }
 			}
 
 			if(duplicateUsername == true) {
-				console.log("Duplicate username in temp_userDB");
-				res.render('sign_up_error.html', {user: req.session.user, error: "username"});
+				res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: "the username: " + username + " has already been taken!", buttonMsg: "BACK TO SIGN UP PAGE"});
 				return;
 			} else {
-				console.log("Duplicate email in temp_userDB");
-				res.render('sign_up_error.html', {user: req.session.user, error: "email"});
+				res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: "the email: " + email + " has already been taken!", buttonMsg: "BACK TO SIGN UP PAGE"});
 				return;
 			}
 		}
 	} catch (err) {
-		console.log(err + "problem with temp_userdb");
-		res.render('error.html', {user: req.session.user, error: ""});
+		res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: "Error: " + err, buttonMsg: "BACK TO SIGN UP PAGE"});
 		return;
 	}
 
-	if(tempUserFound) { return; }
+	if (tempUserFound) { return; }
 
 	let userFound = 0;
 	duplicateUsername = false;
-	/* search through userDB */
-	try{
-		console.log("signing up...");
-		console.log("searching through userDB");
-		
+
+	// search through userDB 
+	try {
 		let docs = await userDB.find({ $or: [{ 'email': email }, { 'username': username }] });
 		userFound = docs.length;
-		console.log("user found: " + docs.length);
-		if(userFound) {
+		if (userFound) {
 			for(i = 0; i < docs.length; i++) {
-				console.log(username + " ? " + docs[i].username);
 				if(docs[i].username == username) { duplicateUsername = true; }
 			}
 
-			if(duplicateUsername == true) {
-				console.log("Duplicate username in userDB");
-				res.render('sign_up_error.html', {user: req.session.user, error: "username"});
-			} else {
-				console.log("Duplicate email in userDB");
-				res.render('sign_up_error.html', {user: req.session.user, error: "email"});
+			if (duplicateUsername == true) {	// username already exists in the userDB
+				res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: "the username: " + username + " has already been taken!", buttonMsg: "BACK TO SIGN UP PAGE"});
+			} else {		// email already exists in the userDB
+				res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: "the email: " + email + " has already been taken!", buttonMsg: "BACK TO SIGN UP PAGE"});
 			}
-			
 			return;
 		}
 	} catch (err) {
-		console.log(err);
-		res.render('sign_up_error.html', {user: req.session.user, error: ""});
+		res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: "Error: " + err, buttonMsg: "BACK TO SIGN UP PAGE"});
 		return;
 	}
+	// if (userFound) { console.log("USER ALREADY "); return; }
 
-	if(userFound) {
-		return;
-	}
-
-	console.log("CREATING SALT");
 	// creating salt
 	let NUM_SIZE = process.env.NUM_SIZE;
 	let rand_num1 = Math.floor(Math.random() * NUM_SIZE);
@@ -425,36 +341,28 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 	let rand_num3 = Math.floor(Math.random() * NUM_SIZE);
 	let rand_num4 = Math.floor(Math.random() * NUM_SIZE);
 	let salt = String(rand_num1) + String(rand_num2) + String(rand_num3) + String(rand_num4);
-	console.log("salt: " + salt);
 
 	// salting and hashing the user's password
 	let hashedPassword = bcrypt.hashSync((salt + password), parseInt(process.env.nROUNDS));
 
 	// create email verification code
 	let emailCode = "";
-	for(i = 0; i < 5; i++) {
-		emailCode = String(emailCode) + String(Math.floor(Math.random() * NUM_SIZE));
+	for(i = 0; i < 5; i++) { emailCode = String(emailCode) + String(Math.floor(Math.random() * NUM_SIZE)); }
+
+	let newTempUser = {
+		"firstName": firstName,
+		"lastName": lastName,
+		"email": email,
+		"username": username,
+		"salt": salt,
+		"password": hashedPassword,
+		"emailConfirmation": emailCode,
 	}
 
+	// insert into the temp_userDB and then send the user an email confirmation code
 	try {
-		let newTempUser = {
-			"firstName": firstName,
-			"lastName": lastName,
-			"email": email,
-			"username": username,
-			"salt": salt,
-			"password": hashedPassword,
-			"emailConfirmation": emailCode,
-			"followerTotal": "0",
-			"followingTotal": "0",
-			"followerList": [],
-			"followingList": [],
-			"giftListContent": []
-		}
 		await temp_userDB.insert(newTempUser);
-		console.log("sending mail");
-		let result = await sendConfirmationCode(newTempUser.emailConfirmation, newTempUser.email);
-		console.log("back from sending mail");
+		await sendConfirmationCode(newTempUser.emailConfirmation, newTempUser.email);
 		
 		let oldInfo = req.session.user;
 		req.session.user = Object.assign(oldInfo, newTempUser, {
@@ -464,314 +372,193 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 			email: newTempUser.email,
 			username: newTempUser.username
 		});
-		res.render('sign_up_success.html', {user: req.session.user});
-		return;
+		res.render('sign_up_success.njk', {user: req.session.user});
 	} catch (err) {
-		console.log("error: " + err);
-		res.render('error.html', {user: req.session.user});
-		return;
+		res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
 	}
 });
 
 app.post('/email_confirmation_status', express.urlencoded({extended:true}), async function(req, res) {
 	let email = req.session.user.email;
-	let emailConfirmationCode = req.body.emailConfirmation;
+	let emailConfirmationCode = req.body.emailConfirmationCode;
 	let userUpgraded = false;
 	
 	try {
-		console.log("searching for temp_user's email confirmation code in temp_userDB");
-		let temp_docs = await temp_userDB.find({'email': email});
-		console.log("finished searching through temp_userDB");
+		let docs = await temp_userDB.find({'email': email});
 		
-		if(temp_docs[0].emailConfirmation == emailConfirmationCode) {
-			console.log("email confirmation confirmed!");
-			console.log("promoting to user");
+		if (docs[0].emailConfirmation == emailConfirmationCode) {
+			let newUser = {
+				"firstName": docs[0].firstName,
+				"lastName": docs[0].lastName,
+				"email": docs[0].email,
+				"username": docs[0].username,
+				"salt": docs[0].salt,
+				"password": docs[0].password,
+				"followerTotal": 0,
+				"followingTotal": 0,
+				"followerList": [],
+				"followingList": [],
+				"giftListContent": []
+			}
 			try {
-				console.log("adding to user DB");
-				let newUser = {
-					"firstName": temp_docs[0].firstName,
-					"lastName": temp_docs[0].lastName,
-					"email": temp_docs[0].email,
-					"username": temp_docs[0].username,
-					"salt": temp_docs[0].salt,
-					"password": temp_docs[0].password,
-					"followerTotal": 0,
-					"followingTotal": 0,
-					"followerList": [],
-					"followingList": [],
-					"giftListContent": []
-				}
-				let docs = await userDB.insert(newUser);
-				console.log(`added new user: ${newUser}`);
-				
+				await userDB.insert(newUser);	// insert the new user into the main DB
 				let oldInfo = req.session.user;
+
+				// upgrade user
 				req.session.regenerate(function (err) {
 					if (err) {
-						console.log(err);
-						res.render('error.html');
+						res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
 						return;
 					}
 					
-					req.session.user = Object.assign(oldInfo, newUser, {
-						role: "user",
-						firstName: newUser.firstName,
-						lastName: newUser.lastName,
-						email: newUser.email,
-						username: newUser.username
-					});
-					console.log("user upgraded to " + req.session.user.role);
-					//res.render("gift-ee_profile.html", {user: req.session.user});
-					//return;
+					req.session.user = Object.assign(oldInfo, newUser, { role: "user", firstName: newUser.firstName, lastName: newUser.lastName, email: newUser.email, username: newUser.username });
 				});
-				console.log(userUpgraded);
+				
 				userUpgraded = true;
-				console.log(userUpgraded);
 			} catch (err) {
-				console.log(err);
-				res.render('error.html');
+				res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
 				return;
 			}
-		} else {
-			console.log("wrong email confirmation code");
-			res.render('error.html');
+		} else {	// wrong email confirmation code
+			res.render("response.njk", {user: req.session.user, title: "Wrong Code", link: "/", message: "Wrong Email Confirmation Code", buttonMsg: "BACK TO HOMEPAGE"});
 			return;
 		}
 	} catch (err) {
-		console.log(err);
-		res.render('error.html');
+		res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
 		return;
 	}
 
-	console.log("checking userupgraded statement" + userUpgraded);
 	if (userUpgraded) {
-		console.log("removing temp user since they have been added to main userDB");
 		try {
-			let temp_docs = await temp_userDB.remove({'email': email});
+			await temp_userDB.remove({'email': email});
 			res.render("home.njk", {user: req.session.user});
 		} catch (err) {
-			console.log(err);
-			res.render('error.html');
-			return;
+			res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
 		}
 	}
 });
 
-/*
-	permissions: logged in user's
-	displays a user's profile
-*/
-app.get('/profile', loggedInMiddleware, async function (req, res) {
-	let email = req.session.user.email;		// get the logged in user's email
-	
+app.get('/profile', usersOnlyMiddleware, async function (req, res) {
 	try {
-		let docs = await userDB.find({'email': email});
-		console.log("We found " + docs.length + " email that matches");
-		
-		if(docs.length == 0) {		// no email matched
-			res.render('error.html', {user: req.session.user});
-			return;
-		}
-			
-		console.log(docs[0].giftListContent);
+		let docs = await userDB.find({'email': req.session.user.email});
 		res.render("gift-ee_profile.njk", {giftList: docs[0].giftListContent, user: req.session.user});
-		return;
 	} catch (err) {
-		console.log("error");
-		res.render('error.html');
-		return;
+		res.render("response.njk", {user: req.session.user, title: "Could Not Load Profile", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
 	}
 });
 
-/*
-	gets displayed after a user has added a gift to their gift list
-*/
-app.post('/added_gift_status', loggedInMiddleware, express.urlencoded({extended:true}), async function(req, res) {
+app.post('/added_gift_status', usersOnlyMiddleware, express.urlencoded({extended:true}), async function(req, res) {
 	let email = req.session.user.email;		// get the logged in user's email
 	
-	let newItem = {			
-		"itemName": (req.body.itemName == "") ? "Gift" : req.body.itemName,
-		"notes": req.body.notes,
-		"price": req.body.price,
-		"qty": req.body.quantity, 
-		"size": req.body.size, 
-		"storeLink": req.body.storeLink
-	};
-	
 	try {
-		let docs = await userDB.update({"email": email}, {$addToSet: {giftListContent: newItem}}, {}, function () {});
-		// res.render("added_gift_success.njk", {user: req.session.user});
+		let newItem = getGift(req.body);
+		await userDB.update({"email": email}, {$addToSet: {giftListContent: newItem}}, {}, function () {});
 		res.render("response.njk", {user: req.session.user, title: "Added Gift", link: "/profile", message: "Gift Added Successfully!", buttonMsg: "BACK TO GIFT LIST"});
-		return;
 	} catch (err) {
-		console.log("error: " + err);
-		res.render("error.html");
-		return;
+		res.render("response.njk", {user: req.session.user, title: "Could Not Add Gift", link: "/profile", message: "error: " + err, buttonMsg: "BACK TO GIFT LIST"});
 	}
 });
 
-app.post('/save_changes_status', loggedInMiddleware, express.urlencoded({extended:true}), async function(req, res) {
+app.post('/save_changes_status', usersOnlyMiddleware, express.urlencoded({extended:true}), async function(req, res) {
 	let email = req.session.user.email;		// get the logged in user's email
 	let index = req.body.index;
 	
-	let newItem = {			
-		"itemName": (req.body.itemName == "") ? "Gift" : req.body.itemName,
-		"notes": req.body.notes,
-		"price": req.body.price,
-		"qty": req.body.quantity, 
-		"size": req.body.size, 
-		"storeLink": req.body.storeLink
-	};
-
-	let newGiftListContent;
-	
 	try {
 		let docs = await userDB.find({'email': email});
 		if(docs.length == 0) {		// no email matched
-			res.render('error.html', {user: req.session.user});
+			res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "Could not find user!", buttonMsg: "BACK TO HOMEPAGE"});
 			return;
 		}
-		newGiftListContent = JSON.parse(JSON.stringify(docs[0].giftListContent));
-		newGiftListContent[index] = newItem;
+
+		let newGiftListContent = JSON.parse(JSON.stringify(docs[0].giftListContent));	// get the user's current gift list
+		newGiftListContent[index] = getGift(req.body);		// apply changes to the gift at the given index
 		await userDB.update({'email': email }, { $set: { giftListContent: newGiftListContent } }, { multi: true }, function (err, numReplaced) {});
-		// res.render("added_gift_success.njk", {user: req.session.user});
 		res.render("response.njk", {user: req.session.user, title: "Gift Changes Saved", link: "/profile", message: "Changes Successfully Saved", buttonMsg: "BACK TO GIFT LIST"});
-		return;
 	} catch (err) {
-		console.log("error: " + err);
-		res.render("error.html");
-		return;
+		res.render("response.njk", {user: req.session.user, title: "Error", link: "/profile", message: "error: " + err, buttonMsg: "BACK TO GIFT LIST"});
 	}
 });
 
-/*
-	gets displayed after a user has deleted an item from their gift list
-*/
-app.post('/deleted_gift_status', loggedInMiddleware, express.urlencoded({extended:true}), async function(req, res) {
+app.post('/deleted_gift_status', usersOnlyMiddleware, express.urlencoded({extended:true}), async function(req, res) {
 	let email = req.session.user.email;
-	let itemNum = req.body.itemNum;
-	// check for case of removing something out of bounds for itemNum
-	console.log("item number: " + itemNum);
+	// check for case of removing something out of bounds for itemNum?
 	
 	try {
 		let docs = await userDB.find({'email': email});
 		if (docs.length == 0) {
-			console.log("error: " + err);
-			res.render("error.html");
+			res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "Could not find user!", buttonMsg: "BACK TO HOMEPAGE"});
 			return;	
 		} else {
-			console.log(itemNum);
-			console.log(docs[0].giftListContent[0].itemName);
 			var newGiftList = docs[0].giftListContent;
-			var deletedItem = newGiftList.splice(itemNum, 1);		// removing an item from a user's gift list
+			var deletedItem = newGiftList.splice(req.body.index, 1);		// removing an item from a user's gift list
 		}
 	} catch (err) {
-		console.log("error: " + err);
-		res.render("error.html");
+		res.render("response.njk", {user: req.session.user, title: "Error", link: "/profile", message: "error: " + err, buttonMsg: "BACK TO GIFT LIST"});
 		return;
 	}
 	
 	try {
 		let docs = await userDB.update({"email": email}, {$set: {giftListContent: newGiftList}}, {}, function (err, numReplaced) {});
-		console.log(deletedItem[0].itemName);
-		// res.render("deleted_gift_success.njk", {deletedItem: deletedItem[0]});
 		res.render("response.njk", {user: req.session.user, title: "Gift Deleted", link: "/profile", message: "Gift Successfully Deleted!", buttonMsg: "BACK TO GIFT LIST"});
-		
 	} catch (err) {
-		console.log("error: " + err);
-		res.render("error.html");
-		return;
+		res.render("response.njk", {user: req.session.user, title: "Error", link: "/profile", message: "error: " + err, buttonMsg: "BACK TO GIFT LIST"});
 	}
 }); 
 
-/*
-	displays the about page
-*/
-app.get('/about', function (req, res) {
-    res.render('about.njk', {user: req.session.user});
-	return;
-});
+app.get('/about', function (req, res) { res.render('about.njk', {user: req.session.user}); });
 
-/* ----------------------------------------------- FOR PRIVATE USE ONLY, SHOULD BE DELETED IN THE FUTURE ----------------------------------------------- */
-app.get('/userlist', function (req, res) {
-	let userList = [];
-	
-	userDB.find({}, function(err, docs) {		// return all items in the database
-		if (err) {
-			console.log("something is wrong");
-			return;
-		} else {
-			console.log("We found " + docs.length + " users");
-			for(let d of docs) {
-				console.log(`Name: ${d.firstName}`);
-				userList.push({"firstName": `${d.firstName}`})		// append database items to variable
-			}
-			res.render('user_list.html', {users: userList});		// had to change the tours.njk variable for the for-loop, compared to hw8
-			return;
-		}
-	});
-});
-
-/* 
-	allows users and guests to search for user's gift list
- */
+// allows users and guests to search for user's gift list
 app.get('/search', async function (req, res) {
 	try {
 		let usernamesList = [];
 		let docs = await userDB.find({});
-		for(i = 0; i < docs.length; i++) {
-			console.log(docs[i].username);
-			usernamesList[i] = docs[i].username;
-			console.log(usernamesList);
-		}
-		console.log(usernamesList);
+
+		for (i = 0; i < docs.length; i++) { usernamesList[i] = docs[i].username; }
 		res.render('search.njk', {user: req.session.user, usernames: usernamesList});
-		return;
-	} catch(err) {
-		console.log(err);
-		res.render("error.html");
-		return;
+	} catch (err) {
+		res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME"});
 	}
 });
 
-/*
-	permission: ALL
-	displays a user's gift list
-*/
 app.post('/search_results', express.urlencoded({extended:true}), async function(req, res) {
-	let username = req.body.username;
-	console.log("username: " + username);
-	console.log("req: " + req.session.user.role);
-
 	try {
-		let docs = await userDB.find({'username': username});
+		let docs = await userDB.find({'username': req.body.username});
 
 		if(docs.length == 0) {
-			console.log("could not find user with that name!");
-			res.render('error.html', {user: req.session.user});
-			return
+			res.render("response.njk", {user: req.session.user, title: "User Not Found", link: "/search", message: "Could Not Find A User With That Name", buttonMsg: "BACK TO SEARCH"});
 		} else {
-			username = docs[0].username;
-			// let giftList = docs[0].giftListContent;
-			console.log("Found user with gift list: " + docs[0].giftListContent)
-			res.render('search_result.njk', {user: req.session.user, username: username, giftList: docs[0].giftListContent});
+			res.render('search_result.njk', {user: req.session.user, username: docs[0].username, giftList: docs[0].giftListContent});
 		}
 	} catch (err) {
-		console.log('error: ' + err);
-		res.render('error.html', {user: req.session.user});
-		return;
+		res.render("response.njk", {user: req.session.user, title: "Error", link: "/profile", message: "error: " + err, buttonMsg: "BACK TO GIFT LIST"});
 	}
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
-/*
 
-let host = '127.15.59.37';
-let port = '2323';
+// let host = '127.15.59.37';
+// let port = '2323';
 
-app.listen(port, host, function () {
-    console.log("tourServer via Templates listening on IPv4: " + host + ":" + port);
-});
+// app.listen(port, host, function () {
+//     console.log("Server listening on IPv4: " + host + ":" + port);
+// });
 
-*/
+// req.session.regenerate(function (err) {
+// 	if (err) {
+// 		console.log(err);
+// 		return false;
+// 	}
+	
+// 	req.session.user = Object.assign(oldInfo, userInfo, {
+// 		role: "user",
+// 		firstName: userInfo.firstName,
+// 		lastName: userInfo.lastName,
+// 		email: userInfo.email,
+// 		username: userInfo.username
+// 	});
+
+// 	res.render("response.njk", {user: req.session.user, title: "Login Successful", link: "/profile", message: "Successfully Logged In", buttonMsg: "GO TO GIFT LIST"});
+// 	return;
+// });
