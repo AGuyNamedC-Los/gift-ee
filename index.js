@@ -45,7 +45,6 @@ const setUpSessionMiddleware = function(req, res, next) {
 };
 app.use(setUpSessionMiddleware);
 
-// restricts paths to only logged in users
 const loggedInMiddleware = function(req, res, next) {
 	if (req.session.user.role == "guest") {
 		res.render("response.njk", {user: req.session.user, title: "Users Only", link: "/", message: "Sorry, only logged in users may view this page", buttonMsg: "GO TO HOMEPAGE"});
@@ -175,9 +174,6 @@ async function sendConfirmationCode(secretCode, email) {
 			</body>
 			</html>
 			`
-			// html: `
-			// 	<h1>Above is your confirmation code, please re-type that into your gift-ee account to be deemed an official user! ${secretCode}</h1>
-			// `,
 		};
 
 		transporter.sendMail(mailOptions, function(error, info){
@@ -199,11 +195,13 @@ function getGift(inputs) {
 	return newGift;
 }
 
+/* ----------------------------
+	web pages
+---------------------------- */
 app.get('/', function (req, res) { res.render('home.njk', {user: req.session.user}); });
 
 app.get('/login', guestsOnlyMiddleware, function (req, res) { res.render('login.html', {user: req.session.user}); });
 
-// displays whether a user was able to successfully log in or not
 app.post('/login_status', express.urlencoded({extended:true}), async function(req, res) {
 	let email = req.body.email;		// get user's typed in email
 	let password = req.body.password;		// get user's typed in password
@@ -479,6 +477,18 @@ app.post('/email_confirmation_status', express.urlencoded({extended:true}), asyn
 		} catch (err) {
 			res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
 		}
+	}
+});
+
+app.post('/resend_confirmation_code', express.urlencoded({extended:true}), async function(req, res) {
+	let email = req.session.user.email;
+
+	try {
+		let docs = await temp_userDB.find({'email': email});
+		sendConfirmationCode(docs[0].emailConfirmation, email);
+		res.render("response.njk", {user: req.session.user, title: "Code Re-Sent", link: "/", message: "Email confirmation code has been sent to your email address", buttonMsg: "BACK TO HOMEPAGE"});
+	} catch (err) {
+		res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
 	}
 });
 

@@ -148,7 +148,7 @@ nav div {
     word-wrap: break-word;
 }
 
-#email-confirmation {
+#email-confirmation, #resend-email-code {
     width: 100%;
     max-width: 30rem;
     margin: 0 auto;
