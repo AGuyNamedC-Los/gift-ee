@@ -1,17 +1,3 @@
-/*
-	npm init
-	npm install express
-	npm install express-session
-	npm install nunjucks
-	npm install nedb --save
-	npm install bcryptjs
-	to use nunjucks-precompile go into node.js command prompt then drag templates into 
-	npm install gulp -D
-	npm install gulp-cli-g
-	npm install gulp-nunjucks --save
-	npm install hulp-nunjucks-render
-*/
-
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 const express = require('express');
@@ -102,7 +88,96 @@ async function sendConfirmationCode(secretCode, email) {
 			to: email,		// list of receivers
 			subject: 'Gift-ee confirmation code!',	// subject line
 			text: secretCode,	// plain text body
-			html: `<h1>Above is your confirmation code, please re-type that into your gift-ee account to be deemed an official user! ${secretCode}</h1>`	// html body
+			html: `
+			<html lang="en">
+			<head>
+				<style>
+					#email-content {
+						background-color: white;
+						border: 1px solid #DFE1E6;
+						max-width: 35rem;
+						margin: 1rem auto;
+						border-radius: 5px;
+						padding: 1rem;
+						text-align: center;
+					}
+			
+					a {
+						display: flex;
+						width: 100%;
+						max-width: 7rem;
+						margin: 1rem auto;
+					}
+			
+					#top, #bottom {
+						border: 5px solid;
+						width: 100%;
+						max-width: 20rem;
+						margin: 0 auto;
+					}
+			
+					#top {
+						padding: 1rem 0;
+						max-width: 21rem;
+						border-radius: 5px;
+						margin-bottom: 1rem;
+					}
+			
+					#bottom {
+						padding: 5rem 0;
+						margin-top: 1rem;
+					}
+			
+					#content {
+						display: flex;
+						flex-direction: column;
+					}
+			
+					p {
+						text-align: center;
+						padding: 0; margin:0;
+						font-family: "GTWalsheim", system-ui, sans-serif;
+						text-rendering: optimizelegibility;
+					}
+			
+					#content p {
+						font-size: 1.5rem;
+						display: block;
+						width: 50%;
+						margin: 0 auto;
+						min-width: 5rem;
+						padding: .5rem 0;
+						border: solid;
+						border-radius: 5px;
+						color: white;
+						background-color: #0060E0;
+						border: solid;
+						border-radius: 5px;
+						border-color: black;
+					}
+				</style>
+			</head>
+			<body>
+				<main>
+					<div id="email-content">
+						<a href="https://gift-ee.herokuapp.com/"><img src="https://raw.githubusercontent.com/AGuyNamedC-Los/gift-ee/master/public/website_images/giftee-logo.png" alt="giftee-logo"></a>
+						<div id="gift">
+							<div id="top"></div>
+							<div id="content">
+								<p>${secretCode}</p>
+							</div>
+							<div id="bottom">
+								<p>Above is your confirmation code!</p>
+							</div>
+						</div>
+					</div>
+				</main>
+			</body>
+			</html>
+			`
+			// html: `
+			// 	<h1>Above is your confirmation code, please re-type that into your gift-ee account to be deemed an official user! ${secretCode}</h1>
+			// `,
 		};
 
 		transporter.sendMail(mailOptions, function(error, info){
@@ -340,13 +415,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 		await sendConfirmationCode(newTempUser.emailConfirmation, newTempUser.email);
 		
 		let oldInfo = req.session.user;
-		req.session.user = Object.assign(oldInfo, newTempUser, {
-			role: "temp_user",
-			firstName: newTempUser.firstName,
-			lastName: newTempUser.lastName,
-			email: newTempUser.email,
-			username: newTempUser.username
-		});
+		req.session.user = Object.assign(oldInfo, newTempUser, {role: "temp_user", firstName: newTempUser.firstName, lastName: newTempUser.lastName, email: newTempUser.email, username: newTempUser.username});
 		res.render('sign_up_success.njk', {user: req.session.user});
 	} catch (err) {
 		res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
