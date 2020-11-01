@@ -124,3 +124,5 @@ deprecated
 
 # database stuff
 gulpfile.js
+temp_usersDB_initialize.js
+usersDB_initialize.js
