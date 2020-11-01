@@ -1,0 +1,42 @@
+{% extends "base.njk" %}
+
+{% block metaStuff%}
+	<title>{{title}}</title>
+{% endblock %}
+
+{% block main %}
+<section class="main-content">
+        <div id="response-gift">
+            <div id="response-gift-top"></div>
+                <div id="response-gift-content">
+                    <a href="/"><input type="button" id="back-to-btn" value="BACK TO HOME PAGE"></a>
+                </div>
+            <div id="response-gift-bottom"><h1 id="response-message">Thanks for signing up! Be sure to enter the confirmation code you received in your email to finish making your profile</h1></div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block script %}
+<script>
+    // "opens" the gift
+    function openGift() {
+        let bottomOfGift = document.getElementById("response-gift-bottom");
+        let giftContent = document.getElementById("response-gift-content");
+        let giftContentHeight = giftContent.scrollHeight;
+
+        if(giftContent.style.visibility === "visible") {   // close the form
+            giftContent.style.transition = "0s";
+            giftContent.style.visibility = "hidden";
+            giftContent.style.opacity = 0;
+            bottomOfGift.style.marginTop = "0px";
+        } else {    // open the form
+            giftContent.style.transition = "2s ease";
+            giftContent.style.visibility = "visible";
+            giftContent.style.opacity = 1;
+            bottomOfGift.style.marginTop = giftContentHeight + 35 + "px";
+        }
+    }
+
+    setTimeout(openGift, 500);
+</script>
+{% endblock %}
