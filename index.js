@@ -73,6 +73,7 @@ const usersOnlyMiddleware = function(req, res, next) {
 	helper functions
 ---------------------------- */
 async function sendConfirmationCode(secretCode, email) {
+	let message = "";
 	try {
 		let transporter = nodemailer.createTransport({
 			service: 'gmail',
@@ -176,7 +177,7 @@ async function sendConfirmationCode(secretCode, email) {
 			`
 		};
 
-		transporter.sendMail(mailOptions, function(error, info){
+		transporter.sendMail(mailOptions, function(error, info) {
 			if (error) { console.log(error); } 
 			else { console.log('Email sent: ' + info.response); }
 		}); 
@@ -486,7 +487,7 @@ app.post('/resend_confirmation_code', express.urlencoded({extended:true}), async
 	try {
 		let docs = await temp_userDB.find({'email': email});
 		sendConfirmationCode(docs[0].emailConfirmation, email);
-		res.render("response.njk", {user: req.session.user, title: "Code Re-Sent", link: "/", message: "Email confirmation code has been sent to your email address", buttonMsg: "BACK TO HOMEPAGE"});
+		res.render("response.njk", {user: req.session.user, title: "Code Re-Sent", link: "/", message: "Email confirmation code has been resent to your email address!", buttonMsg: "BACK TO HOMEPAGE"});
 	} catch (err) {
 		res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
 	}
