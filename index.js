@@ -72,121 +72,24 @@ const usersOnlyMiddleware = function(req, res, next) {
 /* ----------------------------
 	helper functions
 ---------------------------- */
-// async function sendConfirmationCode(secretCode, email) {
-// 	let message = "";
-// 	try {
-// 		let transporter = nodemailer.createTransport({
-// 			service: 'gmail',
-// 			auth: {
-// 				user: process.env.GMAIL_EMAIL,
-// 				pass: process.env.GMAIL_PASSWORD
-// 			}
-// 		});
-		
-// 		let mailOptions = {
-// 			from: '"Gift-ee" <gifteebysuperseed@gmail.com>',	// sender address
-// 			to: email,		// list of receivers
-// 			subject: 'Gift-ee confirmation code!',	// subject line
-// 			text: secretCode,	// plain text body
-// 			html: `
-// 			<html lang="en">
-// 			<head>
-// 				<style>
-// 					#email-content {
-// 						background-color: white;
-// 						border: 1px solid #DFE1E6;
-// 						max-width: 35rem;
-// 						margin: 1rem auto;
-// 						border-radius: 5px;
-// 						padding: 1rem;
-// 						text-align: center;
-// 					}
-			
-// 					a {
-// 						display: flex;
-// 						width: 100%;
-// 						max-width: 7rem;
-// 						margin: 1rem auto;
-// 					}
-			
-// 					#top, #bottom {
-// 						border: 5px solid;
-// 						width: 100%;
-// 						max-width: 20rem;
-// 						margin: 0 auto;
-// 					}
-			
-// 					#top {
-// 						padding: 1rem 0;
-// 						max-width: 21rem;
-// 						border-radius: 5px;
-// 						margin-bottom: 1rem;
-// 					}
-			
-// 					#bottom {
-// 						padding: 5rem 0;
-// 						margin-top: 1rem;
-// 					}
-			
-// 					#content {
-// 						display: flex;
-// 						flex-direction: column;
-// 					}
-			
-// 					p {
-// 						text-align: center;
-// 						padding: 0; margin:0;
-// 						font-family: "GTWalsheim", system-ui, sans-serif;
-// 						text-rendering: optimizelegibility;
-// 					}
-			
-// 					#content p {
-// 						font-size: 1.5rem;
-// 						display: block;
-// 						width: 50%;
-// 						margin: 0 auto;
-// 						min-width: 5rem;
-// 						padding: .5rem 0;
-// 						border: solid;
-// 						border-radius: 5px;
-// 						color: white;
-// 						background-color: #0060E0;
-// 						border: solid;
-// 						border-radius: 5px;
-// 						border-color: black;
-// 					}
-// 				</style>
-// 			</head>
-// 			<body>
-// 				<main>
-// 					<div id="email-content">
-// 						<a href="https://gift-ee.herokuapp.com/"><img src="https://raw.githubusercontent.com/AGuyNamedC-Los/gift-ee/master/public/website_images/giftee-logo.png" alt="giftee-logo"></a>
-// 						<div id="gift">
-// 							<div id="top"></div>
-// 							<div id="content">
-// 								<p>${secretCode}</p>
-// 							</div>
-// 							<div id="bottom">
-// 								<p>Above is your confirmation code!</p>
-// 							</div>
-// 						</div>
-// 					</div>
-// 				</main>
-// 			</body>
-// 			</html>
-// 			`
-// 		};
+async function getFromDB(email, DB) {
+	try {
+		let docs = (DB === "temp_user") ? await temp_userDB.find({'email': email}) : await userDB.find({'email': email});
+		let userFound = docs.length;
 
-// 		transporter.sendMail(mailOptions, function(error, info) {
-// 			if (error) { console.log(error); } 
-// 			else { console.log('Email sent: ' + info.response); }
-// 		}); 
-// 	} catch (err) { console.log(err); }
-// }
+		if (userFound) {
+			return {userFound: userFound, info: docs[0]};
+		} else {
+			return {userFound: userFound, info: []};
+		}
+	} catch (err) {
+		console.log(err);
+	}
+}
 
 async function sendConfirmationCode(secretCode, email) {
-	const sgMail = require('@sendgrid/mail')
-	sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+	const sgMail = require('@sendgrid/mail');
+	sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 	
 	const msg = {
 	  to: email, // Change to your recipient
@@ -314,69 +217,49 @@ app.get('/login', guestsOnlyMiddleware, function (req, res) { res.render('login.
 app.post('/login_status', express.urlencoded({extended:true}), async function(req, res) {
 	let email = req.body.email;		// get user's typed in email
 	let password = req.body.password;		// get user's typed in password
-	let tempUserFound = 0;
 
-	// search throug the temp_userDB
-	try {
-		let docs = await temp_userDB.find({'email': email});
+	let tempUser = await getFromDB(email, "temp_user");
+	if (tempUser.userFound) {
+		let saltedPassword = tempUser.info.salt + password;
+		let passVerified = bcrypt.compareSync(saltedPassword, tempUser.info.password);	// combine the user's salt and password to the hashed password
+
+		if (passVerified) {		// found user and correct password
+			let oldInfo = req.session.user;
+			req.session.regenerate(function (err) {
+				if (err) {
+					console.log(err);
+					return false;
+				}
 		
-		tempUserFound = docs.length;
-		if (tempUserFound) {
-			let saltedPassword = docs[0].salt + password;
-			let passVerified = bcrypt.compareSync(saltedPassword, docs[0].password);	// combine the user's salt and password to the hashed password
-			if (passVerified) {		// user was found with correct password
-				// begin to update the user's role
-				let oldInfo = req.session.user;
-				req.session.regenerate(function (err) {
-					if (err) {
-						console.log(err);
-						return false;
-					}
-					req.session.user = Object.assign(oldInfo, {}, { role: "temp_user", firstname: docs[0].firstName, lastName: docs[0].lastName, username: docs[0].username, email: docs[0].email });
-					res.render("response.njk", {user: req.session.user, title: "Login Successful", link: "/profile", message: "Successfully Logged In", buttonMsg: "GO TO HOMEPAGE"});
-					tempUserFound = true;
-				});
-			} else {	// incorrect password for temp_user
-				tempUserFound = false;
-			}
-		} else {	// username was not found in temp_userDB
-			tempUserFound = false;
+				req.session.user = Object.assign(oldInfo, {}, { role: "temp_user",firstname: tempUser.info.firstName, lastName: tempUser.info.lastName, username: tempUser.info.username, email: tempUser.info.email });
+				res.render("response.njk", {user: req.session.user, title: "Login Successful", link: "/", message: "Successfully Logged In", buttonMsg: "GO TO HOMEPAGE"});
+			});
 		}
-	} catch (err) {
-		res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "Error: " + err, buttonMsg: "BACK TO HOMEPAGE"});
-		return;
 	}
 
-	if (tempUserFound) { return; }
+	if (tempUser.userFound) { return; }
 
-	// searching through the userDB
-	try {
-		let docs = await userDB.find({'email': email});
-		let userFound = docs.length;
+	let user = await getFromDB(email, "user");
+	if (user.userFound) {
+		let saltedPassword = user.info.salt + password;
+		passVerified = bcrypt.compareSync(saltedPassword, user.info.password);	// combine the user's salt and password to the hashed password
 
-		if (userFound) {
-			let saltedPassword = docs[0].salt + password;
-			let passVerified = bcrypt.compareSync(saltedPassword, docs[0].password);	// combine the user's salt and password to the hashed password
-			
-			if (passVerified) {		// found user and correct password
-				let oldInfo = req.session.user;
-				req.session.regenerate(function (err) {
-					if (err) {
-						console.log(err);
-						return false;
-					}
-					
-					req.session.user = Object.assign(oldInfo, {}, { role: "user",firstname: docs[0].firstName, lastName: docs[0].lastName, username: docs[0].username, email: docs[0].email });
-					res.render("response.njk", {user: req.session.user, title: "Login Successful", link: "/profile", message: "Successfully Logged In", buttonMsg: "GO TO GIFT LIST"});
-				});
-			} else {		// found user but wrong password
-				res.render("response.njk", {user: req.session.user, title: "Login Failed", link: "/login", message: "Incorrect Username or Password", buttonMsg: "BACK TO LOGIN"});
-			}
-		} else {	// username was not found in userDB
-			res.render("response.njk", {user: req.session.user, title: "Login Failed", link: "/login", message: "Incorrect Username or Password", buttonMsg: "BACK TO LOGIN"});
+		if (passVerified) {		// found user and correct password
+			let oldInfo = req.session.user;
+			req.session.regenerate(await (async function (err) {
+				if (err) {
+					console.log(err);
+					return false;
+				}
+		
+				req.session.user = Object.assign(oldInfo, {}, { role: "user", firstname: user.info.firstName, lastName: user.info.lastName, username: user.info.username, email: user.info.email });
+				res.render("response.njk", {user: req.session.user, title: "Login Successful", link: "/profile", message: "Successfully Logged In", buttonMsg: "GO TO GIFT LIST"});
+			}));
+		} else {
+			res.render("response.njk", {user: req.session.user, title: "Login Error", link: "/login", message: "Incorrect email or password", buttonMsg: "BACK TO LOGIN"});
 		}
-	} catch (err) {
-		res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "Error: " + err, buttonMsg: "BACK TO HOMEPAGE"});
+	} else {
+		res.render("response.njk", {user: req.session.user, title: "Login Error", link: "/login", message: "Incorrect email or password", buttonMsg: "BACK TO LOGIN"});
 	}
 });
 
@@ -533,9 +416,12 @@ app.post('/email_confirmation_status', express.urlencoded({extended:true}), asyn
 	let email = req.session.user.email;
 	let emailConfirmationCode = req.body.emailConfirmationCode;
 	let userUpgraded = false;
-	
+
 	try {
 		let docs = await temp_userDB.find({'email': email});
+
+		console.log(docs[0].emailConfirmation);
+		console.log(emailConfirmationCode);
 		
 		if (docs[0].emailConfirmation == emailConfirmationCode) {
 			let newUser = {
