@@ -72,116 +72,224 @@ const usersOnlyMiddleware = function(req, res, next) {
 /* ----------------------------
 	helper functions
 ---------------------------- */
-async function sendConfirmationCode(secretCode, email) {
-	let message = "";
-	try {
-		let transporter = nodemailer.createTransport({
-			service: 'gmail',
-			auth: {
-				user: process.env.GMAIL_EMAIL,
-				pass: process.env.GMAIL_PASSWORD
-			}
-		});
+// async function sendConfirmationCode(secretCode, email) {
+// 	let message = "";
+// 	try {
+// 		let transporter = nodemailer.createTransport({
+// 			service: 'gmail',
+// 			auth: {
+// 				user: process.env.GMAIL_EMAIL,
+// 				pass: process.env.GMAIL_PASSWORD
+// 			}
+// 		});
 		
-		let mailOptions = {
-			from: '"Gift-ee" <gifteebysuperseed@gmail.com>',	// sender address
-			to: email,		// list of receivers
-			subject: 'Gift-ee confirmation code!',	// subject line
-			text: secretCode,	// plain text body
-			html: `
-			<html lang="en">
-			<head>
-				<style>
-					#email-content {
-						background-color: white;
-						border: 1px solid #DFE1E6;
-						max-width: 35rem;
-						margin: 1rem auto;
-						border-radius: 5px;
-						padding: 1rem;
-						text-align: center;
-					}
+// 		let mailOptions = {
+// 			from: '"Gift-ee" <gifteebysuperseed@gmail.com>',	// sender address
+// 			to: email,		// list of receivers
+// 			subject: 'Gift-ee confirmation code!',	// subject line
+// 			text: secretCode,	// plain text body
+// 			html: `
+// 			<html lang="en">
+// 			<head>
+// 				<style>
+// 					#email-content {
+// 						background-color: white;
+// 						border: 1px solid #DFE1E6;
+// 						max-width: 35rem;
+// 						margin: 1rem auto;
+// 						border-radius: 5px;
+// 						padding: 1rem;
+// 						text-align: center;
+// 					}
 			
-					a {
-						display: flex;
-						width: 100%;
-						max-width: 7rem;
-						margin: 1rem auto;
-					}
+// 					a {
+// 						display: flex;
+// 						width: 100%;
+// 						max-width: 7rem;
+// 						margin: 1rem auto;
+// 					}
 			
-					#top, #bottom {
-						border: 5px solid;
-						width: 100%;
-						max-width: 20rem;
-						margin: 0 auto;
-					}
+// 					#top, #bottom {
+// 						border: 5px solid;
+// 						width: 100%;
+// 						max-width: 20rem;
+// 						margin: 0 auto;
+// 					}
 			
-					#top {
-						padding: 1rem 0;
-						max-width: 21rem;
-						border-radius: 5px;
-						margin-bottom: 1rem;
-					}
+// 					#top {
+// 						padding: 1rem 0;
+// 						max-width: 21rem;
+// 						border-radius: 5px;
+// 						margin-bottom: 1rem;
+// 					}
 			
-					#bottom {
-						padding: 5rem 0;
-						margin-top: 1rem;
-					}
+// 					#bottom {
+// 						padding: 5rem 0;
+// 						margin-top: 1rem;
+// 					}
 			
-					#content {
-						display: flex;
-						flex-direction: column;
-					}
+// 					#content {
+// 						display: flex;
+// 						flex-direction: column;
+// 					}
 			
-					p {
-						text-align: center;
-						padding: 0; margin:0;
-						font-family: "GTWalsheim", system-ui, sans-serif;
-						text-rendering: optimizelegibility;
-					}
+// 					p {
+// 						text-align: center;
+// 						padding: 0; margin:0;
+// 						font-family: "GTWalsheim", system-ui, sans-serif;
+// 						text-rendering: optimizelegibility;
+// 					}
 			
-					#content p {
-						font-size: 1.5rem;
-						display: block;
-						width: 50%;
-						margin: 0 auto;
-						min-width: 5rem;
-						padding: .5rem 0;
-						border: solid;
-						border-radius: 5px;
-						color: white;
-						background-color: #0060E0;
-						border: solid;
-						border-radius: 5px;
-						border-color: black;
-					}
-				</style>
-			</head>
-			<body>
-				<main>
-					<div id="email-content">
-						<a href="https://gift-ee.herokuapp.com/"><img src="https://raw.githubusercontent.com/AGuyNamedC-Los/gift-ee/master/public/website_images/giftee-logo.png" alt="giftee-logo"></a>
-						<div id="gift">
-							<div id="top"></div>
-							<div id="content">
-								<p>${secretCode}</p>
-							</div>
-							<div id="bottom">
-								<p>Above is your confirmation code!</p>
-							</div>
-						</div>
-					</div>
-				</main>
-			</body>
-			</html>
-			`
-		};
+// 					#content p {
+// 						font-size: 1.5rem;
+// 						display: block;
+// 						width: 50%;
+// 						margin: 0 auto;
+// 						min-width: 5rem;
+// 						padding: .5rem 0;
+// 						border: solid;
+// 						border-radius: 5px;
+// 						color: white;
+// 						background-color: #0060E0;
+// 						border: solid;
+// 						border-radius: 5px;
+// 						border-color: black;
+// 					}
+// 				</style>
+// 			</head>
+// 			<body>
+// 				<main>
+// 					<div id="email-content">
+// 						<a href="https://gift-ee.herokuapp.com/"><img src="https://raw.githubusercontent.com/AGuyNamedC-Los/gift-ee/master/public/website_images/giftee-logo.png" alt="giftee-logo"></a>
+// 						<div id="gift">
+// 							<div id="top"></div>
+// 							<div id="content">
+// 								<p>${secretCode}</p>
+// 							</div>
+// 							<div id="bottom">
+// 								<p>Above is your confirmation code!</p>
+// 							</div>
+// 						</div>
+// 					</div>
+// 				</main>
+// 			</body>
+// 			</html>
+// 			`
+// 		};
 
-		transporter.sendMail(mailOptions, function(error, info) {
-			if (error) { console.log(error); } 
-			else { console.log('Email sent: ' + info.response); }
-		}); 
-	} catch (err) { console.log(err); }
+// 		transporter.sendMail(mailOptions, function(error, info) {
+// 			if (error) { console.log(error); } 
+// 			else { console.log('Email sent: ' + info.response); }
+// 		}); 
+// 	} catch (err) { console.log(err); }
+// }
+
+async function sendConfirmationCode(secretCode, email) {
+	const sgMail = require('@sendgrid/mail')
+	sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+	
+	const msg = {
+	  to: email, // Change to your recipient
+	  from: process.env.GMAIL_EMAIL, // Change to your verified sender
+	  subject: 'Welcome to Giftee! Confirm Your Email',
+	  text: `Here is your confirmation code: ${secretCode}`,
+	  html: `
+	  			<html lang="en">
+	  			<head>
+	  				<style>
+	  					#email-content {
+	  						background-color: white;
+	  						border: 1px solid #DFE1E6;
+	  						max-width: 35rem;
+	  						margin: 1rem auto;
+	  						border-radius: 5px;
+	  						padding: 1rem;
+	  						text-align: center;
+	  					}
+				  
+	  					a {
+	  						display: flex;
+	  						width: 100%;
+	  						max-width: 7rem;
+	  						margin: 1rem auto;
+	  					}
+				  
+	  					#top, #bottom {
+	  						border: 5px solid;
+	  						width: 100%;
+	  						max-width: 20rem;
+	  						margin: 0 auto;
+	  					}
+				  
+	  					#top {
+	  						padding: 1rem 0;
+	  						max-width: 21rem;
+	  						border-radius: 5px;
+	  						margin-bottom: 1rem;
+	  					}
+				  
+	  					#bottom {
+	  						padding: 5rem 0;
+	  						margin-top: 1rem;
+	  					}
+				  
+	  					#content {
+	  						display: flex;
+	  						flex-direction: column;
+	  					}
+				  
+	  					p {
+	  						text-align: center;
+	  						padding: 0; margin:0;
+	  						font-family: "GTWalsheim", system-ui, sans-serif;
+	  						text-rendering: optimizelegibility;
+	  					}
+				  
+	  					#content p {
+	  						font-size: 1.5rem;
+	  						display: block;
+	  						width: 50%;
+	  						margin: 0 auto;
+	  						min-width: 5rem;
+	  						padding: .5rem 0;
+	  						border: solid;
+	  						border-radius: 5px;
+	  						color: white;
+	  						background-color: #0060E0;
+	  						border: solid;
+	  						border-radius: 5px;
+	  						border-color: black;
+	  					}
+	  				</style>
+	  			</head>
+	  			<body>
+	  				<main>
+	  					<div id="email-content">
+	  						<a href="https://gift-ee.herokuapp.com/"><img src="https://raw.githubusercontent.com/AGuyNamedC-Los/gift-ee/master/public/website_images/giftee-logo.png" alt="giftee-logo"></a>
+	  						<div id="gift">
+	  							<div id="top"></div>
+	  							<div id="content">
+	  								<p>${secretCode}</p>
+	  							</div>
+	  							<div id="bottom">
+	  								<p>Above is your confirmation code!</p>
+	  							</div>
+	  						</div>
+	  					</div>
+	  				</main>
+	  			</body>
+	  			</html>
+	  			`
+	}
+	
+	sgMail
+	  .send(msg)
+	  .then(() => {
+		console.log('Email sent')
+	  })
+	  .catch((error) => {
+		console.error(error)
+	  })
 }
 
 function getGift(inputs) {

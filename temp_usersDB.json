@@ -1,2 +1,2 @@
-{"firstName":"asd","lastName":"Carlos Augustine Castillo","email":"closcastillo95@gmail.com","username":"asdasdasd","salt":"15333396","password":"$2a$11$fwWaAuVhqJViZjt7MClVf.tVOAntAKi8LLPglQDRGfLRP4sC5HtbW","emailConfirmation":"6412268477","_id":"HQ2bH4efdhyj4lZK","createdAt":{"$$date":1604206808114},"updatedAt":{"$$date":1604206808114}}
+{"firstName":"asd","lastName":"Carlos Augustine Castillo","email":"closcastillo95@gmail.com","username":"asdasd","salt":"65268769","password":"$2a$11$qJIDrc0cnzWWbYZiNyc8Ouzmtd7uXmw.t4cTuQINNrRBd6ZgKFQCS","emailConfirmation":"9817251696","_id":"JmTAPCBn6HyOpHuj","createdAt":{"$$date":1604274920861},"updatedAt":{"$$date":1604274920861}}
 {"$$indexCreated":{"fieldName":"createdAt","unique":false,"sparse":false}}
