@@ -30,12 +30,13 @@ I thought it would be a lot simpler to have one place to see a person's gift lis
 - ~~redo the sign up page~~
 - ~~redo the profile page~~
 - ~~fix the email confirmation code not being sent~~
-- fix the email confirmation code not being sent from heroku
+- ~~fix the email confirmation code not being sent from heroku~~
 - ~~added appropriate response pages~~
 - ~~redo css for search page~~
 - ~~make the email confirmation look prettier~~
 - ~~add a "resend email confirmation code" button~~
 - ~~clean up backend code~~
+    - maybe use one database instead of two
 - create a profile settings functionality
     - change username
     - change email
