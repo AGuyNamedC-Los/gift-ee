@@ -502,11 +502,3 @@ app.post('/search_results', express.urlencoded({extended:true}), async function(
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
-
-
-// let host = '127.15.59.37';
-// let port = '2323';
-
-// app.listen(port, host, function () {
-//     console.log("Server listening on IPv4: " + host + ":" + port);
-// });
