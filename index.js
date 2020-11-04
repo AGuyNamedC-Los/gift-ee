@@ -1,5 +1,4 @@
 require('dotenv').config();
-const nodemailer = require('nodemailer');
 const express = require('express');
 const session = require('express-session');
 const nunjucks = require('nunjucks');
@@ -7,13 +6,7 @@ const bcrypt = require('bcryptjs');
 var hash = require('object-hash');
 const DataStore = require('nedb-promises');
 
-let userDB = DataStore.create({filename: __dirname + '/usersDB.json', autoload: true});
-
-let temp_userDB = DataStore.create({filename: __dirname + '/temp_usersDB.json', timestampData: true, autoload: true});
-let options = { fieldName: 'createdAt', expireAfterSeconds: process.env.TIME_TO_DELETE };
-temp_userDB.ensureIndex({fieldName: 'createdAt', expireAfterSeconds: process.env.TIME_TO_DELETE}, function (err) {	// adding an expiration date for automatic deletion of temporary users
-});
-
+var userDB = DataStore.create({filename: __dirname + '/usersDB.json', timestampData: true, autoload: true});
 var app = express();
 app.use(express.static('public'));
 var urlendcodedParser = express.urlencoded({extended: true});
@@ -45,14 +38,6 @@ const setUpSessionMiddleware = function(req, res, next) {
 };
 app.use(setUpSessionMiddleware);
 
-const loggedInMiddleware = function(req, res, next) {
-	if (req.session.user.role == "guest") {
-		res.render("response.njk", {user: req.session.user, title: "Users Only", link: "/", message: "Sorry, only logged in users may view this page", buttonMsg: "GO TO HOMEPAGE"});
-	} else {
-		next();
-	}
-};
-
 const guestsOnlyMiddleware = function(req, res, next) {
 	if (req.session.user.role != "guest") {
 		res.render("response.njk", {user: req.session.user, title: "Guests Only", link: "/", message: "Sorry, only guests may view this page", buttonMsg: "GO TO HOMEPAGE"});
@@ -72,21 +57,6 @@ const usersOnlyMiddleware = function(req, res, next) {
 /* ----------------------------
 	helper functions
 ---------------------------- */
-async function getFromDB(email, DB) {
-	try {
-		let docs = (DB === "temp_user") ? await temp_userDB.find({'email': email}) : await userDB.find({'email': email});
-		let userFound = docs.length;
-
-		if (userFound) {
-			return {userFound: userFound, info: docs[0]};
-		} else {
-			return {userFound: userFound, info: []};
-		}
-	} catch (err) {
-		console.log(err);
-	}
-}
-
 async function sendConfirmationCode(secretCode, email) {
 	const sgMail = require('@sendgrid/mail');
 	sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -215,52 +185,47 @@ app.get('/', function (req, res) { res.render('home.njk', {user: req.session.use
 app.get('/login', guestsOnlyMiddleware, function (req, res) { res.render('login.html', {user: req.session.user}); });
 
 app.post('/login_status', express.urlencoded({extended:true}), async function(req, res) {
+    // remove expired temp users
+    let expiredUsers = await userDB.find({'role': "temp_user"});
+    let currTime = Date.now();
+    let usersRemoved = 0;
+    for (i = 0; i < expiredUsers.length; i++) {
+        let ageInSeconds = Math.floor(currTime - expiredUsers[0].createdAt)/1000;
+        if (ageInSeconds >= process.env.TIME_TO_DELETE) {
+            await userDB.remove({'email': expiredUsers[i].email});
+            usersRemoved++;
+        }
+    }
+
 	let email = req.body.email;		// get user's typed in email
 	let password = req.body.password;		// get user's typed in password
 
-	let tempUser = await getFromDB(email, "temp_user");
-	if (tempUser.userFound) {
-		let saltedPassword = tempUser.info.salt + password;
-		let passVerified = bcrypt.compareSync(saltedPassword, tempUser.info.password);	// combine the user's salt and password to the hashed password
-
-		if (passVerified) {		// found user and correct password
-			let oldInfo = req.session.user;
-			req.session.regenerate(function (err) {
-				if (err) {
-					console.log(err);
-					return false;
-				}
-		
-				req.session.user = Object.assign(oldInfo, {}, { role: "temp_user",firstname: tempUser.info.firstName, lastName: tempUser.info.lastName, username: tempUser.info.username, email: tempUser.info.email });
-				res.render("response.njk", {user: req.session.user, title: "Login Successful", link: "/", message: "Successfully Logged In", buttonMsg: "GO TO HOMEPAGE"});
-			});
-		}
-	}
-
-	if (tempUser.userFound) { return; }
-
-	let user = await getFromDB(email, "user");
-	if (user.userFound) {
-		let saltedPassword = user.info.salt + password;
-		passVerified = bcrypt.compareSync(saltedPassword, user.info.password);	// combine the user's salt and password to the hashed password
-
-		if (passVerified) {		// found user and correct password
-			let oldInfo = req.session.user;
-			req.session.regenerate(await (async function (err) {
-				if (err) {
-					console.log(err);
-					return false;
-				}
-		
-				req.session.user = Object.assign(oldInfo, {}, { role: "user", firstname: user.info.firstName, lastName: user.info.lastName, username: user.info.username, email: user.info.email });
-				res.render("response.njk", {user: req.session.user, title: "Login Successful", link: "/profile", message: "Successfully Logged In", buttonMsg: "GO TO GIFT LIST"});
-			}));
-		} else {
-			res.render("response.njk", {user: req.session.user, title: "Login Error", link: "/login", message: "Incorrect email or password", buttonMsg: "BACK TO LOGIN"});
-		}
-	} else {
-		res.render("response.njk", {user: req.session.user, title: "Login Error", link: "/login", message: "Incorrect email or password", buttonMsg: "BACK TO LOGIN"});
-	}
+    // search through user DB
+    try {
+        let user = await userDB.find({'email': email})
+        if (user.length == 1) {
+            let saltedPassword = user[0].salt + password;
+            passVerified = bcrypt.compareSync(saltedPassword, user[0].password);	// combine the user's salt and password to the hashed password
+    
+            if (passVerified) {		// found user and correct password
+                req.session.regenerate(async function (err) {
+                    if (err) {
+                        console.log(err);
+                        return false;
+                    }
+                    
+                    req.session.user = {role: user[0].role, firstname: user[0].firstName, lastName: user[0].lastName, username: user[0].username, email: user[0].email};
+                    res.render("response.njk", {user: req.session.user, title: "Login Successful", link: "/profile", message: "Successfully Logged In", buttonMsg: "GO TO GIFT LIST"});
+                });
+            } else {    // user found but incorrect password
+                res.render("response.njk", {user: req.session.user, title: "Login Error", link: "/login", message: "Incorrect email or password", buttonMsg: "BACK TO LOGIN"});
+            }
+        } else {    // user not found
+            res.render("response.njk", {user: req.session.user, title: "Login Error", link: "/login", message: "Incorrect email or password", buttonMsg: "BACK TO LOGIN"});
+        }
+    } catch (err) {
+        res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
+    }
 });
 
 app.post('/logout_status', express.urlencoded({extended:true}), async function(req, res) {
@@ -278,6 +243,18 @@ app.post('/logout_status', express.urlencoded({extended:true}), async function(r
 app.get('/sign-up', guestsOnlyMiddleware, function (req, res) { res.render('sign_up.html', {user: req.session.user}); });
 
 app.post('/sign_up_status', express.urlencoded({extended:true}), async function(req, res) {
+    // remove expired temp users
+    let expiredUsers = await userDB.find({'role': "temp_user"});
+    let currTime = Date.now();
+    let usersRemoved = 0;
+    for (i = 0; i < expiredUsers.length; i++) {
+        let ageInSeconds = Math.floor(currTime - expiredUsers[0].createdAt)/1000;
+        if (ageInSeconds >= process.env.TIME_TO_DELETE) {
+            await userDB.remove({'email': expiredUsers[i].email});
+            usersRemoved++;
+        }
+    }
+
 	// get form inputs
 	let email = req.body.email;
 	let firstName = req.body.firstName;
@@ -302,7 +279,7 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 	else if (!hasSpaces.test(username)) { errorMessage = "Username can't contain spaces"; badUsername = true;}
 
 	if (badUsername) {
-		res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: "The username: " + username + " is not a valid username", buttonMsg: "BACK TO SIGN UP PAGE"});
+		res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: errorMessage, buttonMsg: "BACK TO SIGN UP PAGE"});
 		return;
 	}
 
@@ -318,45 +295,16 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 	else if (!hasUppercase.test(password)) { errorMessage = "password must contain a uppercase letter"; badPassword = true; }
 
 	if (badPassword) {
-		res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: "the password you have entered is not valid", buttonMsg: "BACK TO SIGN UP PAGE"});
+		res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: errorMessage, buttonMsg: "BACK TO SIGN UP PAGE"});
 		return;
 	}
 
-	let tempUserFound = 0;
 	let duplicateUsername = false;
-	/* searching through the temp_userDB */
-	try {
-		let docs = await temp_userDB.find({ $or: [{ 'email': email }, { 'username': username }] });
-		//let temp_docs = await temp_userDB.find({'email': email}, {'username': username});
-		tempUserFound = docs.length;
-		if (tempUserFound) {
-			for(i = 0; i < docs.length; i++) {
-				if (docs[i].username == username) { duplicateUsername = true; }
-			}
-
-			if(duplicateUsername == true) {
-				res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: "the username: " + username + " has already been taken!", buttonMsg: "BACK TO SIGN UP PAGE"});
-				return;
-			} else {
-				res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: "the email: " + email + " has already been taken!", buttonMsg: "BACK TO SIGN UP PAGE"});
-				return;
-			}
-		}
-	} catch (err) {
-		res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: "Error: " + err, buttonMsg: "BACK TO SIGN UP PAGE"});
-		return;
-	}
-
-	if (tempUserFound) { return; }
-
-	let userFound = 0;
-	duplicateUsername = false;
 
 	// search through userDB 
 	try {
-		let docs = await userDB.find({ $or: [{ 'email': email }, { 'username': username }] });
-		userFound = docs.length;
-		if (userFound) {
+		let docs = await userDB.find({$or: [{'email': email}, {'username': username}]});
+		if (docs.length == 1) {     // duplicate email or username was found
 			for(i = 0; i < docs.length; i++) {
 				if(docs[i].username == username) { duplicateUsername = true; }
 			}
@@ -372,40 +320,44 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 		res.render("response.njk", {user: req.session.user, title: "Sign Up Error", link: "/sign-up", message: "Error: " + err, buttonMsg: "BACK TO SIGN UP PAGE"});
 		return;
 	}
-	// if (userFound) { console.log("USER ALREADY "); return; }
 
-	// creating salt
-	let NUM_SIZE = process.env.NUM_SIZE;
-	let rand_num1 = Math.floor(Math.random() * NUM_SIZE);
-	let rand_num2 = Math.floor(Math.random() * NUM_SIZE);
-	let rand_num3 = Math.floor(Math.random() * NUM_SIZE);
-	let rand_num4 = Math.floor(Math.random() * NUM_SIZE);
-	let salt = String(rand_num1) + String(rand_num2) + String(rand_num3) + String(rand_num4);
+    // creating salt for the password hashing
+    let salt = "";
+    for (i = 0; i < 4; i++) {
+        salt += String(Math.floor(Math.random() * process.env.NUM_SIZE));
+    }
 
 	// salting and hashing the user's password
 	let hashedPassword = bcrypt.hashSync((salt + password), parseInt(process.env.nROUNDS));
 
 	// create email verification code
 	let emailCode = "";
-	for(i = 0; i < 5; i++) { emailCode = String(emailCode) + String(Math.floor(Math.random() * NUM_SIZE)); }
+	for(i = 0; i < 5; i++) {
+        emailCode +=  String(Math.floor(Math.random() * process.env.NUM_SIZE));
+    }
 
-	let newTempUser = {
+	let newUser = {
+        "role": "temp_user",
 		"firstName": firstName,
 		"lastName": lastName,
 		"email": email,
 		"username": username,
 		"salt": salt,
 		"password": hashedPassword,
-		"emailConfirmation": emailCode,
+        "emailConfirmation": emailCode,
+        "followerTotal": 0,
+        "followingTotal": 0,
+        "followerList": [],
+        "followingList": [],
+        "giftListContent": []
 	}
 
-	// insert into the temp_userDB and then send the user an email confirmation code
+	// insert into the userDB and then send the user an email confirmation code to their email
 	try {
-		await temp_userDB.insert(newTempUser);
-		await sendConfirmationCode(newTempUser.emailConfirmation, newTempUser.email);
-		
-		let oldInfo = req.session.user;
-		req.session.user = Object.assign(oldInfo, newTempUser, {role: "temp_user", firstName: newTempUser.firstName, lastName: newTempUser.lastName, email: newTempUser.email, username: newTempUser.username});
+		await userDB.insert(newUser);
+		await sendConfirmationCode(newUser.emailConfirmation, newUser.email);
+
+		req.session.user = {role: "temp_user", firstName: newUser.firstName, lastName: newUser.lastName, email: newUser.email, username: newUser.username};
 		res.render('sign_up_success.njk', {user: req.session.user});
 	} catch (err) {
 		res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
@@ -415,63 +367,29 @@ app.post('/sign_up_status', express.urlencoded({extended:true}), async function(
 app.post('/email_confirmation_status', express.urlencoded({extended:true}), async function(req, res) {
 	let email = req.session.user.email;
 	let emailConfirmationCode = req.body.emailConfirmationCode;
-	let userUpgraded = false;
 
 	try {
-		let docs = await temp_userDB.find({'email': email});
-
-		console.log(docs[0].emailConfirmation);
-		console.log(emailConfirmationCode);
+        let docs = await userDB.find({'email': email});
 		
-		if (docs[0].emailConfirmation == emailConfirmationCode) {
-			let newUser = {
-				"firstName": docs[0].firstName,
-				"lastName": docs[0].lastName,
-				"email": docs[0].email,
-				"username": docs[0].username,
-				"salt": docs[0].salt,
-				"password": docs[0].password,
-				"followerTotal": 0,
-				"followingTotal": 0,
-				"followerList": [],
-				"followingList": [],
-				"giftListContent": []
-			}
-			try {
-				await userDB.insert(newUser);	// insert the new user into the main DB
-				let oldInfo = req.session.user;
+		if (docs[0].emailConfirmation == emailConfirmationCode) {   // matching email confirmation code
+            await userDB.update({'email': email}, {$set: {'role': "user"}}, {multi: true}, function (err, numReplaced) {});     // upgrade the user's role to "user"
+            await userDB.update({'email': email}, {$unset: {emailConfirmation: true}}, {}, function () {});     // remove the email confirmation code field
 
-				// upgrade user
-				req.session.regenerate(function (err) {
-					if (err) {
-						res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
-						return;
-					}
-					
-					req.session.user = Object.assign(oldInfo, newUser, { role: "user", firstName: newUser.firstName, lastName: newUser.lastName, email: newUser.email, username: newUser.username });
-				});
-				
-				userUpgraded = true;
-			} catch (err) {
-				res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
-				return;
-			}
+            // upgrade user
+            req.session.regenerate(function (err) {
+                if (err) {
+                    res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
+                    return;
+                }
+                
+                req.session.user = { role: "user", firstName: docs[0].firstName, lastName: docs[0].lastName, email: docs[0].email, username: docs[0].username};
+                res.render("response.njk", {user: req.session.user, title: "Email Confirmed", link: "/profile", message: "Your profile is now complete", buttonMsg: "GO TO GIFTLIST"});
+            });
 		} else {	// wrong email confirmation code
 			res.render("response.njk", {user: req.session.user, title: "Wrong Code", link: "/", message: "Wrong Email Confirmation Code", buttonMsg: "BACK TO HOMEPAGE"});
-			return;
 		}
 	} catch (err) {
 		res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
-		return;
-	}
-
-	if (userUpgraded) {
-		try {
-			await temp_userDB.remove({'email': email});
-			res.render("home.njk", {user: req.session.user});
-		} catch (err) {
-			res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME PAGE"});
-		}
 	}
 });
 
@@ -479,7 +397,7 @@ app.post('/resend_confirmation_code', express.urlencoded({extended:true}), async
 	let email = req.session.user.email;
 
 	try {
-		let docs = await temp_userDB.find({'email': email});
+		let docs = await userDB.find({'email': email});
 		sendConfirmationCode(docs[0].emailConfirmation, email);
 		res.render("response.njk", {user: req.session.user, title: "Code Re-Sent", link: "/", message: "Email confirmation code has been resent to your email address!", buttonMsg: "BACK TO HOMEPAGE"});
 	} catch (err) {
@@ -547,7 +465,7 @@ app.post('/deleted_gift_status', usersOnlyMiddleware, express.urlencoded({extend
 	}
 	
 	try {
-		let docs = await userDB.update({"email": email}, {$set: {giftListContent: newGiftList}}, {}, function (err, numReplaced) {});
+		await userDB.update({"email": email}, {$set: {giftListContent: newGiftList}}, {}, function (err, numReplaced) {});
 		res.render("response.njk", {user: req.session.user, title: "Gift Deleted", link: "/profile", message: "Gift Successfully Deleted!", buttonMsg: "BACK TO GIFT LIST"});
 	} catch (err) {
 		res.render("response.njk", {user: req.session.user, title: "Error", link: "/profile", message: "error: " + err, buttonMsg: "BACK TO GIFT LIST"});
@@ -561,7 +479,7 @@ app.get('/search', async function (req, res) {
 		let usernamesList = [];
 		let docs = await userDB.find({});
 
-		for (i = 0; i < docs.length; i++) { usernamesList[i] = docs[i].username; }
+		for (i = 0; i < docs.length; i++) {usernamesList[i] = docs[i].username;}
 		res.render('search.njk', {user: req.session.user, usernames: usernamesList});
 	} catch (err) {
 		res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME"});
