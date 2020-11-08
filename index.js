@@ -180,9 +180,14 @@ function getGift(inputs) {
 /* ----------------------------
 	web pages
 ---------------------------- */
-app.get('/', function (req, res) { console.log(req.params.name); res.render('home.njk', {user: req.session.user}); });
+app.get('/', function (req, res) { 
+	userDB.loadDatabase();
+	res.render('home.njk', {user: req.session.user}); });
 
-app.get('/login', guestsOnlyMiddleware, function (req, res) { res.render('login.html', {user: req.session.user}); });
+app.get('/login', guestsOnlyMiddleware, function (req, res) { 
+	userDB.loadDatabase();
+	res.render('login.html', {user: req.session.user}); 
+});
 
 app.post('/login_status', express.urlencoded({extended:true}), async function(req, res) {
     // remove expired temp users
@@ -240,7 +245,10 @@ app.post('/logout_status', express.urlencoded({extended:true}), async function(r
 	});
 });
 
-app.get('/sign-up', guestsOnlyMiddleware, function (req, res) { res.render('sign_up.html', {user: req.session.user}); });
+app.get('/sign-up', guestsOnlyMiddleware, function (req, res) { 
+	userDB.loadDatabase();
+	res.render('sign_up.html', {user: req.session.user}); 
+});
 
 app.post('/sign_up_status', express.urlencoded({extended:true}), async function(req, res) {
     // remove expired temp users
@@ -406,6 +414,7 @@ app.post('/resend_confirmation_code', express.urlencoded({extended:true}), async
 });
 
 app.get('/profile', usersOnlyMiddleware, async function (req, res) {
+	userDB.loadDatabase();
 	try {
 		let docs = await userDB.find({'email': req.session.user.email});
 		res.render("gift-ee_profile.njk", {giftList: docs[0].giftListContent, user: req.session.user});
@@ -475,11 +484,13 @@ app.post('/deleted_gift_status', usersOnlyMiddleware, express.urlencoded({extend
 app.get('/about', function (req, res) { res.render('about.njk', {user: req.session.user}); });
 
 app.get('/search', async function (req, res) {
+	userDB.loadDatabase();
 	try {
 		let usernamesList = [];
 		let docs = await userDB.find({});
 
-		for (i = 0; i < docs.length; i++) {usernamesList[i] = docs[i].username;}
+		for (i = 0; i < docs.length; i++) {usernamesList.push(docs[i].username);}
+		console.log(usernamesList);
 		res.render('search.njk', {user: req.session.user, usernames: usernamesList});
 	} catch (err) {
 		res.render("response.njk", {user: req.session.user, title: "Error", link: "/", message: "error: " + err, buttonMsg: "BACK TO HOME"});
