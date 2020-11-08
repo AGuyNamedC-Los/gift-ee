@@ -180,7 +180,7 @@ function getGift(inputs) {
 /* ----------------------------
 	web pages
 ---------------------------- */
-app.get('/', function (req, res) { res.render('home.njk', {user: req.session.user}); });
+app.get('/', function (req, res) { console.log(req.params.name); res.render('home.njk', {user: req.session.user}); });
 
 app.get('/login', guestsOnlyMiddleware, function (req, res) { res.render('login.html', {user: req.session.user}); });
 
@@ -498,6 +498,11 @@ app.post('/search_results', express.urlencoded({extended:true}), async function(
 	} catch (err) {
 		res.render("response.njk", {user: req.session.user, title: "Error", link: "/profile", message: "error: " + err, buttonMsg: "BACK TO GIFT LIST"});
 	}
+});
+
+app.get('giftList',  usersOnlyMiddleware, express.urlencoded({extended:true}), async function(req, res) {
+	let docs = await userDB.find({'email': req.session.user.email});
+	res.send(docs[0].giftListContent);
 });
 
 const PORT = process.env.PORT || 5000;

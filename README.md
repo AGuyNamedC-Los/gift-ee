@@ -36,11 +36,14 @@ I thought it would be a lot simpler to have one place to see a person's gift lis
 - ~~make the email confirmation look prettier~~
 - ~~add a "resend email confirmation code" button~~
 - ~~clean up backend code~~
-    - maybe use one database instead of two
+    - ~~maybe use one database instead of two~~
+- In the case that I need to store a HUGE amount of users and information the database might need to be rewritten again, therefore it might be best to...
+    - create a new file for each user with their gift list instead of having all the information in one database
 - create a profile settings functionality
     - change username
     - change email
     - add/change a profile picture
+    - change password
 - add a privacy option for users
 - implement a friends/followers list
     - ping users in the friends list when someone has bought an item from your gift list

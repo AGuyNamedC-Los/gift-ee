@@ -133,14 +133,33 @@
         }
     }
 
-    function addGift(form) {
-        console.log("Trying to submit!");
-        form.submit();
+    function addGift(form) { form.submit(); }
+    function applyChangesToCurrGift(form) { form.submit(); }
+
+    /* EXPERIMENTAL AJAX BELOW */
+    function addGift2() {
+
     }
 
-    function applyChangesToCurrGift(form) {
-        console.log("trying to apply changes!");
-        form.submit();
+    function fetchJSONFile(path, callback) {
+        let httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = function() {
+            if (httpRequest.readyState === 4) {
+                if (httpRequest.status === 200) {
+                    var data = JSON.parse(httpRequest.responseText);
+                    if (callback) callback(data);
+                }
+            }
+        };
+        httpRequest.open('GET', path);
+        httpRequest.send(); 
     }
+
+    // this requests the file and executes a callback with the parsed result once it is available
+    // might have to put the usersDB inside of the templates folder but would then make it unsafe since it would allow it for users to view their own data
+    // even though user sensitive information is encrypted... might need to write to a file that contians only the user's giftlist
+    fetchJSONFile('giftList', function(data){
+        console.log(data);
+    });
 </script>
 {% endblock %}
