@@ -1,6 +1,8 @@
+# NOTE
+This version of giftee is now depricated, I completely redid the file structure and code as well as implemented knex which uses sqlite3 and postgreSQL for databases which is actually compatable with heroku. If you would like to see the current working version of giftee please click this [link](https://github.com/AGuyNamedC-Los/giftee)
+
 # Giftee
-A social media-esque [website](https://tranquil-fjord-29285.herokuapp.com/) that allows you to manage a gift list that can be comprised of multiple items from other online stores. This gift list can also be viewed by other people who search up your username
-- Please allow a couple seconds for the website to load.
+A social media-esque that allows you to manage a gift list that can be comprised of multiple items from other online stores. This gift list can also be viewed by other people who search up your username
 
 # Motivation
 
