@@ -27,7 +27,7 @@
     "minimist": "^1.2.5",
     "nedb": "^1.8.0",
     "nedb-promises": "^4.0.1",
-    "nodemailer": "^6.4.5",
+    "nodemailer": "^6.4.16",
     "nunjucks": "^3.2.1",
     "object-hash": "^2.0.3",
     "sendgrid": "^5.2.3"
